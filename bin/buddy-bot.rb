@@ -30,9 +30,9 @@ localconf = YAML::load(File.read(BuddyBot.localconf_filename))
 
 bot = nil
 if localconf["token"] && localconf["token"].length && localconf["appid"] != 0
-  bot = Discordrb::Bot.new token: localconf["token"], application_id: localconf["appid"], log_mode: :debug
+  bot = Discordrb::Bot.new token: localconf["token"], application_id: localconf["appid"]
 elsif localconf["username"].length != 0 && localconf["password"].length != 0
-  bot = Discordrb::Bot.new email: localconf["username"], password: localconf["password"], log_mode: :debug
+  bot = Discordrb::Bot.new email: localconf["username"], password: localconf["password"]
 else
   puts "No authentication info, check localconf.yml."
   exit false
