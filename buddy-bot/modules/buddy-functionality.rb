@@ -39,7 +39,6 @@ module BuddyBot::Modules::BuddyFunctionality
     text = event.content
     user = event.user.on event.server
     added_roles = []
-    puts text.scan(/([A-z]+)/)
     text.scan(/([A-z]+)/).map do |matches|
       word = matches.first.downcase
       if @@member_names.has_key? word
@@ -47,7 +46,6 @@ module BuddyBot::Modules::BuddyFunctionality
         role = self.find_role event.server, member_name
         user.add_role role
         added_roles << role.name
-        puts "ÄÄÄÄ Adding #{role.name} to #{user.name}"
         event.bot.debug("Added role '#{role.name}' to '#{event.user.name}'")
       end
     end
