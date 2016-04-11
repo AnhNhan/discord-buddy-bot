@@ -32,7 +32,6 @@ module BuddyBot::Modules::BuddyFunctionality
   member_join do |event|
     event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him!"
     event.user.on(event.server).add_role(self.find_role(event.server, "buddy"))
-    puts self.find_role(event.server, "buddy")
     event.bot.debug("Added role 'Buddy' to '#{event.user.name}'")
   end
 
