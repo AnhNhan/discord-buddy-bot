@@ -16,7 +16,18 @@ module BuddyBot::Modules::BuddyFunctionality
     "yuna" => "yuju",
     "umji" => "umji",
     "yewon" => "umji",
-    "umjiya" => "umji"
+    "umjiya" => "umji",
+    "imabuddy" => "buddy"
+  }
+
+  @@emoji_map = {
+    "sowon" => ":bride_with_veil:",
+    "eunha" => ":princess:",
+    "yerin" => ":girl:",
+    "yuju" => ":heart_eyes_cat:",
+    "sinb" => ":dancer:",
+    "umji" => ":angel:",
+    "buddy" => ":fries:"
   }
 
   def self.find_role(server, name)
@@ -45,13 +56,62 @@ module BuddyBot::Modules::BuddyFunctionality
         member_name = @@member_names[word]
         role = self.find_role event.server, member_name
         user.add_role role
-        added_roles << role.name
+        added_roles << "**#{role.name}**" + if !word.eql? member_name then " _(#{matches.first})_" else "" end
         event.bot.debug("Added role '#{role.name}' to '#{event.user.name}'")
       end
     end
     if !added_roles.empty?
-      added_roles_text = added_roles.map{ |s| "**#{s}**" }.join ", "
+      added_roles_text = added_roles.join ", "
       event.send_message "#{user.mention} your bias#{if added_roles.length > 1 then 'es' end} #{if added_roles.length > 1 then 'are' else 'is' end} now #{added_roles_text}"
     end
+  end
+
+  def self.bias_stats(members, first_bias = false, bias_order = [])
+    biases = @@member_names.values.uniq
+    result = {}
+    result.default = 0
+
+    members
+      .flat_map do |member|
+        if first_bias
+          # ugh
+          first_bias = bias_order.find { |bias| member.roles.find { |role| role.name.eql? bias } }
+          [member.roles.find { |role| role.name.eql? first_bias }]
+        else
+          member.roles
+        end
+      end
+      .map(&:name)
+      .select{ |s| @@member_names.values.include? s.downcase }
+      .inject(result) do |result, role|
+        result[role] += 1
+        result
+      end
+  end
+
+  def self.print_bias_stats(bias_stats)
+    bias_stats.map do |name, count|
+      "#{@@emoji_map[name.downcase]} " + "**#{name}**:".rjust(6) + count.to_s.rjust(3) + "x"
+    end.join "\n"
+  end
+
+  message(start_with: /^!bias-stats\W*/) do |event|
+    bias_stats = self.bias_stats(event.server.members)
+    bias_stats.delete "Buddy"
+    event.send_message "**##{event.server.name} Bias List** _(note that members may have multiple biases)_"
+    event.send_message self.print_bias_stats(bias_stats)
+  end
+
+  message(start_with: /^!first-bias-stats\W*/) do |event|
+    bias_stats = self.bias_stats(event.server.members, true, event.server.roles.reverse.map(&:name))
+    event.send_message "**##{event.server.name} Bias List**"
+    event.send_message self.print_bias_stats(bias_stats)
+  end
+
+  message(content: ["!help", "!commands"]) do |event|
+    event.send_message "*@BuddyBot* to the help! I help managing #GFRIEND.\n\n" +
+        "Supported commands:\n" +
+        "  _!bias-stats_ / _!first-bias-stats_: Counts the members biases.\n" +
+        "  _!help_ / _!commands_: Displays this help."
   end
 end
