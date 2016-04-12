@@ -12,6 +12,7 @@ require 'yaml'
 
 require 'buddy-bot'
 require 'modules/buddy-functionality'
+require 'modules/invite-bot'
 
 ###########################################################
 #### MAIN
@@ -43,5 +44,6 @@ bot.message(with_text: /^\W*ping\W*$/i) do |event|
 end
 
 bot.include! BuddyBot::Modules::BuddyFunctionality
+bot.include! BuddyBot::Modules::InviteBot
 
 bot.run
