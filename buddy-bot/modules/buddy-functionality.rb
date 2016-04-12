@@ -81,6 +81,7 @@ module BuddyBot::Modules::BuddyFunctionality
           member.roles
         end
       end
+      .compact
       .map(&:name)
       .select{ |s| @@member_names.values.include? s.downcase }
       .inject(result) do |result, role|
