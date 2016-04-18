@@ -7,11 +7,15 @@ module BuddyBot::Modules::BuddyFunctionality
   @@member_names = {
     "eunha" => "eunha",
     "sinb" => "sinb",
+    "sinbi" => "sinb",
     "shinbi" => "sinb",
     "sowon" => "sowon",
     "sojung" => "sowon",
     "yerin" => "yerin",
     "yenni" => "yerin",
+    "yerini" => "yerin",
+    "rinnie" => "yerin",
+    "rinni" => "yerin",
     "yuju" => "yuju",
     "yuna" => "yuju",
     "umji" => "umji",
@@ -41,7 +45,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   member_join do |event|
-    event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him!"
+    event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him/her!"
     event.user.on(event.server).add_role(self.find_role(event.server, "buddy"))
     event.bot.debug("Added role 'Buddy' to '#{event.user.name}'")
   end
@@ -96,14 +100,14 @@ module BuddyBot::Modules::BuddyFunctionality
     end.join "\n"
   end
 
-  message(start_with: /^!bias-stats\W*/) do |event|
+  message(start_with: /^!bias-stats\W*/i) do |event|
     bias_stats = self.bias_stats(event.server.members)
     bias_stats.delete "Buddy"
     event.send_message "**##{event.server.name} Bias List** _(note that members may have multiple biases)_"
     event.send_message self.print_bias_stats(bias_stats)
   end
 
-  message(start_with: /^!first-bias-stats\W*/) do |event|
+  message(start_with: /^!first-bias-stats\W*/i) do |event|
     bias_stats = self.bias_stats(event.server.members, true, event.server.roles.reverse.map(&:name))
     event.send_message "**##{event.server.name} Bias List**"
     event.send_message self.print_bias_stats(bias_stats)
