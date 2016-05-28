@@ -36,7 +36,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.find_role(server, name)
     name = name.downcase
-    server.roles.find{ |role| role.name.downcase.eql? name }
+    server.roles.find{ |role| role.name.downcase.scan(/([A-z]+)/).find{ |part| part.first.eql?(name) } }
   end
 
   ready do |event|
