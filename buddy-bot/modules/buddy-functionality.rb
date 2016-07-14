@@ -124,7 +124,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: ["!help", "!commands"]) do |event|
-    event.send_message "**@BuddyBot** to the help!\n\nI help managing #GFRIEND. My creator is <@139342974776639489>, send him a message if I don't behave.\n\n" +
+    event.send_message "**@BuddyBot** to the rescue!\n\nI help managing #GFRIEND. My creator is <@139342974776639489>, send him a message if I don't behave.\n\n" +
         "**Supported commands**\n" +
         "  **!bias-stats** / **!first-bias-stats** Counts the members biases.\n" +
         "  **!help** / **!commands** Displays this help."
