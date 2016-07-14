@@ -85,7 +85,7 @@ module BuddyBot::Modules::BuddyFunctionality
       rejected_names_text = rejected_names.map do |name|
         " - #{name.capitalize} (#{@@members_of_other_groups[name].sample})"
       end.join "\n"
-      event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's' else '' end} do not belong to \#Godfriend:\n#{rejected_names_text}\n\nOfficials have been alerted and now are on the search for you."
+      event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's' else '' end} do not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you."
     end
   end
 
@@ -141,11 +141,30 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@members_of_other_groups = {
     "momo" => [
+      "*nico nico ni~*",
+    ],
+    "sana" => [
+      "#ShaShaSha",
+    ],
+    "nosana" => [
+      "#ShaShaSha",
+    ],
+    "nosananolife" => [
+      "#ShaShaSha",
+    ],
+    "tzuyu" => [
       "Twice",
+    ],
+    "nayeon" => [
+      "Twice",
+    ],
+    "jihyo" => [
+      "don't scream in my ear'",
     ],
     "mina" => [
       "Twice",
       "AOA",
+      "Mina plz!",
     ],
     "taeyeon" => [
       "SNSD",
@@ -196,6 +215,12 @@ module BuddyBot::Modules::BuddyFunctionality
     "elkie" => [
       "CL.Clear",
     ],
+    "jimin" => [
+      "Lè Motherfucking Top Madam",
+    ],
+    "jimmy" => [
+      "CL.Clear",
+    ],
     "arin" => [
       "Oh Ma Girl",
     ],
@@ -207,15 +232,16 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "somi" => [
       "*PICK ME PICK ME PICK ME PICK ME*",
+      "adorbs!",
     ],
     "sohye" => [
-      "*PICK ME PICK ME PICK ME PICK ME*",
+      "Ey Ouh Ey", # I was told this was Boston accent
     ],
     "sejeong" => [
-      "***GODDESS***",
+      "**GODDESS**",
     ],
-    "somi" => [
-      "*PICK ME PICK ME PICK ME PICK ME*",
+    "nayoung" => [
+      "Ay Oh Ay",
     ],
     "suzy" => [
       "miss A",
@@ -223,9 +249,73 @@ module BuddyBot::Modules::BuddyFunctionality
     "sueji" => [
       "miss A",
     ],
+    "sojung" => [
+      "I think a lot of people have that name...",
+    ],
     "hyojung" => [
       "Oh Ma Girl",
       "*PICK ME PICK ME PICK ME PICK ME*",
+    ],
+    "mimi" => [
+      "@AnhNhan's waifu, hands off!'",
+    ],
+    "sojin" => [
+      "uh.... I'm feeling old'",
+    ],
+    "yura" => [
+      "Yura-chu!",
+    ],
+    "minah" => [
+      "did you mean Mina?",
+    ],
+    "hyeri" => [
+      "did you mean Hyerin?",
+    ],
+    "hyerin" => [
+      "did you mean Hyeri?",
+    ],
+    "yeri" => [
+      "did you mean Yerin?",
+      "The Red Velvet Gods demand their sacrifice",
+    ],
+    "wendy" => [
+      "The Red Velvet Gods demand their sacrifice",
+    ],
+    "seulgi" => [
+      "The Red Velvet Gods demand their sacrifice",
+    ],
+    "irene" => [
+      "The Red Velvet Gods demand their sacrifice",
+    ],
+    "joy" => [
+      "The Red Velvet Gods demand their sacrifice",
+    ],
+    "jiyoung" => [
+      "Muthafucking JYP!",
+    ],
+    "jyp" => [
+      "Still Alive",
+    ],
+    "peter" => [
+      "who??",
+    ],
+    "max" => [
+      "srsly?",
+    ],
+    "Dolo7" => [
+      "who?",
+    ],
+    "hate" => [
+      "Fun Fact: Hate leads to the dark side of the force.",
+    ],
+    "cookie" => [
+      "Cookies can only be found on the dark side of the force.",
+    ],
+    "buddybot" => [
+      "no srsly",
+    ],
+    "hulk" => [
+      "**HE IS ANGRY**",
     ],
   }
 end
