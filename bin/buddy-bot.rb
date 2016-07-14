@@ -13,7 +13,7 @@ require 'yaml'
 require 'buddy-bot'
 require 'modules/buddy-functionality'
 require 'modules/invite-bot'
-require 'modules/memes'
+# require 'modules/memes'
 
 ###########################################################
 #### MAIN
@@ -46,6 +46,6 @@ end
 
 bot.include! BuddyBot::Modules::BuddyFunctionality
 bot.include! BuddyBot::Modules::InviteBot
-bot.include! BuddyBot::Modules::Memes
+# bot.include! BuddyBot::Modules::Memes
 
 bot.run
