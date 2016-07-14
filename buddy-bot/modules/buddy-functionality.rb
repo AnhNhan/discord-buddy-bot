@@ -23,7 +23,6 @@ module BuddyBot::Modules::BuddyFunctionality
     "umjiya" => "umji",
     "umjiyah" => "umji",
     "manager" => "manager",
-    "manager" => "manager",
     "buddy" => "buddy",
     "imabuddy" => "buddy"
   }
@@ -64,6 +63,7 @@ module BuddyBot::Modules::BuddyFunctionality
     text = event.content
     user = event.user.on event.server
     added_roles = []
+    rejected_names = []
     text.scan(/([A-z]+)/).map do |matches|
       word = matches.first.downcase
       if @@member_names.has_key? word
@@ -72,11 +72,20 @@ module BuddyBot::Modules::BuddyFunctionality
         user.add_role role
         added_roles << "**#{role.name}**" + if !word.eql? member_name then " _(#{matches.first})_" else "" end
         self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
+      elsif @@members_of_other_groups.has_key? word
+        rejected_names << word
+        self.log "Warning, '#{event.user.name}' requested '#{word}'.", event.bot
       end
     end
     if !added_roles.empty?
       added_roles_text = added_roles.join ", "
       event.send_message "#{user.mention} your bias#{if added_roles.length > 1 then 'es' end} #{if added_roles.length > 1 then 'are' else 'is' end} now #{added_roles_text}"
+    end
+    if !rejected_names.empty?
+      rejected_names_text = rejected_names.map do |name|
+        " - #{name.uppercase} (#{@@members_of_other_groups[name].sample})"
+      end
+      event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's' else ''} do not belong to \#Godfriend:\n#{rejected_names_text}\n\nOfficials have been alerted and now are on the search for you."
     end
   end
 
@@ -129,4 +138,94 @@ module BuddyBot::Modules::BuddyFunctionality
         "  **!bias-stats** / **!first-bias-stats** Counts the members biases.\n" +
         "  **!help** / **!commands** Displays this help."
   end
+
+  @@members_of_other_groups = {
+    "momo" => [
+      "Twice",
+    ],
+    "mina" => [
+      "Twice",
+      "AOA",
+    ],
+    "taeyeon" => [
+      "SNSD",
+    ],
+    "yoona" => [
+      "SNSD",
+    ],
+    "choa" => [
+      "AOA",
+    ],
+    "yuna" => [
+      "AOA",
+      "The Ark",
+    ],
+    "krystal" => [
+      "f(x-1)",
+    ],
+    "minju" => [
+      "The Ark",
+    ],
+    "halla" => [
+      "The Ark",
+    ],
+    "jane" => [
+      "The Ark",
+    ],
+    "yuujin" => [
+      "The Ark",
+      "CL.Clear",
+    ],
+    "seungyeon" => [
+      "CL.Clear",
+    ],
+    "seunghee" => [
+      "CL.Clear",
+      "Oh My Girl",
+    ],
+    "eunbin" => [
+      "Eunbeani Beani",
+    ],
+    "yeeun" => [
+      "CL.Clear",
+      "Wonder Girls(??)",
+    ],
+    "sorn" => [
+      "CL.Clear",
+    ],
+    "elkie" => [
+      "CL.Clear",
+    ],
+    "arin" => [
+      "Oh Ma Girl",
+    ],
+    "yooa" => [
+      "Oh Ma Girl",
+    ],
+    "binnie" => [
+      "Oh My Girl",
+    ],
+    "somi" => [
+      "*PICK ME PICK ME PICK ME PICK ME*",
+    ],
+    "sohye" => [
+      "*PICK ME PICK ME PICK ME PICK ME*",
+    ],
+    "sejeong" => [
+      "***GODDESS***",
+    ],
+    "somi" => [
+      "*PICK ME PICK ME PICK ME PICK ME*",
+    ],
+    "suzy" => [
+      "miss A",
+    ],
+    "sueji" => [
+      "miss A",
+    ],
+    "hyojung" => [
+      "Oh Ma Girl",
+      "*PICK ME PICK ME PICK ME PICK ME*",
+    ],
+  }
 end
