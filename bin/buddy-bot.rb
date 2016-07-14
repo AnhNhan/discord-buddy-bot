@@ -13,6 +13,7 @@ require 'yaml'
 require 'buddy-bot'
 require 'modules/buddy-functionality'
 require 'modules/invite-bot'
+require 'modules/memes'
 
 ###########################################################
 #### MAIN
