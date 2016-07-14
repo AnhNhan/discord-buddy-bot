@@ -21,6 +21,10 @@ module BuddyBot::Modules::BuddyFunctionality
     "umji" => "umji",
     "yewon" => "umji",
     "umjiya" => "umji",
+    "umjiyah" => "umji",
+    "manager" => "manager",
+    "manager" => "manager",
+    "buddy" => "buddy",
     "imabuddy" => "buddy"
   }
 
@@ -34,6 +38,11 @@ module BuddyBot::Modules::BuddyFunctionality
     "buddy" => ":fries:"
   }
 
+  def self.log(msg, bot)
+    # buddy bot log on anh-test
+    bot.send_message 189800756403109889, msg
+  end
+
   def self.find_role(server, name)
     name = name.downcase
     server.roles.find{ |role| role.name.downcase.scan(/([A-z]+)/).find{ |part| part.first.eql?(name) } }
@@ -41,13 +50,14 @@ module BuddyBot::Modules::BuddyFunctionality
 
   ready do |event|
     #event.bot.profile.avatar = open("GFriend-gfriend-39231889-1500-998.jpg")
-    event.bot.game = "👍"
+    event.bot.game = "NA NA NA NAVILLERA"
+    self.log "ready!", event.bot
   end
 
   member_join do |event|
     event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him/her!"
     event.user.on(event.server).add_role(self.find_role(event.server, "buddy"))
-    event.bot.debug("Added role 'Buddy' to '#{event.user.name}'")
+    self.log "Added role 'Buddy' to '#{event.user.name}'", event.bot
   end
 
   message(in: "whos_your_bias") do |event|
@@ -61,7 +71,7 @@ module BuddyBot::Modules::BuddyFunctionality
         role = self.find_role event.server, member_name
         user.add_role role
         added_roles << "**#{role.name}**" + if !word.eql? member_name then " _(#{matches.first})_" else "" end
-        event.bot.debug("Added role '#{role.name}' to '#{event.user.name}'")
+        self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
       end
     end
     if !added_roles.empty?
