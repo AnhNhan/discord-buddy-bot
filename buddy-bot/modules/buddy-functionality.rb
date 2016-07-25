@@ -299,6 +299,9 @@ module BuddyBot::Modules::BuddyFunctionality
     "jyp" => [
       "Still Alive",
     ],
+    "buddybot" => [
+      "I heard you...",
+    ],
     "peter" => [
       "who??",
     ],
