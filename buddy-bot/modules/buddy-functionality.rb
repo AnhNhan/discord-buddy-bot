@@ -169,6 +169,9 @@ module BuddyBot::Modules::BuddyFunctionality
     "taeyeon" => [
       "SNSD",
     ],
+    "jessica" => [
+      "Did you mistake her for SinB?",
+    ],
     "yoona" => [
       "SNSD",
     ],
