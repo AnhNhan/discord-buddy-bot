@@ -317,9 +317,6 @@ module BuddyBot::Modules::BuddyFunctionality
     "cookie" => [
       "Cookies can only be found on the dark side of the force.",
     ],
-    "buddybot" => [
-      "no srsly",
-    ],
     "hulk" => [
       "**HE IS ANGRY**",
     ],
