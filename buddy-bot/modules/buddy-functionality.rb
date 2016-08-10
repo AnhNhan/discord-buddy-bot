@@ -243,6 +243,9 @@ module BuddyBot::Modules::BuddyFunctionality
     "sejeong" => [
       "**GODDESS**",
     ],
+    "sejong" => [
+      "**GODDESS**",
+    ],
     "nayoung" => [
       "Ay Oh Ay",
     ],
@@ -319,6 +322,24 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "hulk" => [
       "**HE IS ANGRY**",
+    ],
+    "sojiniee" => [
+      "thank you for your interest...",
+    ],
+    "alice" => [
+      "Hello Venus"
+    ],
+    "nara" => [
+      "Hello Venus"
+    ],
+    "lime" => [
+      "Hello Venus"
+    ],
+    "shinee" => [
+      "SHINee is back!"
+    ],
+    "exo" => [
+      "E!X!O!"
     ],
   }
 end
