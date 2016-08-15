@@ -56,11 +56,12 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.members_map(text, cb_member, cb_other_member)
     text.scan(/([A-z]+)/).map do |matches|
+      original = matches.first
       match = matches.first.downcase
       if @@member_names.has_key? match
-        cb_member.call match
+        cb_member.call match, original
       elsif @@members_of_other_groups.has_key? match
-        cb_other_member.call match
+        cb_other_member.call match, original
       end
     end
   end
@@ -100,14 +101,14 @@ module BuddyBot::Modules::BuddyFunctionality
     added_roles = []
     rejected_names = []
 
-    cb_member = lambda do |match|
+    cb_member = lambda do |match, original|
       member_name = @@member_names[match]
       role = self.find_role event.server, member_name
       user.add_role role
-      added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{matches.first})_" else "" end
+      added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
       self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
     end
-    cb_other_member = lambda do |match|
+    cb_other_member = lambda do |match, original|
       rejected_names << match
       self.log "Warning, '#{event.user.name}' requested '#{match}'.", event.bot
     end
@@ -123,6 +124,9 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: /^!remove\W*/i, in: "whos_your_bias") do |event|
+    if event.user.nil?
+      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
+    end
     if event.user.bot_account?
       self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
@@ -130,14 +134,32 @@ module BuddyBot::Modules::BuddyFunctionality
     self.log "Remove attempt by #{event.user.mention}", event.bot
     data = event.content.scan(/^!remove\s+(.*?)\s*$/i)[0]
     if data
-      cb_member = lambda do |match|
+      data = data[0]
+      user = event.user.on event.server
+      rejected_names = []
+      removed_roles = []
+      cb_member = lambda do |match, original|
         member_name = @@member_names[match]
+        role = self.find_role event.server, member_name
+        user.remove_role role
+        removed_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
+        self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot
       end
-      cb_other_member = lambda do |match|
+      cb_other_member = lambda do |match, original|
+        rejected_names << match
+        self.log "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot
       end
       self.members_map data, cb_member, cb_other_member
+
+      if !removed_roles.empty?
+        removed_roles_text = removed_roles.join ", "
+        event.send_message "#{user.mention} removed bias#{if removed_roles.length > 1 then 'es' end} #{removed_roles_text}"
+      end
+      if !rejected_names.empty?
+        self.print_rejected_names rejected_names, event
+      end
     else
-      self.log "Didn't remove role. No input in `#{event.message}`"
+      self.log "Didn't remove role. No input in '#{event.message.content}' #{event.channel.mention}"
     end
   end
 
