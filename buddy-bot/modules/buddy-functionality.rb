@@ -37,6 +37,13 @@ module BuddyBot::Modules::BuddyFunctionality
     "buddy" => ":fries:"
   }
 
+  @@motd = [
+    "ME GUSTA TU",
+    "NA NA NA NAVILLERA",
+    "LAUGHING OUT LOUD",
+    "LOTS OF LOVE"
+  ]
+
   def self.log(msg, bot)
     # buddy bot log on anh-test
     bot.send_message 189800756403109889, msg
@@ -47,36 +54,60 @@ module BuddyBot::Modules::BuddyFunctionality
     server.roles.find{ |role| role.name.downcase.scan(/([A-z]+)/).find{ |part| part.first.eql?(name) } }
   end
 
+  def self.members_map(text, cb_member, cb_other_member)
+    text.scan(/([A-z]+)/).map do |matches|
+      match = matches.first.downcase
+      if @@member_names.has_key? match
+        puts "Added role 'Buddy' to member_names"
+        cb_member.call match
+      elsif @@members_of_other_groups.has_key? match
+        puts "Added role 'Buddy' to members_of_other_groups"
+        cb_other_member.call match
+      end
+    end
+  end
+
   ready do |event|
-    #event.bot.profile.avatar = open("GFriend-gfriend-39231889-1500-998.jpg")
-    event.bot.game = "NA NA NA NAVILLERA"
+    event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
+    event.bot.game = @@motd.sample
     self.log "ready!", event.bot
   end
 
   member_join do |event|
     event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him/her!"
     event.user.on(event.server).add_role(self.find_role(event.server, "buddy"))
-    self.log "Added role 'Buddy' to '#{event.user.name}'", event.bot
+    self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
   end
 
   message(in: "whos_your_bias") do |event|
     text = event.content
+    if text =~ /^!remove/i
+      next
+    end
+    if event.user.nil?
+      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
+    end
+    if event.user.bot_account?
+      self.log "Ignored message from bot #{event.user.mention}.", event.bot
+      next
+    end
     user = event.user.on event.server
     added_roles = []
     rejected_names = []
-    text.scan(/([A-z]+)/).map do |matches|
-      word = matches.first.downcase
-      if @@member_names.has_key? word
-        member_name = @@member_names[word]
-        role = self.find_role event.server, member_name
-        user.add_role role
-        added_roles << "**#{role.name}**" + if !word.eql? member_name then " _(#{matches.first})_" else "" end
-        self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
-      elsif @@members_of_other_groups.has_key? word
-        rejected_names << word
-        self.log "Warning, '#{event.user.name}' requested '#{word}'.", event.bot
-      end
+
+    cb_member = lambda do |match|
+      member_name = @@member_names[match]
+      role = self.find_role event.server, member_name
+      user.add_role role
+      added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{matches.first})_" else "" end
+      self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
     end
+    cb_other_member = lambda do |match|
+      rejected_names << match
+      self.log "Warning, '#{event.user.name}' requested '#{match}'.", event.bot
+    end
+    self.members_map(text, cb_member, cb_other_member)
+
     if !added_roles.empty?
       added_roles_text = added_roles.join ", "
       event.send_message "#{user.mention} your bias#{if added_roles.length > 1 then 'es' end} #{if added_roles.length > 1 then 'are' else 'is' end} now #{added_roles_text}"
@@ -85,7 +116,17 @@ module BuddyBot::Modules::BuddyFunctionality
       rejected_names_text = rejected_names.map do |name|
         " - #{name.capitalize} (#{@@members_of_other_groups[name].sample})"
       end.join "\n"
-      event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's' else '' end} do not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you."
+      event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you."
+    end
+  end
+
+  message(start_with: /^!remove\W*/i, in: "whos_your_bias") do |event|
+    self.log "Remove attempt by #{event.user.mention}", event.bot
+    data = event.content.scan(/^!remove\s+(.*?)\s*$/i)[0]
+    if data
+      event.send_message "#{data}"
+    else
+      self.log "Didn't remove role. No input in `#{event.message}`"
     end
   end
 
@@ -244,6 +285,9 @@ module BuddyBot::Modules::BuddyFunctionality
       "**GODDESS**",
     ],
     "sejong" => [
+      "**GODDESS**",
+    ],
+    "sejung" => [
       "**GODDESS**",
     ],
     "nayoung" => [
