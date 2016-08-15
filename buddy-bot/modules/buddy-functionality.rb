@@ -67,6 +67,13 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
+  def self.print_rejected_names(rejected_names, event)
+    rejected_names_text = rejected_names.map do |name|
+      " - #{name.capitalize} (#{@@members_of_other_groups[name].sample})"
+    end.join "\n"
+    event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you."
+  end
+
   ready do |event|
     event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
     event.bot.game = @@motd.sample
@@ -113,10 +120,7 @@ module BuddyBot::Modules::BuddyFunctionality
       event.send_message "#{user.mention} your bias#{if added_roles.length > 1 then 'es' end} #{if added_roles.length > 1 then 'are' else 'is' end} now #{added_roles_text}"
     end
     if !rejected_names.empty?
-      rejected_names_text = rejected_names.map do |name|
-        " - #{name.capitalize} (#{@@members_of_other_groups[name].sample})"
-      end.join "\n"
-      event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you."
+      self.print_rejected_names rejected_names, event
     end
   end
 
@@ -128,7 +132,12 @@ module BuddyBot::Modules::BuddyFunctionality
     self.log "Remove attempt by #{event.user.mention}", event.bot
     data = event.content.scan(/^!remove\s+(.*?)\s*$/i)[0]
     if data
-      event.send_message "#{data}"
+      cb_member = lambda do |match|
+        member_name = @@member_names[match]
+      end
+      cb_other_member = lambda do |match|
+      end
+      self.members_map data, cb_member, cb_other_member
     else
       self.log "Didn't remove role. No input in `#{event.message}`"
     end
