@@ -159,7 +159,7 @@ module BuddyBot::Modules::BuddyFunctionality
       "Twice",
     ],
     "jihyo" => [
-      "don't scream in my ear'",
+      "don't scream into my ear",
     ],
     "mina" => [
       "Twice",
@@ -339,7 +339,7 @@ module BuddyBot::Modules::BuddyFunctionality
       "SHINee is back!"
     ],
     "exo" => [
-      "E!X!O!"
+      "E! X! O!"
     ],
   }
 end
