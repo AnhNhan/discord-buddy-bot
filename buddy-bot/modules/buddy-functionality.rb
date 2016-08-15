@@ -121,6 +121,10 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: /^!remove\W*/i, in: "whos_your_bias") do |event|
+    if event.user.bot_account?
+      self.log "Ignored message from bot #{event.user.mention}.", event.bot
+      next
+    end
     self.log "Remove attempt by #{event.user.mention}", event.bot
     data = event.content.scan(/^!remove\s+(.*?)\s*$/i)[0]
     if data
@@ -161,6 +165,10 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: /^!bias-stats\W*/i) do |event|
+    if event.user.bot_account?
+      self.log "Ignored message from bot #{event.user.mention}.", event.bot
+      next
+    end
     bias_stats = self.bias_stats(event.server.members)
     bias_stats.delete "Buddy"
     event.send_message "**##{event.server.name} Bias List** _(note that members may have multiple biases)_"
@@ -168,12 +176,20 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: /^!first-bias-stats\W*/i) do |event|
+    if event.user.bot_account?
+      self.log "Ignored message from bot #{event.user.mention}.", event.bot
+      next
+    end
     bias_stats = self.bias_stats(event.server.members, true, event.server.roles.reverse.map(&:name))
     event.send_message "**##{event.server.name} Bias List**"
     event.send_message self.print_bias_stats(bias_stats)
   end
 
   message(content: ["!help", "!commands"]) do |event|
+    if event.user.bot_account?
+      self.log "Ignored message from bot #{event.user.mention}.", event.bot
+      next
+    end
     event.send_message "**@BuddyBot** to the rescue!\n\nI help managing #GFRIEND. My creator is <@139342974776639489>, send him a message if I don't behave.\n\n" +
         "**Supported commands**\n" +
         "  **!bias-stats** / **!first-bias-stats** Counts the members biases.\n" +
