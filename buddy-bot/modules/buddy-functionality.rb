@@ -58,10 +58,8 @@ module BuddyBot::Modules::BuddyFunctionality
     text.scan(/([A-z]+)/).map do |matches|
       match = matches.first.downcase
       if @@member_names.has_key? match
-        puts "Added role 'Buddy' to member_names"
         cb_member.call match
       elsif @@members_of_other_groups.has_key? match
-        puts "Added role 'Buddy' to members_of_other_groups"
         cb_other_member.call match
       end
     end
