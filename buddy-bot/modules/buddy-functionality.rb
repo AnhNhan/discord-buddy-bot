@@ -51,7 +51,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.find_role(server, name)
     name = name.downcase
-    server.roles.find{ |role| role.name.downcase.scan(/([A-z]+)/).find{ |part| part.first.eql?(name) } }
+    server.roles.find{ |role| !role.name.eql?('Sowon\'s Hair') && role.name.downcase.scan(/([A-z]+)/).find{ |part| part.first.eql?(name) } }
   end
 
   def self.members_map(text, cb_member, cb_other_member)
