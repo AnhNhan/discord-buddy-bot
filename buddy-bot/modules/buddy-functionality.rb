@@ -16,6 +16,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "yerini" => "yerin",
     "rinnie" => "yerin",
     "rinni" => "yerin",
+    "ginseng" => "yerin",
     "yuju" => "yuju",
     "yuna" => "yuju",
     "umji" => "umji",
