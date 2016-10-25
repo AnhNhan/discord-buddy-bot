@@ -124,7 +124,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  message(start_with: /^!remove\W*/i, in: "whos_your_bias") do |event|
+  message(start_with: /^!remove\s*/i, in: "whos_your_bias") do |event|
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
@@ -160,7 +160,7 @@ module BuddyBot::Modules::BuddyFunctionality
         self.print_rejected_names rejected_names, event
       end
     else
-      self.log "Didn't remove role. No input in '#{event.message.content}' #{event.channel.mention}"
+      self.log "Didn't remove role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot
     end
   end
 
