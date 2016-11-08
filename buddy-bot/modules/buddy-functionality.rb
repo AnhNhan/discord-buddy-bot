@@ -5,6 +5,15 @@ module BuddyBot::Modules::BuddyFunctionality
   extend Discordrb::EventContainer
 
   @@member_names = {
+    # ships
+    "sinrin" => "sinb+yerin",
+    "2bi" => "eunha+sinb",
+    "2ye" => "yerin+umji",
+    "2won" => "umji+sowon",
+    "eunbi" => "eunha+sinb",
+    "eunrin" => "eunha+yerin",
+    "yurin" => "yuju+yerin",
+    # regular members
     "eunha" => "eunha",
     "sinb" => "sinb",
     "sinbi" => "sinb",
@@ -40,6 +49,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@motd = [
     "ME GUSTA TU",
+    "BUDDIES, TOGEHTER, FOREVER",
     "NA NA NA NAVILLERA",
     "LAUGHING OUT LOUD",
     "LOTS OF LOVE"
@@ -52,7 +62,18 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.find_role(server, name)
     name = name.downcase
-    server.roles.find{ |role| !role.name.eql?('Sowon\'s Hair') && role.name.downcase.scan(/([A-z]+)/).find{ |part| part.first.eql?(name) } }
+    searches = []
+    if name['+']
+      searches.concat name.split('+')
+    else
+      searches << name
+    end
+    server.roles.find_all do |role|
+      if role.name.eql?('Sowon\'s Hair')
+        next
+      end
+      role.name.downcase.scan(/([A-z]+)/).find{ |part| searches.include?(part.first) }
+    end
   end
 
   def self.members_map(text, cb_member, cb_other_member)
@@ -106,8 +127,10 @@ module BuddyBot::Modules::BuddyFunctionality
       member_name = @@member_names[match]
       role = self.find_role event.server, member_name
       user.add_role role
-      added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
-      self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
+      role.map do |role|
+        added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
+        self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
+      end
     end
     cb_other_member = lambda do |match, original|
       rejected_names << match
@@ -143,8 +166,10 @@ module BuddyBot::Modules::BuddyFunctionality
         member_name = @@member_names[match]
         role = self.find_role event.server, member_name
         user.remove_role role
-        removed_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
-        self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot
+        role.map do |role|
+          removed_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
+          self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot
+        end
       end
       cb_other_member = lambda do |match, original|
         rejected_names << match
