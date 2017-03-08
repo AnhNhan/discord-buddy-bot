@@ -52,7 +52,9 @@ module BuddyBot::Modules::BuddyFunctionality
     "BUDDIES, TOGEHTER, FOREVER",
     "NA NA NA NAVILLERA",
     "LAUGHING OUT LOUD",
-    "LOTS OF LOVE"
+    "LOTS OF LOVE",
+    "TANG TANG TANG",
+    "PINGO TIP",
   ]
 
   def self.log(msg, bot)
@@ -99,6 +101,10 @@ module BuddyBot::Modules::BuddyFunctionality
     event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
     event.bot.game = @@motd.sample
     self.log "ready!", event.bot
+  end
+
+  message(start_with: /^!motd/) do |event|
+    event.bot.game = @@motd.sample
   end
 
   member_join do |event|
