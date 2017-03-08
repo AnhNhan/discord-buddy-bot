@@ -254,6 +254,7 @@ module BuddyBot::Modules::BuddyFunctionality
     event.send_message "**@BuddyBot** to the rescue!\n\nI help managing #GFRIEND. My creator is <@139342974776639489>, send him a message if I don't behave.\n\n" +
         "**Supported commands**\n" +
         "  **!bias-stats** / **!first-bias-stats** Counts the members biases.\n" +
+        "  **!remove** Removes a bias." +
         "  **!help** / **!commands** Displays this help."
   end
 
@@ -371,7 +372,7 @@ module BuddyBot::Modules::BuddyFunctionality
       "Ay Oh Ay",
     ],
     "suzy" => [
-      "miss A",
+      "[x] Yes [ ] No [ ] Maybe",
     ],
     "sueji" => [
       "miss A",
@@ -385,6 +386,9 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "mimi" => [
       "@AnhNhan's waifu, hands off!'",
+    ],
+    "jiho" => [
+      "She looks like Krystal..."
     ],
     "sojin" => [
       "uh.... I'm feeling old'",
@@ -461,6 +465,94 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "exo" => [
       "E! X! O!"
+    ],
+    "iu" => [
+      "muh red shoes!"
+    ],
+    "ailee" => [
+      "Ai Lee"
+    ],
+    "hyosung" => [
+      "secret!"
+    ],
+    "kyungri" => [
+      "Hot damn!"
+    ],
+    "heejin" => [
+      "LOOΠΔ!"
+    ],
+    "hyunjin" => [
+      "LOOΠΔ!"
+    ],
+    "haseul" => [
+      "LOOΠΔ!"
+    ],
+    "yeojin" => [
+      "LOOΠΔ!"
+    ],
+    "lisa" => [
+      "LOOΠΔ!"
+    ],
+    "sohee" => [
+      "Sorry, who?"
+    ],
+    "rose" => [
+      "BLΛƆKPIИK IN YOUR AREA!"
+    ],
+    "jisoo" => [
+      "BLΛƆKPIИK IN YOUR AREA!",
+      "Ah-Choo!",
+    ],
+    "lisa" => [
+      "BLΛƆKPIИK IN YOUR AREA!"
+    ],
+    "lalisa" => [
+      "BLΛƆKPIИK IN YOUR AREA!"
+    ],
+    "jennie" => [
+      "BLΛƆKPIИK IN YOUR AREA!"
+    ],
+    "wheein" => [
+      "Mamamoo"
+    ],
+    "solar" => [
+      "Mamamoo"
+    ],
+    "hwasa" => [
+      "Mamamoo"
+    ],
+    "moonbyul" => [
+      "Mamamoo"
+    ],
+    "nancy" => [
+      "Jjang!"
+    ],
+    "exy" => [
+      "Catch me!"
+    ],
+    "luda" => [
+      "GFriend?"
+    ],
+    "eunseo" => [
+      "WJSN"
+    ],
+    "jenny" => [
+      "Mamamoo"
+    ],
+    "chaeyeon" => [
+      "Do It Amazing!"
+    ],
+    "kei" => [
+      "Aegyo Queen"
+    ],
+    "jinsol" => [
+      "April"
+    ],
+    "pogba" => [
+      "..."
+    ],
+    "zlatan" => [
+      "..."
     ],
   }
 end
