@@ -492,9 +492,6 @@ module BuddyBot::Modules::BuddyFunctionality
     "yeojin" => [
       "LOOΠΔ!"
     ],
-    "lisa" => [
-      "LOOΠΔ!"
-    ],
     "sohee" => [
       "Sorry, who?"
     ],
@@ -549,6 +546,9 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "jinsol" => [
       "April"
+    ],
+    "seventeen" => [
+      "Aju nice!",
     ],
     "pogba" => [
       "..."
