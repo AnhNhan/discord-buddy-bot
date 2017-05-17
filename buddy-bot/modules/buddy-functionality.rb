@@ -58,8 +58,10 @@ module BuddyBot::Modules::BuddyFunctionality
   ]
 
   def self.log(msg, bot)
+    msg.scan(/.{1,2000}/m).map do |chunk|
     # buddy bot log on anh-test
-    bot.send_message 189800756403109889, msg
+      bot.send_message 189800756403109889, chunk
+    end
   end
 
   def self.find_role(server, name)
