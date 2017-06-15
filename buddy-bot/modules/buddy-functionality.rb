@@ -37,6 +37,23 @@ module BuddyBot::Modules::BuddyFunctionality
     "imabuddy" => "buddy"
   }
 
+  @@primary_ids = [
+    # anh-test
+    168814333717905408, # Sowon
+    168813932239126528, # Eunha
+    168813954406154241, # SinB
+    168814003982696449, # Yuju
+    168814302495637505, # Yerin
+    168814320212246528, # Umji
+    # gfriend
+    166306322520735744, # 🌌 Umji 엄지
+    166306300261564416, # 🌌 SinB 신비
+    166306276148510720, # 🌌 Yuju 유주
+    166306204379906048, # 🌌 Eunha 은하
+    166306254048854017, # 🌌 Yerin 예린
+    166306230468476928, # 🌌 Sowon 소원
+  ];
+
   @@emoji_map = {
     "sowon" => ":bride_with_veil:",
     "eunha" => ":princess:",
@@ -59,7 +76,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.log(msg, bot)
     msg.scan(/.{1,2000}/m).map do |chunk|
-    # buddy bot log on anh-test
+      # buddy bot log on anh-test
       bot.send_message 189800756403109889, chunk
     end
   end
@@ -100,7 +117,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   ready do |event|
-    event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
+    # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
     event.bot.game = @@motd.sample
     self.log "ready!", event.bot
 
