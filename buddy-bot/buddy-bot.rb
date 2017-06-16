@@ -1,13 +1,15 @@
 
 module BuddyBot
-  cattr_accessor :localconf_filename
-
   @@project_root = File.dirname(__FILE__) + "/../"
 
-  @@localconf_filename = @@project_root + "localconf.yml"
+  @_localconf_filename = @@project_root + "localconf.yml"
 
   def BuddyBot.path(path = "")
     @@project_root + path
+  end
+
+  def BuddyBot.localconf_filename()
+    @_localconf_filename
   end
 
   def BuddyBot.current_voice_channel(user, bot)
