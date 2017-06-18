@@ -81,7 +81,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  def self.find_role(server, name)
+  def self.find_roles(server, name, primary)
     name = name.downcase
     searches = []
     if name['+']
@@ -89,12 +89,31 @@ module BuddyBot::Modules::BuddyFunctionality
     else
       searches << name
     end
-    server.roles.find_all do |role|
+    roles = server.roles.find_all do |role|
       if role.name.eql?('Sowon\'s Hair')
         next
       end
-      role.name.downcase.scan(/([A-z]+)/).find{ |part| searches.include?(part.first) }
+      match = role.name.downcase.scan(/([A-z]+)/).find{ |part| searches.include?(part.first) }
+      if !match
+        next
+      end
+      primary && self.role_is_primary(role)
     end
+  end
+
+  # Rules for primary role:
+  # - compound bias are never considered for primary
+  # - when a user has a primary role: no additional primary role
+  # - when a user has no primary role yet: pick the first in the list that is not a compound bias
+  def self.determine_requesting_primary(user, role_name)
+    if role_name['+']
+      return false
+    end
+    !user.roles.find{ |role| self.role_is_primary(role) }
+  end
+
+  def self.role_is_primary(role)
+    @@primary_ids.include?(role.id)
   end
 
   def self.members_map(text, cb_member, cb_other_member)
@@ -121,12 +140,12 @@ module BuddyBot::Modules::BuddyFunctionality
     event.bot.game = @@motd.sample
     self.log "ready!", event.bot
 
-    event.bot.servers.each do |server_id, server|
-      roles = server.roles.sort_by(&:position).map do |role|
-        "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
-      end.join
-      self.log "**#{server.name}**\n#{roles}\n", event.bot
-    end
+    # event.bot.servers.each do |server_id, server|
+    #   roles = server.roles.sort_by(&:position).map do |role|
+    #     "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
+    #   end.join
+    #   self.log "**#{server.name}**\n#{roles}\n", event.bot
+    # end
   end
 
   message(start_with: /^!motd/) do |event|
@@ -135,7 +154,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   member_join do |event|
     event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him/her!"
-    event.user.on(event.server).add_role(self.find_role(event.server, "buddy"))
+    event.user.on(event.server).add_role(self.find_roles(event.server, "buddy", false))
     self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
   end
 
@@ -157,7 +176,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
     cb_member = lambda do |match, original|
       member_name = @@member_names[match]
-      role = self.find_role event.server, member_name
+      role = self.find_roles event.server, member_name, self.determine_requesting_primary(user, member_name)
       user.add_role role
       role.map do |role|
         added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
@@ -196,7 +215,7 @@ module BuddyBot::Modules::BuddyFunctionality
       removed_roles = []
       cb_member = lambda do |match, original|
         member_name = @@member_names[match]
-        role = self.find_role event.server, member_name
+        role = self.find_roles event.server, member_name, self.determine_requesting_primary(user, member_name)
         user.remove_role role
         role.map do |role|
           removed_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
