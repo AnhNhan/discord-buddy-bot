@@ -37,14 +37,16 @@ module BuddyBot::Modules::BuddyFunctionality
     "imabuddy" => "buddy"
   }
 
+  @@main_role_names = [
+    "eunha" => "eunha",
+    "sinb" => "sinb",
+    "sowon" => "sowon",
+    "yerin" => "yerin",
+    "yuju" => "yuju",
+    "umji" => "umji",
+  ]
+
   @@primary_ids = [
-    # anh-test
-    168814333717905408, # Sowon
-    168813932239126528, # Eunha
-    168813954406154241, # SinB
-    168814003982696449, # Yuju
-    168814302495637505, # Yerin
-    168814320212246528, # Umji
     # gfriend
     166306322520735744, # 🌌 Umji 엄지
     166306300261564416, # 🌌 SinB 신비
@@ -52,6 +54,20 @@ module BuddyBot::Modules::BuddyFunctionality
     166306204379906048, # 🌌 Eunha 은하
     166306254048854017, # 🌌 Yerin 예린
     166306230468476928, # 🌌 Sowon 소원
+    # anh-test
+    168814333717905408, # Sowon
+    168813932239126528, # Eunha
+    168813954406154241, # SinB
+    168814003982696449, # Yuju
+    168814302495637505, # Yerin
+    168814320212246528, # Umji
+    # t-2
+    326506500904452109, # yuju main
+    326506388761214988, # umji main
+    326506323145392140, # yerin main
+    326506255726411786, # sinb main
+    326506188348981250, # eunha main
+    326506102214754305, # sowon main
   ];
 
   @@emoji_map = {
@@ -81,7 +97,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  def self.find_roles(server, name, primary)
+  def self.find_roles(server, name, requesting_primary)
     name = name.downcase
     searches = []
     if name['+']
@@ -97,8 +113,10 @@ module BuddyBot::Modules::BuddyFunctionality
       if !match
         next
       end
-      primary && self.role_is_primary(role)
+      requesting_primary ^ !self.role_is_primary(role)
     end
+    puts roles.map(&:name)
+    roles
   end
 
   # Rules for primary role:
@@ -109,7 +127,9 @@ module BuddyBot::Modules::BuddyFunctionality
     if role_name['+']
       return false
     end
-    !user.roles.find{ |role| self.role_is_primary(role) }
+    result = !user.roles.find{ |role| self.role_is_primary(role) }
+    puts result
+    result
   end
 
   def self.role_is_primary(role)
