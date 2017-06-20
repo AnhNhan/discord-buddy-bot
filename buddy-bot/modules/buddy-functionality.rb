@@ -296,7 +296,8 @@ module BuddyBot::Modules::BuddyFunctionality
       removed_roles = []
       cb_member = lambda do |match, original|
         member_name = @@member_names[match]
-        role = self.find_roles event.server, member_name, self.determine_requesting_primary(user, member_name)
+        role = self.find_roles event.server, member_name, true
+        role = role + (self.find_roles event.server, member_name, false)
         user.remove_role role
         role.map do |role|
           removed_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
