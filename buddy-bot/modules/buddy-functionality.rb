@@ -54,6 +54,7 @@ module BuddyBot::Modules::BuddyFunctionality
     166306204379906048, # 🌌 Eunha 은하
     166306254048854017, # 🌌 Yerin 예린
     166306230468476928, # 🌌 Sowon 소원
+    345292659600130048, # new umji role
     # anh-test
     168814333717905408, # Sowon
     168813932239126528, # Eunha
