@@ -13,6 +13,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "eunbi" => "eunha+sinb",
     "eunrin" => "eunha+yerin",
     "yurin" => "yuju+yerin",
+    "wonha" => "sowon+eunha",
     # regular members
     "eunha" => "eunha",
     "sinb" => "sinb",
@@ -89,6 +90,11 @@ module BuddyBot::Modules::BuddyFunctionality
     "LOTS OF LOVE",
     "TANG TANG TANG",
     "PINGO TIP",
+    "LET ME TELL YOU A STORY",
+    "SUMMER RAIN",
+    "AVE MARIA",
+    "RAINBOW",
+    "PARALLEL",
   ]
 
   def self.log(msg, bot)
@@ -420,6 +426,7 @@ module BuddyBot::Modules::BuddyFunctionality
   @@members_of_other_groups = {
     "momo" => [
       "*nico nico ni~*",
+      "omo momo",
     ],
     "sana" => [
       "#ShaShaSha",
@@ -433,16 +440,35 @@ module BuddyBot::Modules::BuddyFunctionality
     "tzuyu" => [
       "Twice",
     ],
+    "chaeyoung" => [
+      "Baby Chaeng",  
+    ],
+    "jungyeon" => [
+      "Kith her!",  
+    ],
+    "jeongyeon" => [
+      "Kith her!",  
+    ],
+    "dahyun" => [
+      "Twice",
+    ],
+    "dubu" => [
+      "Twice",
+    ],
     "nayeon" => [
       "Twice",
     ],
     "jihyo" => [
-      "don't scream into my ear",
+      "don't scream into my ear :(",
     ],
     "mina" => [
       "Twice",
       "AOA",
       "Mina plz!",
+      "Minabois!",
+    ],
+    "gain" => [
+      "Full Bloom",  
     ],
     "taeyeon" => [
       "SNSD",
@@ -453,12 +479,30 @@ module BuddyBot::Modules::BuddyFunctionality
     "yoona" => [
       "SNSD",
     ],
+    "tiffany" => [
+      "SNSD",
+    ],
+    "fany" => [
+      "SNSD",
+    ],
+    "sica" => [
+      "Did you mistake her for SinB?",
+    ],
+    "sunny" => [
+      "omo",
+    ],
     "choa" => [
       "AOA",
     ],
     "yuna" => [
       "AOA",
       "The Ark",
+    ],
+    "euna" => [
+      "The Ark",  
+    ],
+    "seolhyun" => [
+      "omo",  
     ],
     "krystal" => [
       "f(x-1)",
@@ -467,6 +511,9 @@ module BuddyBot::Modules::BuddyFunctionality
       "The Ark",
     ],
     "halla" => [
+      "The Ark",
+    ],
+    "suji" => [
       "The Ark",
     ],
     "jane" => [
@@ -514,6 +561,9 @@ module BuddyBot::Modules::BuddyFunctionality
     "somi" => [
       "*PICK ME PICK ME PICK ME PICK ME*",
       "adorbs!",
+    ],
+    "chungha" => [
+      "*PICK ME PICK ME PICK ME PICK ME*",  
     ],
     "sohye" => [
       "Ey Ouh Ey", # I was told this was Boston accent
@@ -628,6 +678,18 @@ module BuddyBot::Modules::BuddyFunctionality
     "iu" => [
       "muh red shoes!"
     ],
+    "le" => [
+      "EXID",
+    ],
+    "hani" => [
+      "EXID",
+    ],
+    "junghwa" => [
+      "Did you mistake her for Jeonghwa?",
+    ],
+    "jeonghwa" => [
+      "Did you mistake her for Junghwa",
+    ],
     "ailee" => [
       "Ai Lee"
     ],
@@ -650,7 +712,8 @@ module BuddyBot::Modules::BuddyFunctionality
       "LOOΠΔ!"
     ],
     "sohee" => [
-      "Sorry, who?"
+      "Sorry, who?",
+      "Did you mean Kim Sohee, Kim Sohee or Kim Sohee?",
     ],
     "rose" => [
       "BLΛƆKPIИK IN YOUR AREA!"
@@ -706,6 +769,102 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "seventeen" => [
       "Aju nice!",
+    ],
+    "jungkook" => [
+      "BTS",  
+    ],
+    "v" => [
+      "Bi",  
+    ],
+    "leeteuk" => [
+      "SJ",  
+    ],
+    "heechul" => [
+      "SJ",  
+    ],
+    "kyuhyun" => [
+      "SJ",  
+    ],
+    "jackson" => [
+      "I GOT 7",  
+    ],
+    "naeun" => [
+      "Her ankle hurt :( ...",  
+    ],
+    "eunji" => [
+      "APink",
+    ],
+    "namjoo" => [
+      "APink",
+    ],
+    "dad" => [
+      "I'm your father...",  
+    ],
+    "sunmi" => [
+      "Full Moon",  
+      "JYP Ent.",  
+      "Jack Bauer",  
+      "Gashina",  
+    ],
+    "xiyeon" => [
+      "Prithtin",  
+    ],
+    "siyeon" => [
+      "Prithtin",  
+    ],
+    "kyulkyung" => [
+      "We are Pristin!",  
+    ],
+    "roa" => [
+      "Annyeong...",  
+    ],
+    "minkyung" => [
+      "Annyeong",  
+    ],
+    "jiu" => [
+      "Dreamcatcher",  
+    ],
+    "yoohyeon" => [
+      "Dreamcatcher",  
+    ],
+    "dami" => [
+      "Dreamcatcher",  
+    ],
+    "soyou" => [
+      "Collab Queen",  
+    ],
+    "cl" => [
+      "Imma da best!",  
+    ],
+    "dara" => [
+      "2NE1",  
+    ],
+    "pinky" => [
+      "I.O.I",  
+    ],
+    "yg" => [
+      "Daddy!",  
+    ],
+    "dad" => [
+      "I'm your father...",  
+    ],
+    "baekhyun" => [
+      "Did you mistake him for Bacon?",
+    ],
+    "bacon" => [
+      "Did you mistake him for Oreo?",
+    ],
+    "oreo" => [
+      "Did you mistake him for the pervert?",
+    ],
+    "pervert" => [
+      "Did you mistake him for Byun Baekhyun?",
+    ],
+    "gfriend" => [
+      "You are at the right place :D",
+    ],
+    "defconn" => [
+      "Weeekly Aidol!1!",  
     ],
     "pogba" => [
       "..."
