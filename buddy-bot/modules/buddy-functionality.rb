@@ -536,6 +536,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "yeeun" => [
       "CL.Clear",
       "Wonder Girls(??)",
+      "Muh ha:t felt wa doki doki",
     ],
     "sorn" => [
       "CL.Clear",
@@ -587,6 +588,9 @@ module BuddyBot::Modules::BuddyFunctionality
       "miss A",
     ],
     "sojung" => [
+      "I think a lot of people have that name...",
+    ],
+    "soojung" => [
       "I think a lot of people have that name...",
     ],
     "hyojung" => [
@@ -756,13 +760,16 @@ module BuddyBot::Modules::BuddyFunctionality
       "WJSN"
     ],
     "jenny" => [
-      "Mamamoo"
+      "GFriend?"
     ],
     "chaeyeon" => [
       "Do It Amazing!"
     ],
     "kei" => [
       "Aegyo Queen"
+    ],
+    "sujeong" => [
+      "Lovelyz"
     ],
     "jinsol" => [
       "April"
@@ -796,9 +803,6 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "namjoo" => [
       "APink",
-    ],
-    "dad" => [
-      "I'm your father...",  
     ],
     "sunmi" => [
       "Full Moon",  
@@ -839,7 +843,13 @@ module BuddyBot::Modules::BuddyFunctionality
     "dara" => [
       "2NE1",  
     ],
+    "youngji" => [
+      "Hur hur hur",  
+    ],
     "pinky" => [
+      "I.O.I",  
+    ],
+    "yeonjung" => [
       "I.O.I",  
     ],
     "yg" => [
@@ -865,6 +875,42 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "defconn" => [
       "Weeekly Aidol!1!",  
+    ],
+    "boa" => [
+      "SM Family"
+    ],
+    "dam" => [
+      "https://i.imgur.com/eNtlu1r.jpg"
+    ],
+    "amber" => [
+      "We don't serve guys here"
+    ],
+    "owl" => [
+      "ROK Air Force"
+    ],
+    "owlofjune" => [
+      "ROK Air Force"
+    ],
+    "avenger" => [
+      "You could have the power of the gods!"
+    ],
+    "avengers" => [
+      "You could have the power of the gods!"
+    ],
+    "nugu" => [
+      "who?"
+    ],
+    "batman" => [
+      "na-na-na-na-na-na-na"
+    ],
+    "once" => [
+      "Are you actually a Buddy?",
+      "https://discord.gg/5nZM7c8",
+      "https://discord.gg/9Wq9f5G",
+      "https://discord.gg/2ABZXUw",
+    ],
+    "table" => [
+      "https://discord.gg/RfM3ZXr"
     ],
     "pogba" => [
       "..."
