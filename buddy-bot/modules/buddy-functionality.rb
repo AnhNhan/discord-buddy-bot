@@ -113,7 +113,7 @@ module BuddyBot::Modules::BuddyFunctionality
       searches << name
     end
     roles = server.roles.find_all do |role|
-      if role.name.eql?('Sowon\'s Hair')
+      if role.name.eql?('Sowon\'s Hair') || role.name.eql?('Umji\'s Cheeks')
         next
       end
       match = role.name.downcase.scan(/([A-z]+)/).find{ |part| searches.include?(part.first) }
