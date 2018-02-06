@@ -165,7 +165,7 @@ module BuddyBot::Modules::BuddyFunctionality
     rejected_names_text = rejected_names.map do |name|
       " - #{name.capitalize} (#{@@members_of_other_groups[name].sample})"
     end.join "\n"
-    event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you."
+    event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you. Remember, the only thing you need in life is GFriend."
   end
 
   ready do |event|
