@@ -272,7 +272,7 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "Warning, '#{event.user.name}' requested '#{match}'.", event.bot
     end
     cb_special = lambda do |match, original, user_id|
-      event.message "Hey @#{event.server.member(user_id).nick}, lookie lookie super lookie! You have an admirer!"
+      event.send_message "Hey @#{event.server.member(user_id).nick}, lookie lookie super lookie! You have an admirer!"
     end
     self.members_map(text, cb_member, cb_other_member, cb_special)
 
