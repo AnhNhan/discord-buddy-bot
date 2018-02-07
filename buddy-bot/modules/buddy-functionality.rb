@@ -71,6 +71,17 @@ module BuddyBot::Modules::BuddyFunctionality
     326506188348981250, # eunha main
     326506102214754305, # sowon main
   ];
+  
+  @@special_members = [
+    "fingerteep" => 283848369250500608,
+    "owlofjune" => 326237059918462976,
+    "anhnhan" => 139342974776639489,
+    # "leth" => 144545054441078784,
+    "gfriendbot" => 115385224119975941,
+    "noona" => 155149108183695360, # noona bot
+    "robyul" => 283848369250500608, # is he even on #gfriend?
+    "buddybot" => 168796631137910784,
+  ]
 
   @@emoji_map = {
     "sowon" => ":bride_with_veil:",
@@ -90,11 +101,18 @@ module BuddyBot::Modules::BuddyFunctionality
     "LOTS OF LOVE",
     "TANG TANG TANG",
     "PINGO TIP",
+    "STARTING FROM TODAY, US",
+    "I'LL GIVE YOU PRECIOUS MEMORIES"
     "LET ME TELL YOU A STORY",
     "SUMMER RAIN",
     "AVE MARIA",
     "RAINBOW",
     "PARALLEL",
+    "LIKE THE SUMMER RAIN",
+    "OUR CRYSTAL CLEAR STORY",
+    "DUGEUNDAEYO",
+    "HIDE AND SEEK IN 1 CHANNEL",
+    "ON THE ONE AND ONLY GUILD",
   ]
 
   def self.log(msg, bot)
@@ -149,7 +167,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@primary_ids.include?(role.id)
   end
 
-  def self.members_map(text, cb_member, cb_other_member)
+  def self.members_map(text, cb_member, cb_other_member, cb_special)
     text.scan(/([A-z]+)/).map do |matches|
       original = matches.first
       match = matches.first.downcase
@@ -157,6 +175,9 @@ module BuddyBot::Modules::BuddyFunctionality
         cb_member.call match, original
       elsif @@members_of_other_groups.has_key? match
         cb_other_member.call match, original
+      # special bots and members
+      elsif @@special_members.has_key? match
+        cb_special.call match, original, @@special_members[match]
       end
     end
   end
@@ -220,7 +241,10 @@ module BuddyBot::Modules::BuddyFunctionality
       rejected_names << match
       self.log "Warning, '#{event.user.name}' requested '#{match}'.", event.bot
     end
-    self.members_map(text, cb_member, cb_other_member)
+    cb_special = lambda do |match, original, user_id|
+      event.message "Hey @#{event.server.member(user_id).nick}, lookie lookie super lookie! You have an admirer!"
+    end
+    self.members_map(text, cb_member, cb_other_member, cb_special)
 
     if !added_roles.empty?
       added_roles_text = added_roles.join ", "
