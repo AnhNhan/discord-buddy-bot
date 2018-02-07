@@ -87,6 +87,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "noona" => 155149108183695360, # noona bot
     "robyul" => 283848369250500608, # is he even on #gfriend?
     "buddybot" => 168796631137910784,
+    "Mee6" => 159985870458322944, # not on #gfriend?
   }
 
   @@emoji_map = {
