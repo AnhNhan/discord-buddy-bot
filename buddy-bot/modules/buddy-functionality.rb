@@ -75,8 +75,14 @@ module BuddyBot::Modules::BuddyFunctionality
   @@special_members = [
     "fingerteep" => 283848369250500608,
     "owlofjune" => 326237059918462976,
+    "owlofshipping" => 326237059918462976,
     "anhnhan" => 139342974776639489,
-    # "leth" => 144545054441078784,
+    "leth" => 144545054441078784,
+    "lethargic" => 144545054441078784,
+    "dot" => 112191130728161280,
+    "sojiniee" => 163122269403480065,
+    "idiot" => 116361044217167876,
+    "chipst3r" => 212291933748330497,
     "gfriendbot" => 115385224119975941,
     "noona" => 155149108183695360, # noona bot
     "robyul" => 283848369250500608, # is he even on #gfriend?
@@ -100,17 +106,41 @@ module BuddyBot::Modules::BuddyFunctionality
     "LAUGHING OUT LOUD",
     "LOTS OF LOVE",
     "TANG TANG TANG",
+    "FINGER FINGERTIP",
     "PINGO TIP",
+    "TIME GOES TICK TOCK",
     "STARTING FROM TODAY, US",
     "I'LL GIVE YOU PRECIOUS MEMORIES"
-    "LET ME TELL YOU A STORY",
+    "LET ME TELL YOU A PRECIOUS STORY",
+    "OPEN YOUR EARS",
+    "BLOOM LIKE THE FLOWERS",
+    "WAKE FROM THE DREAMS",
+    "LET'S START FRESH, YOU AND ME",
+    "SOMEDAY, YOU AND I",
+    "IN THE SAME PLACE, JUST US TWO",
+    "BABY UNTIL ALWAYS OH YEAH",
+    "WANNA BE YOUR ONE WAY",
+    "WE ARE LIKE PARALLEL LINES",
+    "I GUESS WE ARE STILL TOO YOUNG",
+    "OH MY GOD LOVE MY BOY",
+    "WELCOME TO THE NEVERLAND",
+    "KISS ME BABY",
+    "WOO YEAH",
+    "I'LL SHINE ON YOU FOREVER",
+    "PROTECT ME SO I WON'T BREAK",
     "SUMMER RAIN",
     "AVE MARIA",
     "RAINBOW",
     "PARALLEL",
+    "I'M WITH YOU",
     "LIKE THE SUMMER RAIN",
     "OUR CRYSTAL CLEAR STORY",
     "DUGEUNDAEYO",
+    "DUGEUN DUGEUN DUGEUN",
+    "HEY MR. TAXI",
+    "TAKE ME AWAY",
+    "HURRY UP UP",
+    "DANCE DANCE COME ON",
     "HIDE AND SEEK IN 1 CHANNEL",
     "ON THE ONE AND ONLY GUILD",
   ]
@@ -664,9 +694,6 @@ module BuddyBot::Modules::BuddyFunctionality
     "jyp" => [
       "Still Alive",
     ],
-    "buddybot" => [
-      "I heard you...",
-    ],
     "peter" => [
       "who??",
     ],
@@ -722,22 +749,46 @@ module BuddyBot::Modules::BuddyFunctionality
       "Ai Lee"
     ],
     "hyosung" => [
-      "secret!"
+      "himitsu desu!"
     ],
     "kyungri" => [
       "Hot damn!"
     ],
     "heejin" => [
-      "LOOΠΔ!"
+      "LOOΠΔ!",
     ],
     "hyunjin" => [
-      "LOOΠΔ!"
+      "LOOΠΔ!",
     ],
     "haseul" => [
-      "LOOΠΔ!"
+      "LOOΠΔ!",
     ],
     "yeojin" => [
-      "LOOΠΔ!"
+      "LOOΠΔ!",
+    ],
+    "vivi" => [
+      "LOOΠΔ!",
+    ],
+    "kimlip" => [
+      "LOOΠΔ!",
+    ],
+    "jinsoul" => [
+      "LOOΠΔ!",
+    ],
+    "choerry" => [
+      "LOOΠΔ!",
+    ],
+    "yves" => [
+      "LOOΠΔ!",
+    ],
+    "chuu" => [
+      "LOOΠΔ!",
+    ],
+    "gowon" => [
+      "LOOΠΔ!",
+    ],
+    "loona" => [
+      "https://discord.gg/K7vsQEU",
     ],
     "sohee" => [
       "Sorry, who?",
@@ -760,16 +811,16 @@ module BuddyBot::Modules::BuddyFunctionality
       "BLΛƆKPIИK IN YOUR AREA!"
     ],
     "wheein" => [
-      "Mamamoo"
+      "Mamamoo~"
     ],
     "solar" => [
-      "Mamamoo"
+      "Mamamoo~"
     ],
     "hwasa" => [
-      "Mamamoo"
+      "Mamamoo~"
     ],
     "moonbyul" => [
-      "Mamamoo"
+      "Mamamoo~"
     ],
     "nancy" => [
       "Jjang!"
@@ -833,12 +884,14 @@ module BuddyBot::Modules::BuddyFunctionality
       "JYP Ent.",  
       "Jack Bauer",  
       "Gashina",  
+      "Wonder Girls",
     ],
     "xiyeon" => [
       "Prithtin",  
     ],
     "siyeon" => [
       "Prithtin",  
+      "Dreamcatcher",
     ],
     "kyulkyung" => [
       "We are Pristin!",  
@@ -894,26 +947,30 @@ module BuddyBot::Modules::BuddyFunctionality
     "pervert" => [
       "Did you mistake him for Byun Baekhyun?",
     ],
+    "daniel" => [
+      "Wanna GFriend?",  
+    ],
     "gfriend" => [
       "You are at the right place :D",
     ],
     "defconn" => [
       "Weeekly Aidol!1!",  
     ],
+    "hyungdon" => [
+      "Weeekly Aidol!1!",  
+    ],
+    "hyeongdon" => [
+      "Weeekly Aidol!1!",  
+    ],
     "boa" => [
-      "SM Family"
+      "SM Family",
+      "SM Top Madam",
     ],
     "dam" => [
       "https://i.imgur.com/eNtlu1r.jpg"
     ],
     "amber" => [
       "We don't serve guys here"
-    ],
-    "owl" => [
-      "ROK Air Force"
-    ],
-    "owlofjune" => [
-      "ROK Air Force"
     ],
     "avenger" => [
       "You could have the power of the gods!"
