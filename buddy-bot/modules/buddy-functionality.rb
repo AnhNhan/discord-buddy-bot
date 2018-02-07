@@ -72,7 +72,7 @@ module BuddyBot::Modules::BuddyFunctionality
     326506102214754305, # sowon main
   ];
   
-  @@special_members = [
+  @@special_members = {
     "fingerteep" => 283848369250500608,
     "owlofjune" => 326237059918462976,
     "owlofshipping" => 326237059918462976,
@@ -87,7 +87,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "noona" => 155149108183695360, # noona bot
     "robyul" => 283848369250500608, # is he even on #gfriend?
     "buddybot" => 168796631137910784,
-  ]
+  }
 
   @@emoji_map = {
     "sowon" => ":bride_with_veil:",
