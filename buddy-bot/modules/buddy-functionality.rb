@@ -238,7 +238,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   member_join do |event|
-    event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him/her!"
+    event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him/her! Please go to <#166340324355080193> to pick your bias(es)."
     event.user.on(event.server).add_role(self.find_roles(event.server, "buddy", false))
     self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
   end
@@ -274,7 +274,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
     cb_special = lambda do |match, original, user_id|
       member = event.server.member(user_id)
-      event.send_message "Hey @#{member.nick || member.username}, lookie lookie super lookie! You have an admirer!"
+      event.send_message "Hey **@#{member.nick || member.username}**, lookie lookie super lookie! You have an admirer!"
     end
     self.members_map(text, cb_member, cb_other_member, cb_special)
 
@@ -368,7 +368,10 @@ module BuddyBot::Modules::BuddyFunctionality
         rejected_names << match
         self.log "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot
       end
-      self.members_map data, cb_member, cb_other_member
+      cb_special = lambda do |match, original|
+        event.send_message "Do you really think bias hopping away from **@#{member.nick || member.username}** is any fun!?"
+      end
+      self.members_map data, cb_member, cb_other_member, cb_special
 
       if !removed_roles.empty?
         removed_roles_text = removed_roles.join ", "
@@ -1000,6 +1003,21 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "zlatan" => [
       "..."
+    ],
+    "kbuddy" => [
+      "This bot will not be able to converse with you.",
+    ],
+    "canadabuddy" => [
+      "Kindly, be a buddy.",
+    ],
+    "usbuddy" => [
+      "We, Us, Together.",
+    ],
+    "ibuddy" => [
+      "Congratz, you are a buddy!",
+    ],
+    "eubuddy" => [
+      "Europa Universalis Buddy!?",
     ],
   }
 end
