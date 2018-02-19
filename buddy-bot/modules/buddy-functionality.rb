@@ -419,67 +419,24 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  def self.bias_stats(members, first_bias = false, bias_order = [])
-    biases = @@member_names.values.uniq
-    result = {}
-    result.default = 0
-
-    members
-      .flat_map do |member|
-        if first_bias
-          # ugh
-          first_bias = bias_order.find { |bias| member.roles.find { |role| role.name.eql? bias } }
-          [member.roles.find { |role| role.name.eql? first_bias }]
-        else
-          member.roles
-        end
-      end
-      .compact
-      .map(&:name)
-      .select{ |s| @@member_names.values.include? s.downcase }
-      .inject(result) do |result, role|
-        result[role] += 1
-        result
-      end
-  end
-
-  def self.print_bias_stats(bias_stats)
-    bias_stats.map do |name, count|
-      "#{@@emoji_map[name.downcase]} " + "**#{name}**:".rjust(6) + count.to_s.rjust(3) + "x"
-    end.join "\n"
-  end
-
-  message(start_with: /^!bias-stats\W*/i) do |event|
-    if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
-      next
-    end
-    bias_stats = self.bias_stats(event.server.members)
-    bias_stats.delete "Buddy"
-    event.send_message "**##{event.server.name} Bias List** _(note that members may have multiple biases)_"
-    event.send_message self.print_bias_stats(bias_stats)
-  end
-
-  message(start_with: /^!first-bias-stats\W*/i) do |event|
-    if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
-      next
-    end
-    bias_stats = self.bias_stats(event.server.members, true, event.server.roles.reverse.map(&:name))
-    event.send_message "**##{event.server.name} Bias List**"
-    event.send_message self.print_bias_stats(bias_stats)
-  end
-
   message(content: ["!help", "!commands"]) do |event|
     if event.user.bot_account?
       self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
-    event.send_message "**@BuddyBot** to the rescue!\n\nI help managing #GFRIEND. My creator is <@139342974776639489>, send him a message if I don't behave.\n\n" +
+    event.send_message "```python\n" +
+        "**@BuddyBot** to the rescue!\n\nI help managing #GFRIEND. My creator is @AnhNhan (stan Yerin!), send him a message if I don't behave.\n\n" +
+        "I will help making sure you are assigned the right bias in #whos_your_bias, just shout your bias(es)' name(es) and watch the magic happen!\n\n" +
+        "Note that I also keep watch for people having a bias outside of #GFRIEND, and show them their place on this server. Repeat offenders will be brought to justice by spanking them!\n\n" +
         "**Supported commands**\n" +
-        "  **!bias-stats** / **!first-bias-stats** Counts the members biases.\n" +
-        "  **!remove** Removes a bias." +
-        "  **!help** / **!commands** Displays this help."
+        "  **!primary <member>**     Replaces your primary bias with the chosen member. \n" +
+        "                            Do note that the mods may issue capital punishment \n" +
+        "                            if the motivation is light of heart.\n\n" +
+        "  **!remove**               Removes a bias.\n\n" +
+        "  **!remove-all**           Removes all biases. You will have to start deciding \n" +
+        "                            again who you stan and in which order.\n\n" +
+        "  **!help** / **!commands** Displays this help. It cures cancer and brings world peace.\n" +
+        "```\n"
   end
 
   @@members_of_other_groups = {
