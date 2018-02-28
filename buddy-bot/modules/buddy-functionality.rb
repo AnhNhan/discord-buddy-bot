@@ -35,7 +35,16 @@ module BuddyBot::Modules::BuddyFunctionality
     "umjiyah" => "umji",
     "manager" => "manager",
     "buddy" => "buddy",
-    "imabuddy" => "buddy"
+    "imabuddy" => "buddy",
+    "canadabuddy" => "canadabuddy",
+    "cabuddy" => "canadabuddy",
+    "buddytv" => "buddytv",
+    "tv" => "buddytv",
+    "rabbit" => "buddytv",
+    "karaoke" => "karaoke",
+    "noraebang" => "karaoke",
+    "buddycraft" => "buddycraft",
+    "minecraft" => "buddycraft",
   }
 
   @@primary_role_names = [
@@ -243,7 +252,7 @@ module BuddyBot::Modules::BuddyFunctionality
     self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
   end
 
-  message(in: "whos_your_bias") do |event|
+  message(in: "whos-your-bias") do |event|
     text = event.content
     if text =~ /^!(remove|primary)/i
       next
@@ -287,7 +296,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  message(start_with: /^!primary\s*/i, in: "whos_your_bias") do |event|
+  message(start_with: /^!primary\s*/i, in: "whos-your-bias") do |event|
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
@@ -339,7 +348,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  message(start_with: /^!remove\s+/i, in: "whos_your_bias") do |event|
+  message(start_with: /^!remove\s+/i, in: "whos-your-bias") do |event|
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
@@ -428,6 +437,7 @@ module BuddyBot::Modules::BuddyFunctionality
         "**@BuddyBot** to the rescue!\n\nI help managing #GFRIEND. My creator is @AnhNhan (stan Yerin!), send him a message if I don't behave.\n\n" +
         "I will help making sure you are assigned the right bias in #whos_your_bias, just shout your bias(es)' name(es) and watch the magic happen!\n\n" +
         "Note that I also keep watch for people having a bias outside of #GFRIEND, and show them their place on this server. Repeat offenders will be brought to justice by spanking them!\n\n" +
+        "Additional available roles: BuddyTV, BuddyCraft and KARAOKE.\n\n" +
         "**Supported commands**\n" +
         "  **!primary <member>**     Replaces your primary bias with the chosen member. \n" +
         "                            Do note that the mods may issue capital punishment \n" +
