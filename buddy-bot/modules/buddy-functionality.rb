@@ -396,7 +396,8 @@ module BuddyBot::Modules::BuddyFunctionality
         rejected_names << match
         self.log "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot
       end
-      cb_special = lambda do |match, original|
+      cb_special = lambda do |match, original, user_id|
+        member = event.server.member(user_id)
         event.send_message "Do you really think bias hopping away from **@#{member.nick || member.username}** is any fun!?"
       end
       self.members_map data, cb_member, cb_other_member, cb_special
