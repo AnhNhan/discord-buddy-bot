@@ -247,14 +247,26 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   member_join do |event|
-    event.server.general_channel.send_message "#{event.user.mention} joined! Please welcome him/her! Please go to <#166340324355080193> to pick your bias(es)."
+    event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
     event.user.on(event.server).add_role(self.find_roles(event.server, "buddy", false))
     self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
+  end
+  
+  message(start_with: /^!suggest-bias\s*/i, in: "whos-your-bias") do |event|
+    if event.user.nil?
+      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
+    end
+    if event.user.bot_account?
+      self.log "Ignored message from bot #{event.user.mention}.", event.bot
+      next
+    end
+    user = event.user.on event.server
+    event.send_message "#{user.mention} My dice says **#{["Yerin", "Yuju", "SinB", "Umji", "Sowon", "Eunha"].sample}**!"
   end
 
   message(in: "whos-your-bias") do |event|
     text = event.content
-    if text =~ /^!(remove|primary)/i
+    if text =~ /^!(remove|primary|suggest)/i
       next
     end
     if event.user.nil?
@@ -267,6 +279,10 @@ module BuddyBot::Modules::BuddyFunctionality
     user = event.user.on event.server
     added_roles = []
     rejected_names = []
+    
+    if text =~ /^!secondary /i
+      event.send_message "#{user.mention} you do not need to provide the !secondary command."
+    end
 
     cb_member = lambda do |match, original|
       member_name = @@member_names[match]
@@ -364,6 +380,9 @@ module BuddyBot::Modules::BuddyFunctionality
       rejected_names = []
       removed_roles = []
       cb_member = lambda do |match, original|
+        if match.eql? "buddy" # don't remove buddy role
+          next
+        end
         member_name = @@member_names[match]
         role = self.find_roles event.server, member_name, true
         role = role + (self.find_roles event.server, member_name, false)
@@ -442,6 +461,7 @@ module BuddyBot::Modules::BuddyFunctionality
         "  **!primary <member>**     Replaces your primary bias with the chosen member. \n" +
         "                            Do note that the mods may issue capital punishment \n" +
         "                            if the motivation is light of heart.\n\n" +
+        "  **!suggest-bias**         ( ͡° ͜ʖ ͡°).\n\n" +
         "  **!remove**               Removes a bias.\n\n" +
         "  **!remove-all**           Removes all biases. You will have to start deciding \n" +
         "                            again who you stan and in which order.\n\n" +
