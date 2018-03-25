@@ -36,6 +36,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "manager" => "manager",
     "buddy" => "buddy",
     "imabuddy" => "buddy",
+    "canada" => "canadabuddy",
     "canadabuddy" => "canadabuddy",
     "cabuddy" => "canadabuddy",
     "buddytv" => "buddytv",
