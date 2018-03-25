@@ -45,6 +45,10 @@ module BuddyBot::Modules::BuddyFunctionality
     "noraebang" => "karaoke",
     "buddycraft" => "buddycraft",
     "minecraft" => "buddycraft",
+
+    # gfbuddies
+    "ot6" => "ot6",
+    "amino" => "amino",
   }
 
   @@primary_role_names = [
@@ -79,8 +83,16 @@ module BuddyBot::Modules::BuddyFunctionality
     326506255726411786, # sinb main
     326506188348981250, # eunha main
     326506102214754305, # sowon main
+    # gfbuddies
+    426546320917135380, # Sowon
+    426546537137700865, # Yerin
+    426546791740211224, # Eunha
+    426546952956542976, # SinB
+    426547263184306178, # Yuju
+    426547472270098432, # Umji
+    356094920043397120, # ot6
   ];
-  
+
   @@special_members = {
     "fingerteep" => 283848369250500608,
     "owlofjune" => 326237059918462976,
@@ -253,7 +265,7 @@ module BuddyBot::Modules::BuddyFunctionality
     event.user.on(event.server).add_role(self.find_roles(event.server, "buddy", false))
     self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
   end
-  
+
   message(start_with: /^!suggest-bias\s*/i, in: "whos-your-bias") do |event|
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
@@ -281,7 +293,7 @@ module BuddyBot::Modules::BuddyFunctionality
     user = event.user.on event.server
     added_roles = []
     rejected_names = []
-    
+
     if text =~ /^!secondary /i
       event.send_message "#{user.mention} you do not need to provide the !secondary command."
     end
@@ -490,13 +502,13 @@ module BuddyBot::Modules::BuddyFunctionality
       "Twice",
     ],
     "chaeyoung" => [
-      "Baby Chaeng",  
+      "Baby Chaeng",
     ],
     "jungyeon" => [
-      "Kith her!",  
+      "Kith her!",
     ],
     "jeongyeon" => [
-      "Kith her!",  
+      "Kith her!",
     ],
     "dahyun" => [
       "Twice",
@@ -517,7 +529,7 @@ module BuddyBot::Modules::BuddyFunctionality
       "Minabois!",
     ],
     "gain" => [
-      "Full Bloom",  
+      "Full Bloom",
     ],
     "taeyeon" => [
       "SNSD",
@@ -548,10 +560,10 @@ module BuddyBot::Modules::BuddyFunctionality
       "The Ark",
     ],
     "euna" => [
-      "The Ark",  
+      "The Ark",
     ],
     "seolhyun" => [
-      "omo",  
+      "omo",
     ],
     "krystal" => [
       "f(x-1)",
@@ -613,7 +625,7 @@ module BuddyBot::Modules::BuddyFunctionality
       "adorbs!",
     ],
     "chungha" => [
-      "*PICK ME PICK ME PICK ME PICK ME*",  
+      "*PICK ME PICK ME PICK ME PICK ME*",
     ],
     "sohye" => [
       "Ey Ouh Ey", # I was told this was Boston accent
@@ -848,25 +860,25 @@ module BuddyBot::Modules::BuddyFunctionality
       "Aju nice!",
     ],
     "jungkook" => [
-      "BTS",  
+      "BTS",
     ],
     "v" => [
-      "Bi",  
+      "Bi",
     ],
     "leeteuk" => [
-      "SJ",  
+      "SJ",
     ],
     "heechul" => [
-      "SJ",  
+      "SJ",
     ],
     "kyuhyun" => [
-      "SJ",  
+      "SJ",
     ],
     "jackson" => [
-      "I GOT 7",  
+      "I GOT 7",
     ],
     "naeun" => [
-      "Her ankle hurt :( ...",  
+      "Her ankle hurt :( ...",
     ],
     "eunji" => [
       "APink",
@@ -875,60 +887,60 @@ module BuddyBot::Modules::BuddyFunctionality
       "APink",
     ],
     "sunmi" => [
-      "Full Moon",  
-      "JYP Ent.",  
-      "Jack Bauer",  
-      "Gashina",  
+      "Full Moon",
+      "JYP Ent.",
+      "Jack Bauer",
+      "Gashina",
       "Wonder Girls",
     ],
     "xiyeon" => [
-      "Prithtin",  
+      "Prithtin",
     ],
     "siyeon" => [
-      "Prithtin",  
+      "Prithtin",
       "Dreamcatcher",
     ],
     "kyulkyung" => [
-      "We are Pristin!",  
+      "We are Pristin!",
     ],
     "roa" => [
-      "Annyeong...",  
+      "Annyeong...",
     ],
     "minkyung" => [
-      "Annyeong",  
+      "Annyeong",
     ],
     "jiu" => [
-      "Dreamcatcher",  
+      "Dreamcatcher",
     ],
     "yoohyeon" => [
-      "Dreamcatcher",  
+      "Dreamcatcher",
     ],
     "dami" => [
-      "Dreamcatcher",  
+      "Dreamcatcher",
     ],
     "soyou" => [
-      "Collab Queen",  
+      "Collab Queen",
     ],
     "cl" => [
-      "Imma da best!",  
+      "Imma da best!",
     ],
     "dara" => [
-      "2NE1",  
+      "2NE1",
     ],
     "youngji" => [
-      "Hur hur hur",  
+      "Hur hur hur",
     ],
     "pinky" => [
-      "I.O.I",  
+      "I.O.I",
     ],
     "yeonjung" => [
-      "I.O.I",  
+      "I.O.I",
     ],
     "yg" => [
-      "Daddy!",  
+      "Daddy!",
     ],
     "dad" => [
-      "I'm your father...",  
+      "I'm your father...",
     ],
     "baekhyun" => [
       "Did you mistake him for Bacon?",
@@ -943,19 +955,19 @@ module BuddyBot::Modules::BuddyFunctionality
       "Did you mistake him for Byun Baekhyun?",
     ],
     "daniel" => [
-      "Wanna GFriend?",  
+      "Wanna GFriend?",
     ],
     "gfriend" => [
       "You are at the right place :D",
     ],
     "defconn" => [
-      "Weeekly Aidol!1!",  
+      "Weeekly Aidol!1!",
     ],
     "hyungdon" => [
-      "Weeekly Aidol!1!",  
+      "Weeekly Aidol!1!",
     ],
     "hyeongdon" => [
-      "Weeekly Aidol!1!",  
+      "Weeekly Aidol!1!",
     ],
     "boa" => [
       "SM Family",
