@@ -796,6 +796,7 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "loona" => [
       "https://discord.gg/K7vsQEU",
+      "https://discord.gg/CPMQBSg",
     ],
     "sohee" => [
       "Sorry, who?",
