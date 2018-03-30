@@ -38,7 +38,7 @@ else
   exit false
 end
 
-bot.message(with_text: /^\W*ping\W*$/i) do |event|
+bot.message(with_text: /^!ping\W*$/i) do |event|
   event.respond "Pong!"
 end
 
