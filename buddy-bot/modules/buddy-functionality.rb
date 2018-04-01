@@ -262,7 +262,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   member_join do |event|
-    event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
+    event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the UNB & UNI.T Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
     event.user.on(event.server).add_role(self.find_roles(event.server, "buddy", false))
     self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
   end
