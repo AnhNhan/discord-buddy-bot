@@ -120,16 +120,6 @@ module BuddyBot::Modules::BuddyFunctionality
     "Mee6" => 159985870458322944, # not on #gfriend?
   }
 
-  @@emoji_map = {
-    "sowon" => ":bride_with_veil:",
-    "eunha" => ":princess:",
-    "yerin" => ":girl:",
-    "yuju" => ":heart_eyes_cat:",
-    "sinb" => ":dancer:",
-    "umji" => ":angel:",
-    "buddy" => ":fries:"
-  }
-
   @@motd = [
     "ME GUSTA TU",
     "BUDDIES, TOGEHTER, FOREVER",
@@ -215,9 +205,9 @@ module BuddyBot::Modules::BuddyFunctionality
     # if role_name['+']
     #   return false
     # end
-    if @@primary_role_names.include? role_name
+    if @@primary_role_names.include?(role_name) || (@@member_names.include?(role_name) && @@primary_role_names.include?(@@member_names[role_name]))
       no_primary_yet = !user.roles.find{ |role| self.role_is_primary(role) }
-      puts no_primary_yet
+      puts "No primary yet: #{no_primary_yet}"
       no_primary_yet
     else
       false
