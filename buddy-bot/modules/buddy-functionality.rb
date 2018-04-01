@@ -340,17 +340,17 @@ module BuddyBot::Modules::BuddyFunctionality
       removed_roles = []
       added_roles = []
 
+      if !(@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_role_names.include?(@@member_names[data])))
+        event.send_message "#{user.mention} you didn't give me a possible primary bias"
+        next
+      end
+
       current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
 
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
         self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot
         user.remove_role current_primary_role
-      end
-
-      if !(@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_role_names.include?(@@member_names[data])))
-        event.send_message "#{user.mention} you didn't give me a possible primary bias"
-        next
       end
 
       member_name = @@member_names[data]
