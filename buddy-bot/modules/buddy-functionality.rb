@@ -25,6 +25,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "sojung" => "sowon",
     "yerin" => "yerin",
     "yenni" => "yerin",
+    "yennie" => "yerin",
     "yerini" => "yerin",
     "rinnie" => "yerin",
     "rinni" => "yerin",
@@ -347,7 +348,7 @@ module BuddyBot::Modules::BuddyFunctionality
         user.remove_role current_primary_role
       end
 
-      if !@@primary_role_names.include? data
+      if !@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_datas.include?(@@member_names[data]))
         event.send_message "#{user.mention} you didn't give me a possible primary bias"
         next
       end
