@@ -20,6 +20,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "euna" => "eunha",
     "galaxy" => "eunha",
     "milkyway" => "eunha",
+    "oonar" => "eunha", # :eunhawtf:
     "sinb" => "sinb",
     "sinbi" => "sinb",
     "shinbi" => "sinb",
@@ -842,6 +843,9 @@ module BuddyBot::Modules::BuddyFunctionality
     "eunseo" => [
       "WJSN"
     ],
+    "oonser" => [
+      "WJSN"
+    ],
     "jenny" => [
       "GFriend?"
     ],
@@ -879,6 +883,9 @@ module BuddyBot::Modules::BuddyFunctionality
       "I GOT 7",
     ],
     "naeun" => [
+      "Her ankle hurt :( ...",
+    ],
+    "noun" => [
       "Her ankle hurt :( ...",
     ],
     "eunji" => [
