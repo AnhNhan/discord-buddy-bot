@@ -16,6 +16,8 @@ module BuddyBot::Modules::BuddyFunctionality
     "wonha" => "sowon+eunha",
     # regular members
     "eunha" => "eunha",
+    "euhna" => "eunha", # ;_;
+    "euna" => "eunha",
     "sinb" => "sinb",
     "sinbi" => "sinb",
     "shinbi" => "sinb",
@@ -27,6 +29,10 @@ module BuddyBot::Modules::BuddyFunctionality
     "rinnie" => "yerin",
     "rinni" => "yerin",
     "ginseng" => "yerin",
+    "yebin" => "yerin",
+    "yeri" => "yerin",
+    "hyeri" => "yerin",
+    "hyerin" => "yerin",
     "yuju" => "yuju",
     "yuna" => "yuju",
     "umji" => "umji",
@@ -560,9 +566,6 @@ module BuddyBot::Modules::BuddyFunctionality
       "AOA",
       "The Ark",
     ],
-    "euna" => [
-      "The Ark",
-    ],
     "seolhyun" => [
       "omo",
     ],
@@ -673,16 +676,6 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "minah" => [
       "did you mean Mina?",
-    ],
-    "hyeri" => [
-      "did you mean Hyerin?",
-    ],
-    "hyerin" => [
-      "did you mean Hyeri?",
-    ],
-    "yeri" => [
-      "did you mean Yerin?",
-      "The Red Velvet Gods demand their sacrifice",
     ],
     "wendy" => [
       "The Red Velvet Gods demand their sacrifice",
@@ -937,6 +930,10 @@ module BuddyBot::Modules::BuddyFunctionality
     ],
     "yeonjung" => [
       "I.O.I",
+    ],
+    "euijin" => [
+      "UNB",
+      "UNI.T",
     ],
     "yg" => [
       "Daddy!",
