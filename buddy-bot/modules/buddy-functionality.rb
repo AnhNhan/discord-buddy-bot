@@ -21,6 +21,7 @@ module BuddyBot::Modules::BuddyFunctionality
     "galaxy" => "eunha",
     "milkyway" => "eunha",
     "oonar" => "eunha", # :eunhawtf:
+    "oonarr" => "eunha", # :eunhawtf:
     "sinb" => "sinb",
     "sinbi" => "sinb",
     "shinbi" => "sinb",
@@ -119,6 +120,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@special_members = {
     "fingerteep" => 283848369250500608,
+    "pingoteep" => 283848369250500608,
     "owlofjune" => 326237059918462976,
     "owlofshipping" => 326237059918462976,
     "anhnhan" => 139342974776639489,
