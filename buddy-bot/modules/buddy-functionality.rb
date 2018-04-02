@@ -361,6 +361,13 @@ module BuddyBot::Modules::BuddyFunctionality
     event.respond "I have been running for exactly **#{uptime.strip}**, and counting!"
   end
 
+  message(content: "!sigh") do |event|
+    self.only_creator(event.user) {
+      event.respond "_\*sigh\* Yerin is so beautiful~_"
+      event.message.delete()
+    }
+  end
+
   message(content: "!reload-configs") do |event|
     self.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a config reload!", event.bot
