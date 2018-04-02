@@ -361,9 +361,14 @@ module BuddyBot::Modules::BuddyFunctionality
     event.respond "I have been running for exactly **#{uptime.strip}**, and counting!"
   end
 
-  message(content: "!sigh") do |event|
+  message(start_with: "!sigh") do |event|
     self.only_creator(event.user) {
-      event.respond "_\\*sigh\\* Yerin is so beautiful~_"
+      name = "Yerin"
+      data = event.content.scan(/^!sigh\s+(.*?)\s*$/i)[0]
+      if data
+        name = data[0]
+      end
+      event.respond "_\\*sigh\\* #{name} is so beautiful~_"
       event.message.delete()
     }
   end
