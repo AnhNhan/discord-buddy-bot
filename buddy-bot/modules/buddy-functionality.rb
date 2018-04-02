@@ -37,8 +37,10 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-configs") do |event|
-    self.scan_files()
-    event.respond "Done! Hopefully..."
+    only_creator(event.user) {
+      self.scan_files()
+      event.respond "Done! Hopefully..."
+    }
   end
 
   def self.log(msg, bot)
