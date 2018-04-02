@@ -363,7 +363,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: "!sigh") do |event|
     self.only_creator(event.user) {
-      event.respond "_\*sigh\* Yerin is so beautiful~_"
+      event.respond "_\\*sigh\\* Yerin is so beautiful~_"
       event.message.delete()
     }
   end
