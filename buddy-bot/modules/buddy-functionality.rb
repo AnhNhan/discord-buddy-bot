@@ -36,14 +36,6 @@ module BuddyBot::Modules::BuddyFunctionality
     @@special_members = member_config["special_members"]
   end
 
-  message(content: "!reload-configs") do |event|
-    self.only_creator(event.user) {
-      self.log "'#{event.user.name}' just requested a config reload!", event.bot
-      self.scan_files()
-      event.respond "Done! Hopefully..."
-    }
-  end
-
   def self.log(msg, bot)
     msg.scan(/.{1,2000}/m).map do |chunk|
       # buddy bot log on anh-test
@@ -357,6 +349,35 @@ module BuddyBot::Modules::BuddyFunctionality
         "                            again who you stan and in which order.\n\n" +
         "  **!help** / **!commands** Displays this help. It cures cancer and brings world peace.\n" +
         "```\n"
+  end
+
+  # tells everybody how long the bot has been running. also tells everybody when I last restarted the bot.
+  message(content: "!uptime") do |event|
+    pid = Process.pid
+    uptime = `ps -p #{pid} -o etime=`
+    event.respond "I have been running for exactly **#{uptime.strip}**, and counting!"
+  end
+
+  message(content: "!reload-configs") do |event|
+    self.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a config reload!", event.bot
+      self.scan_files()
+      event.respond "Done! Hopefully..."
+    }
+  end
+
+  message(start_with: "!spank") do |event|
+    self.only_creator(event.user) {
+      mentions = event.message.mentions.map(&:mention).join " "
+      event.respond "#{mentions} bend over bitch and accept your punishment\nhttps://cdn.discordapp.com/attachments/107942652275601408/107945087350079488/TuHGJ.gif"
+    }
+  end
+
+  # invoke this command if you want to e.g. add new audio clips or memes, but don't want to restart the bot. for now, you also have to invoke e.g. #audio-load manually afterwards.
+  message(content: "!git-pull") do |event|
+    self.only_creator(event.user) {
+      event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull`}"
+    }
   end
 
   @@members_of_other_groups = {
