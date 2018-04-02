@@ -68,7 +68,6 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       requesting_primary ^ !self.role_is_primary(role)
     end
-    puts roles.map(&:name)
     roles
   end
 
