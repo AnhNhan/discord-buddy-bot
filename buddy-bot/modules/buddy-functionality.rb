@@ -23,7 +23,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if self.is_creator? user
       cb.call
     else
-      event.respond "#{user.mention} you do not have permission to complete this command."
+      # event.respond "#{user.mention} you do not have permission to complete this command."
     end
   end
 
