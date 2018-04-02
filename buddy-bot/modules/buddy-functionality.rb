@@ -19,7 +19,7 @@ module BuddyBot::Modules::BuddyFunctionality
     user.id.eql? @@creator_id
   end
 
-  def only_creator(user, &cb)
+  def self.only_creator(user, &cb)
     if is_creator? user
       cb.call
     else
@@ -37,7 +37,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-configs") do |event|
-    only_creator(event.user) {
+    self.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a config reload!", event.bot
       self.scan_files()
       event.respond "Done! Hopefully..."
