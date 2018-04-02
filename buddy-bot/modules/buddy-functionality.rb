@@ -15,12 +15,12 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@special_members = {}
 
-  def is_creator?(user)
+  def self.is_creator?(user)
     user.id.eql? @@creator_id
   end
 
   def self.only_creator(user, &cb)
-    if is_creator? user
+    if self.is_creator? user
       cb.call
     else
       event.respond "#{user.mention} you do not have permission to complete this command."
