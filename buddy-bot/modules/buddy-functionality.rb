@@ -1,189 +1,45 @@
 
 require 'discordrb'
+require 'yaml'
 
 module BuddyBot::Modules::BuddyFunctionality
   extend Discordrb::EventContainer
 
-  @@member_names = {
-    # ships
-    "sinrin" => "sinb+yerin",
-    "2bi" => "eunha+sinb",
-    "2ye" => "yerin+umji",
-    "2won" => "umji+sowon",
-    "eunbi" => "eunha+sinb",
-    "eunrin" => "eunha+yerin",
-    "yurin" => "yuju+yerin",
-    "wonha" => "sowon+eunha",
-    # regular members
-    "eunha" => "eunha",
-    "euhna" => "eunha", # ;_;
-    "euna" => "eunha",
-    "galaxy" => "eunha",
-    "milkyway" => "eunha",
-    "oonar" => "eunha", # :eunhawtf:
-    "oonarr" => "eunha", # :eunhawtf:
-    "sinb" => "sinb",
-    "sinbi" => "sinb",
-    "shinbi" => "sinb",
-    "ddinb" => "sinb",
-    "ddinbi" => "sinb",
-    "secret" => "sinb",
-    "mystery" => "sinb",
-    "sowon" => "sowon",
-    "sojung" => "sowon",
-    "wish" => "sowon",
-    "onegai" => "sowon",
-    "yerin" => "yerin",
-    "yenni" => "yerin",
-    "yennie" => "yerin",
-    "yerini" => "yerin",
-    "rinnie" => "yerin",
-    "rinni" => "yerin",
-    "ginseng" => "yerin",
-    "treasure" => "yerin",
-    "talent" => "yerin", # totally not biased see https://www.behindthename.com/name/ye01rin/submitted
-    "ability" => "yerin", # totally not biased see https://www.behindthename.com/name/ye01rin/submitted
-    "water" => "yerin", # totally not biased see https://www.behindthename.com/name/ye01rin/submitted
-    "yebin" => "yerin",
-    "yeri" => "yerin",
-    "hyeri" => "yerin",
-    "hyerin" => "yerin",
-    "yuju" => "yuju",
-    "yuna" => "yuju",
-    "yujy" => "yuju",
-    "monarch" => "yuju",
-    "umji" => "umji",
-    "yewon" => "umji",
-    "umjiya" => "umji",
-    "umjiyah" => "umji",
-    "thumb" => "umji",
-    "manager" => "manager",
-    "buddy" => "buddy",
-    "imabuddy" => "buddy",
-    "canada" => "canadabuddy",
-    "canadabuddy" => "canadabuddy",
-    "cabuddy" => "canadabuddy",
-    "buddytv" => "buddytv",
-    "tv" => "buddytv",
-    "rabbit" => "buddytv",
-    "karaoke" => "karaoke",
-    "noraebang" => "karaoke",
-    "buddycraft" => "buddycraft",
-    "minecraft" => "buddycraft",
+  @@creator_id = 139342974776639489
 
-    # gfbuddies
-    "ot6" => "ot6",
-    "amino" => "amino",
-  }
+  @@member_names = {}
 
-  @@primary_role_names = [
-    "eunha",
-    "sinb",
-    "sowon",
-    "yerin",
-    "yuju",
-    "umji",
-  ]
+  @@primary_role_names = []
 
-  @@primary_ids = [
-    # gfriend
-    166306322520735744, # 🌌 Umji 엄지
-    166306300261564416, # 🌌 SinB 신비
-    166306276148510720, # 🌌 Yuju 유주
-    166306204379906048, # 🌌 Eunha 은하
-    166306254048854017, # 🌌 Yerin 예린
-    166306230468476928, # 🌌 Sowon 소원
-    345292659600130048, # new umji role
-    # anh-test
-    168814333717905408, # Sowon
-    168813932239126528, # Eunha
-    168813954406154241, # SinB
-    168814003982696449, # Yuju
-    168814302495637505, # Yerin
-    168814320212246528, # Umji
-    # t-2
-    326506500904452109, # yuju main
-    326506388761214988, # umji main
-    326506323145392140, # yerin main
-    326506255726411786, # sinb main
-    326506188348981250, # eunha main
-    326506102214754305, # sowon main
-    # gfbuddies
-    426546320917135380, # Sowon
-    426546537137700865, # Yerin
-    426546791740211224, # Eunha
-    426546952956542976, # SinB
-    426547263184306178, # Yuju
-    426547472270098432, # Umji
-    356094920043397120, # ot6
-  ];
+  @@primary_ids = []
 
-  @@special_members = {
-    "fingerteep" => 283848369250500608,
-    "pingoteep" => 283848369250500608,
-    "owlofjune" => 326237059918462976,
-    "owlofshipping" => 326237059918462976,
-    "anhnhan" => 139342974776639489,
-    "han" => 139342974776639489,
-    "leth" => 144545054441078784,
-    "lethargic" => 144545054441078784,
-    "dot" => 112191130728161280,
-    "sojiniee" => 163122269403480065,
-    "soji" => 163122269403480065,
-    "idiot" => 116361044217167876,
-    "chipst3r" => 212291933748330497,
-    "gfriendbot" => 115385224119975941,
-    "noona" => 155149108183695360, # noona bot
-    "robyul" => 283848369250500608, # is he even on #gfriend?
-    "buddybot" => 168796631137910784,
-    "Mee6" => 159985870458322944, # not on #gfriend?
-  }
+  @@special_members = {}
 
-  @@motd = [
-    "ME GUSTA TU",
-    "BUDDIES, TOGEHTER, FOREVER",
-    "NA NA NA NAVILLERA",
-    "LAUGHING OUT LOUD",
-    "LOTS OF LOVE",
-    "TANG TANG TANG",
-    "FINGER FINGERTIP",
-    "PINGO TIP",
-    "TIME GOES TICK TOCK",
-    "STARTING FROM TODAY, US",
-    "I'LL GIVE YOU PRECIOUS MEMORIES",
-    "LET ME TELL YOU A PRECIOUS STORY",
-    "OPEN YOUR EARS",
-    "BLOOM LIKE THE FLOWERS",
-    "WAKE FROM THE DREAMS",
-    "LET'S START FRESH, YOU AND ME",
-    "SOMEDAY, YOU AND I",
-    "IN THE SAME PLACE, JUST US TWO",
-    "BABY UNTIL ALWAYS OH YEAH",
-    "WANNA BE YOUR ONE WAY",
-    "WE ARE LIKE PARALLEL LINES",
-    "I GUESS WE ARE STILL TOO YOUNG",
-    "OH MY GOD LOVE MY BOY",
-    "WELCOME TO THE NEVERLAND",
-    "KISS ME BABY",
-    "WOO YEAH",
-    "I'LL SHINE ON YOU FOREVER",
-    "PROTECT ME SO I WON'T BREAK",
-    "SUMMER RAIN",
-    "AVE MARIA",
-    "RAINBOW",
-    "PARALLEL",
-    "I'M WITH YOU",
-    "LIKE THE SUMMER RAIN",
-    "OUR CRYSTAL CLEAR STORY",
-    "DUGEUNDAEYO",
-    "DUGEUN DUGEUN DUGEUN",
-    "HEY MR. TAXI",
-    "TAKE ME AWAY",
-    "HURRY UP UP",
-    "DANCE DANCE COME ON",
-    "HIDE AND SEEK IN 1 CHANNEL",
-    "ON THE ONE AND ONLY GUILD",
-  ]
+  def is_creator?(user)
+    user.id.eql? @@creator_id
+  end
+
+  def only_creator(user, &cb)
+    if is_creator? user
+      cb.call
+    else
+      event.respond "#{user.mention} you do not have permission to complete this command."
+    end
+  end
+
+  def self.scan_files()
+    member_config = YAML.load_file(HanBot.path("content/members.yml"))
+
+    @@member_names = member_config["member_names"]
+    @@primary_role_names = member_config["primary_role_names"]
+    @@primary_ids = member_config["primary_ids"]
+    @@special_members = member_config["special_members"]
+  end
+
+  message(content: "!reload-configs") do |event|
+    self.scan_files()
+    event.respond "Done! Hopefully..."
+  end
 
   def self.log(msg, bot)
     msg.scan(/.{1,2000}/m).map do |chunk|
@@ -201,7 +57,7 @@ module BuddyBot::Modules::BuddyFunctionality
       searches << name
     end
     roles = server.roles.find_all do |role|
-      if role.name.eql?('Sowon\'s Hair') || role.name.eql?('Umji\'s Cheeks') || role.name.eql?('Yeppeu Yerin')
+      if role.name.eql?('Sowon\'s Hair') || role.name.eql?('Umji\'s Cheeks') || role.name.eql?('Yeppeu Yerin') || role.name.eql?('Yeppeun Yerin') # smh this should not be hardcoded
         next
       end
       match = role.name.downcase.scan(/([A-z]+)/).find{ |part| searches.include?(part.first) }
@@ -260,8 +116,9 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   ready do |event|
+    self.scan_files()
     # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
-    event.bot.game = @@motd.sample
+    # event.bot.game = @@motd.sample
     self.log "ready!", event.bot
 
     # event.bot.servers.each do |server_id, server|
@@ -272,9 +129,9 @@ module BuddyBot::Modules::BuddyFunctionality
     # end
   end
 
-  message(start_with: /^!motd/) do |event|
-    event.bot.game = @@motd.sample
-  end
+  # message(start_with: /^!motd/) do |event|
+  #   event.bot.game = @@motd.sample
+  # end
 
   member_join do |event|
     event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
