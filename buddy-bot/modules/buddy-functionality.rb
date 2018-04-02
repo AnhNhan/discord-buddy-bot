@@ -38,6 +38,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: "!reload-configs") do |event|
     only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a config reload!", event.bot
       self.scan_files()
       event.respond "Done! Hopefully..."
     }
