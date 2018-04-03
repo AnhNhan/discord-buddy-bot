@@ -186,6 +186,7 @@ module BuddyBot::Modules::BuddyFunctionality
     puts "Removable roles: #{removable_roles.map(&:name).join(", ")}"
 
     if !removable_roles.length
+      puts "Skipping non-new member"
       next
     end
 
