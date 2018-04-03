@@ -181,12 +181,11 @@ module BuddyBot::Modules::BuddyFunctionality
 
     remove_roles_ids = @@server_threshold_remove_roles[server.id]
     remove_threshold = @@server_thresholds[server.id]
+    puts remove_threshold
 
     removable_roles = user.roles.find_all{ |role| remove_roles_ids.include?(role.id) }
-    puts "Removable roles: #{removable_roles.map(&:name).join(", ")}"
 
     if removable_roles.empty?
-      puts "Skipping non-new member"
       next
     end
 
@@ -196,11 +195,16 @@ module BuddyBot::Modules::BuddyFunctionality
       }
     end
 
-    current_entry = @@member_message_counts[user.id]
     @@member_message_counts[user.id] = {
-      "count" => current_entry["count"] + 1
+      "count" => @@member_message_counts[user.id]["count"] + 1
     }
     @@global_counted_messages = @@global_counted_messages + 1
+
+    if @@member_message_counts[user.id]["count"] > remove_threshold
+      user.remove_role removable_roles, "Reached new member message threshold of #{remove_threshold}"
+      @@member_message_counts.delete user.id
+      self.log "Upgraded '#{event.user.username} - \##{event.user.id}' to a normal user", event.bot
+    end
 
     if @@global_counted_messages % 5 == 0
       # @@global_counted_messages = 0 # prevent overflow from long running counting
