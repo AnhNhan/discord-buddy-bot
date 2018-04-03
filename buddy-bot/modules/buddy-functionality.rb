@@ -17,6 +17,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@members_of_other_groups = {}
 
+  @@ignored_roles = []
+
   def self.is_creator?(user)
     user.id.eql? @@creator_id
   end
@@ -37,6 +39,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@primary_ids = member_config["primary_ids"]
     @@special_members = member_config["special_members"]
     @@members_of_other_groups = member_config["members_of_other_groups"]
+    @@ignored_roles = member_config["ignored_roles"]
   end
 
   def self.log(msg, bot)
@@ -55,7 +58,7 @@ module BuddyBot::Modules::BuddyFunctionality
       searches << name
     end
     roles = server.roles.find_all do |role|
-      if role.name.eql?('Sowon\'s Hair') || role.name.eql?('Umji\'s Cheeks') || role.name.eql?('Yeppeu Yerin') || role.name.eql?('Yeppeun Yerin') # smh this should not be hardcoded
+      if @@ignored_roles.include? role.name
         next
       end
       match = role.name.downcase.scan(/([A-z]+)/).find{ |part| searches.include?(part.first) }
