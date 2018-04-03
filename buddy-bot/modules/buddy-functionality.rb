@@ -171,6 +171,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
+  # new member counting
   message() do |event|
     server = event.server
     if event.user.nil? || event.user.bot_account? || !@@server_threshold_remove_roles.include?(server.id) || !@@server_thresholds.include?(server.id)
@@ -184,7 +185,7 @@ module BuddyBot::Modules::BuddyFunctionality
     removable_roles = user.roles.find_all{ |role| remove_roles_ids.include?(role.id) }
     puts "Removable roles: #{removable_roles.map(&:name).join(", ")}"
 
-    if !removable_roles
+    if !removable_roles.length
       next
     end
 
@@ -212,7 +213,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     user = event.user.on event.server
@@ -228,7 +228,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     user = event.user.on event.server
@@ -272,7 +271,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     self.log "Primary switch attempt by #{event.user.mention}", event.bot
@@ -324,7 +322,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     self.log "Remove attempt by #{event.user.mention}", event.bot
@@ -374,7 +371,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     self.log "Remove-All attempt by #{event.user.mention}", event.bot
@@ -404,7 +400,6 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: ["!help", "!commands"]) do |event|
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     event.send_message "```python\n" +
@@ -459,11 +454,18 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(content: "!save-message-counts") do |event|
+    self.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a member message count persist!", event.bot
+      self.persist_member_message_counts()
+      event.respond "Done! Hopefully..."
+    }
+  end
+
   message(content: "!print-message-counts") do |event|
     self.only_creator(event.user) {
-      self.log "'#{event.user.name}' just requested a member message count print-out on #{event.server.name} - #{event.channel.name}!", event.bot
+      self.log "'#{event.user.name}' just requested a member message count print-out on '#{event.server.name}' - '##{event.channel.name}'!", event.bot
       event.respond YAML.dump(@@member_message_counts)
-      event.respond "Done! Hopefully..."
     }
   end
 
