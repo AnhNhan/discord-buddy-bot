@@ -124,12 +124,12 @@ module BuddyBot::Modules::BuddyFunctionality
     # event.bot.game = @@motd.sample
     self.log "ready!", event.bot
 
-    # event.bot.servers.each do |server_id, server|
-    #   roles = server.roles.sort_by(&:position).map do |role|
-    #     "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
-    #   end.join
-    #   self.log "**#{server.name}**\n#{roles}\n", event.bot
-    # end
+    event.bot.servers.each do |server_id, server|
+      roles = server.roles.sort_by(&:position).map do |role|
+        "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
+      end.join
+      self.log "**#{server.name}**\n#{roles}\n", event.bot
+    end
   end
 
   # message(start_with: /^!motd/) do |event|
@@ -138,8 +138,21 @@ module BuddyBot::Modules::BuddyFunctionality
 
   member_join do |event|
     event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
-    event.user.on(event.server).add_role(self.find_roles(event.server, "buddy", false))
-    self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
+    begin
+      server = event.server
+      if !@@new_member_roles.include? server.id
+        self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot
+        next
+      end
+      role_ids = @@new_member_roles[server.id]
+      roles = role_ids.map do |role_id|
+        server.role role_id
+      end
+      member = event.user.on(server)
+      member.roles = roles
+      self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot
+    rescue
+    end
   end
 
   message(start_with: /^!suggest-bias\s*/i, in: "whos-your-bias") do |event|
