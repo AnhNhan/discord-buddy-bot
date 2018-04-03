@@ -34,7 +34,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   def self.scan_files()
-    member_config = YAML.load_file(BuddyBot.path("content/members.yml"))
+    member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
 
     @@member_names = member_config["member_names"]
     @@primary_role_names = member_config["primary_role_names"]
@@ -84,9 +84,8 @@ module BuddyBot::Modules::BuddyFunctionality
     #   return false
     # end
     if @@primary_role_names.include?(role_name) || (@@member_names.include?(role_name) && @@primary_role_names.include?(@@member_names[role_name]))
-      no_primary_yet = !user.roles.find{ |role| self.role_is_primary(role) }
-      puts "No primary yet: #{no_primary_yet}"
-      no_primary_yet
+      # no primary yet?
+      !user.roles.find{ |role| self.role_is_primary(role) }
     else
       false
     end
