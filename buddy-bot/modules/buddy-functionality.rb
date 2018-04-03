@@ -21,6 +21,12 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@new_member_roles = {}
 
+  @@server_thresholds = {}
+  @@server_threshold_remove_roles = {}
+
+  @@global_counted_messages = 0
+  @@member_message_counts = {}
+
   def self.is_creator?(user)
     user.id.eql? @@creator_id
   end
@@ -33,7 +39,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  def self.scan_files()
+  def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
 
     @@member_names = member_config["member_names"]
@@ -43,6 +49,16 @@ module BuddyBot::Modules::BuddyFunctionality
     @@members_of_other_groups = member_config["members_of_other_groups"]
     @@ignored_roles = member_config["ignored_roles"]
     @@new_member_roles = member_config["new_member_roles"]
+    @@server_thresholds = member_config["server_thresholds"]
+    @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
+  end
+
+  def self.scan_member_message_counts()
+    @@member_message_counts = YAML.load_file(BuddyBot.path("content/member_message_counts.yml"))
+  end
+
+  def self.persist_member_message_counts()
+    File.open(BuddyBot.path("content/member_message_counts.yml"), "w") { |file| file.write(YAML.dump(@@member_message_counts)) }
   end
 
   def self.log(msg, bot)
@@ -118,7 +134,8 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   ready do |event|
-    self.scan_files()
+    self.scan_bot_files()
+    self.scan_member_message_counts()
     # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
     # event.bot.game = @@motd.sample
     self.log "ready!", event.bot
@@ -151,6 +168,42 @@ module BuddyBot::Modules::BuddyFunctionality
       member.roles = roles
       self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot
     rescue
+    end
+  end
+
+  message() do |event|
+    server = event.server
+    if event.user.nil? || event.user.bot_account? || !@@server_threshold_remove_roles.include?(server.id) || !@@server_thresholds.include?(server.id)
+      next
+    end
+    user = event.user.on server
+
+    remove_roles_ids = @@server_threshold_remove_roles[server.id]
+    remove_threshold = @@server_thresholds[server.id]
+
+    removable_roles = user.roles.find_all{ |role| remove_roles_ids.include?(role.id) }
+    puts "Removable roles: #{removable_roles.map(&:name).join(", ")}"
+
+    if !removable_roles
+      next
+    end
+
+    if !@@member_message_counts.include?(user.id)
+      @@member_message_counts[user.id] = {
+        "count" => 0,
+      }
+    end
+
+    current_entry = @@member_message_counts[user.id]
+    @@member_message_counts[user.id] = {
+      "count" => current_entry["count"] + 1
+    }
+    @@global_counted_messages = @@global_counted_messages + 1
+
+    if @@global_counted_messages % 5 == 0
+      # @@global_counted_messages = 0 # prevent overflow from long running counting
+      self.persist_member_message_counts()
+      self.log "Saved!", event.bot
     end
   end
 
@@ -393,7 +446,23 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!reload-configs") do |event|
     self.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a config reload!", event.bot
-      self.scan_files()
+      self.scan_bot_files()
+      event.respond "Done! Hopefully..."
+    }
+  end
+
+  message(content: "!reload-message-counts") do |event|
+    self.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a member message count reload!", event.bot
+      self.scan_member_message_counts()
+      event.respond "Done! Hopefully..."
+    }
+  end
+
+  message(content: "!print-message-counts") do |event|
+    self.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a member message count print-out on #{event.server.name} - #{event.channel.name}!", event.bot
+      event.respond YAML.dump(@@member_message_counts)
       event.respond "Done! Hopefully..."
     }
   end

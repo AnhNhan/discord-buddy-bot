@@ -147,6 +147,16 @@ new_member_roles:
     - 430694026954670081 # new
     - 168813906444156929 # buddy
 
+server_thresholds:
+  166304074252288000: 100 # gfcord
+  165551300375871488: 5   # anh-test
+
+server_threshold_remove_roles:
+  166304074252288000: # gfcord
+    - 430593431195353088 # NEW
+  165551300375871488: # anh-test
+    - 430694026954670081 # new
+
 members_of_other_groups:
   momo:
     - "*nico nico ni~*"
