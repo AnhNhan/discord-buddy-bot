@@ -123,12 +123,12 @@ module BuddyBot::Modules::BuddyFunctionality
     # event.bot.game = @@motd.sample
     self.log "ready!", event.bot
 
-    event.bot.servers.each do |server_id, server|
-      roles = server.roles.sort_by(&:position).map do |role|
-        "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
-      end.join
-      self.log "**#{server.name}**\n#{roles}\n", event.bot
-    end
+    # event.bot.servers.each do |server_id, server|
+    #   roles = server.roles.sort_by(&:position).map do |role|
+    #     "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
+    #   end.join
+    #   self.log "**#{server.name}**\n#{roles}\n", event.bot
+    # end
   end
 
   # message(start_with: /^!motd/) do |event|
