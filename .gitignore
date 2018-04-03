@@ -1,5 +1,6 @@
 localconf.yml
 pokemon-list.json
+content/member_message_counts.yml
 Thumbs.db
 
 *.gem

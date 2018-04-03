@@ -21,6 +21,12 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@new_member_roles = {}
 
+  @@server_thresholds = {}
+  @@server_threshold_remove_roles = {}
+
+  @@global_counted_messages = 0
+  @@member_message_counts = {}
+
   def self.is_creator?(user)
     user.id.eql? @@creator_id
   end
@@ -33,8 +39,8 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  def self.scan_files()
-    member_config = YAML.load_file(BuddyBot.path("content/members.yml"))
+  def self.scan_bot_files()
+    member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
 
     @@member_names = member_config["member_names"]
     @@primary_role_names = member_config["primary_role_names"]
@@ -43,6 +49,16 @@ module BuddyBot::Modules::BuddyFunctionality
     @@members_of_other_groups = member_config["members_of_other_groups"]
     @@ignored_roles = member_config["ignored_roles"]
     @@new_member_roles = member_config["new_member_roles"]
+    @@server_thresholds = member_config["server_thresholds"]
+    @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
+  end
+
+  def self.scan_member_message_counts()
+    @@member_message_counts = YAML.load_file(BuddyBot.path("content/member_message_counts.yml"))
+  end
+
+  def self.persist_member_message_counts()
+    File.open(BuddyBot.path("content/member_message_counts.yml"), "w") { |file| file.write(YAML.dump(@@member_message_counts)) }
   end
 
   def self.log(msg, bot)
@@ -84,9 +100,8 @@ module BuddyBot::Modules::BuddyFunctionality
     #   return false
     # end
     if @@primary_role_names.include?(role_name) || (@@member_names.include?(role_name) && @@primary_role_names.include?(@@member_names[role_name]))
-      no_primary_yet = !user.roles.find{ |role| self.role_is_primary(role) }
-      puts "No primary yet: #{no_primary_yet}"
-      no_primary_yet
+      # no primary yet?
+      !user.roles.find{ |role| self.role_is_primary(role) }
     else
       false
     end
@@ -119,7 +134,8 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   ready do |event|
-    self.scan_files()
+    self.scan_bot_files()
+    self.scan_member_message_counts()
     # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
     # event.bot.game = @@motd.sample
     self.log "ready!", event.bot
@@ -138,8 +154,61 @@ module BuddyBot::Modules::BuddyFunctionality
 
   member_join do |event|
     event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
-    event.user.on(event.server).add_role(self.find_roles(event.server, "buddy", false))
-    self.log "Added role 'Buddy' to #{event.user.mention}", event.bot
+    begin
+      server = event.server
+      if !@@new_member_roles.include? server.id
+        self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot
+        next
+      end
+      role_ids = @@new_member_roles[server.id]
+      roles = role_ids.map do |role_id|
+        server.role role_id
+      end
+      member = event.user.on(server)
+      member.roles = roles
+      self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot
+    rescue
+    end
+  end
+
+  # new member counting
+  message() do |event|
+    server = event.server
+    if event.user.nil? || event.user.bot_account? || !@@server_threshold_remove_roles.include?(server.id) || !@@server_thresholds.include?(server.id)
+      next
+    end
+    user = event.user.on server
+
+    remove_roles_ids = @@server_threshold_remove_roles[server.id]
+    remove_threshold = @@server_thresholds[server.id]
+
+    removable_roles = user.roles.find_all{ |role| remove_roles_ids.include?(role.id) }
+
+    if removable_roles.empty?
+      next
+    end
+
+    if !@@member_message_counts.include?(user.id)
+      @@member_message_counts[user.id] = {
+        "count" => 0,
+      }
+    end
+
+    @@member_message_counts[user.id] = {
+      "count" => @@member_message_counts[user.id]["count"] + 1
+    }
+    @@global_counted_messages = @@global_counted_messages + 1
+
+    if @@member_message_counts[user.id]["count"] > remove_threshold
+      user.remove_role removable_roles #, "Reached new member message threshold of #{remove_threshold}" wtf only one arg supported?
+      @@member_message_counts.delete user.id
+      self.log "Upgraded '#{event.user.username} - \##{event.user.id}' to a normal user", event.bot
+    end
+
+    if @@global_counted_messages % 5 == 0
+      # @@global_counted_messages = 0 # prevent overflow from long running counting
+      self.persist_member_message_counts()
+    end
   end
 
   message(start_with: /^!suggest-bias\s*/i, in: "whos-your-bias") do |event|
@@ -147,7 +216,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     user = event.user.on event.server
@@ -163,7 +231,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     user = event.user.on event.server
@@ -207,7 +274,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     self.log "Primary switch attempt by #{event.user.mention}", event.bot
@@ -259,7 +325,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     self.log "Remove attempt by #{event.user.mention}", event.bot
@@ -309,7 +374,6 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
     end
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     self.log "Remove-All attempt by #{event.user.mention}", event.bot
@@ -339,7 +403,6 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: ["!help", "!commands"]) do |event|
     if event.user.bot_account?
-      self.log "Ignored message from bot #{event.user.mention}.", event.bot
       next
     end
     event.send_message "```python\n" +
@@ -381,8 +444,32 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!reload-configs") do |event|
     self.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a config reload!", event.bot
-      self.scan_files()
+      self.scan_bot_files()
       event.respond "Done! Hopefully..."
+    }
+  end
+
+  message(content: "!reload-message-counts") do |event|
+    self.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a member message count reload!", event.bot
+      self.scan_member_message_counts()
+      event.respond "Done! Hopefully..."
+    }
+  end
+
+  message(content: "!save-message-counts") do |event|
+    self.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a member message count persist!", event.bot
+      self.persist_member_message_counts()
+      event.respond "Done! Hopefully..."
+    }
+  end
+
+  message(content: "!print-message-counts") do |event|
+    self.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a member message count print-out on '#{event.server.name}' - '##{event.channel.name}'!", event.bot
+      event.respond "Current messages counted at #{@@global_counted_messages}"
+      event.respond YAML.dump(@@member_message_counts)
     }
   end
 
