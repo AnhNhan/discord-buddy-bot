@@ -301,7 +301,6 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-
   message(content: ["!remove-all"]) do |event|
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
@@ -314,7 +313,7 @@ module BuddyBot::Modules::BuddyFunctionality
     user = event.user.on event.server
     removed_roles = []
     main_roles = user.roles.find_all do |role|
-      if role.name.eql? 'Sowon\'s Hair'
+      if @@ignored_roles.include? role.name
         next
       end
       role.name.downcase.scan(/([A-z]+)/).find do |matches|
