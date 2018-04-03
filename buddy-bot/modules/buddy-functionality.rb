@@ -185,7 +185,7 @@ module BuddyBot::Modules::BuddyFunctionality
     removable_roles = user.roles.find_all{ |role| remove_roles_ids.include?(role.id) }
     puts "Removable roles: #{removable_roles.map(&:name).join(", ")}"
 
-    if !removable_roles.length
+    if removable_roles.empty?
       puts "Skipping non-new member"
       next
     end
@@ -205,7 +205,6 @@ module BuddyBot::Modules::BuddyFunctionality
     if @@global_counted_messages % 5 == 0
       # @@global_counted_messages = 0 # prevent overflow from long running counting
       self.persist_member_message_counts()
-      self.log "Saved!", event.bot
     end
   end
 
@@ -466,6 +465,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!print-message-counts") do |event|
     self.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a member message count print-out on '#{event.server.name}' - '##{event.channel.name}'!", event.bot
+      event.respond "Current messages counted at #{@@global_counted_messages}"
       event.respond YAML.dump(@@member_message_counts)
     }
   end
