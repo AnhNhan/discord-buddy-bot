@@ -181,7 +181,6 @@ module BuddyBot::Modules::BuddyFunctionality
 
     remove_roles_ids = @@server_threshold_remove_roles[server.id]
     remove_threshold = @@server_thresholds[server.id]
-    puts remove_threshold
 
     removable_roles = user.roles.find_all{ |role| remove_roles_ids.include?(role.id) }
 
@@ -201,7 +200,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@global_counted_messages = @@global_counted_messages + 1
 
     if @@member_message_counts[user.id]["count"] > remove_threshold
-      user.remove_role removable_roles, "Reached new member message threshold of #{remove_threshold}"
+      user.remove_role removable_roles #, "Reached new member message threshold of #{remove_threshold}" wtf only one arg supported?
       @@member_message_counts.delete user.id
       self.log "Upgraded '#{event.user.username} - \##{event.user.id}' to a normal user", event.bot
     end
