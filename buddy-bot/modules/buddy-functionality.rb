@@ -19,6 +19,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@ignored_roles = []
 
+  @@new_member_roles = {}
+
   def self.is_creator?(user)
     user.id.eql? @@creator_id
   end
@@ -40,6 +42,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@special_members = member_config["special_members"]
     @@members_of_other_groups = member_config["members_of_other_groups"]
     @@ignored_roles = member_config["ignored_roles"]
+    @@new_member_roles = member_config["new_member_roles"]
   end
 
   def self.log(msg, bot)
