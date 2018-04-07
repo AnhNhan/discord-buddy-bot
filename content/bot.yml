@@ -8,6 +8,7 @@ member_names:
   # ships
   sinrin: sinb+yerin
   2bi: eunha+sinb
+  2jung: yerin+eunha
   2ye: yerin+umji
   2won: umji+sowon
   eunbi: eunha+sinb
@@ -72,7 +73,8 @@ member_names:
   minecraft: buddycraft
 
   # gfbuddies
-  ot6: ot6
+  ot6: ot
+  ot: ot
   amino: amino
 
 primary_role_names:
@@ -82,6 +84,7 @@ primary_role_names:
   - yerin
   - yuju
   - umji
+  - ot
 
 
 primary_ids:
@@ -93,6 +96,7 @@ primary_ids:
   - 166306254048854017 # 🌌 Yerin 예린
   - 166306230468476928 # 🌌 Sowon 소원
   - 345292659600130048 # new umji role
+  - 431303766210379776 #ot6
   # anh-test
   - 168814333717905408 # Sowon
   - 168813932239126528 # Eunha
