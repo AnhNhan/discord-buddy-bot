@@ -5,6 +5,8 @@ require 'yaml'
 module BuddyBot::Modules::BuddyFunctionality
   extend Discordrb::EventContainer
 
+  @@initialized = false
+
   @@creator_id = 139342974776639489
 
   @@member_names = {}
@@ -134,18 +136,14 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   ready do |event|
-    self.scan_bot_files()
-    self.scan_member_message_counts()
-    # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
+    if not @@initialized
+      self.scan_bot_files()
+      self.scan_member_message_counts()
+      # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
+      @@initialized = true
+    end
     # event.bot.game = @@motd.sample
     self.log "ready!", event.bot
-
-    # event.bot.servers.each do |server_id, server|
-    #   roles = server.roles.sort_by(&:position).map do |role|
-    #     "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
-    #   end.join
-    #   self.log "**#{server.name}**\n#{roles}\n", event.bot
-    # end
   end
 
   # message(start_with: /^!motd/) do |event|
@@ -205,6 +203,7 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "Upgraded '#{event.user.username} - \##{event.user.id}' to a normal user", event.bot
     end
 
+    # save every five messages
     if @@global_counted_messages % 5 == 0
       # @@global_counted_messages = 0 # prevent overflow from long running counting
       self.persist_member_message_counts()
@@ -441,6 +440,16 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(start_with: "!say") do |event|
+    self.only_creator(event.user) {
+      data = event.content.scan(/^!say\s+((\d+) (.*?))\s*$/i)[0]
+      if !data
+        event.respond "Input not accepted!"
+      end
+      event.respond data[1]
+    }
+  end
+
   message(content: "!reload-configs") do |event|
     self.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a config reload!", event.bot
@@ -477,6 +486,17 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!git-pull") do |event|
     self.only_creator(event.user) {
       event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull`}"
+    }
+  end
+
+  message(content: "!print-role-lists") do |event|
+    self.only_creator(event.user) {
+      event.bot.servers.each do |server_id, server|
+        roles = server.roles.sort_by(&:position).map do |role|
+          "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
+        end.join
+        self.log "**#{server.name}**\n#{roles}\n", event.bot
+      end
     }
   end
 
