@@ -442,11 +442,12 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(start_with: "!say") do |event|
     self.only_creator(event.user) {
-      data = event.content.scan(/^!say\s+((\d+) (.*?))\s*$/i)[0]
+      data = event.content.scan(/^!say\s+((\d+)\s+(.*?))\s*$/i)[0]
       if !data
         event.respond "Input not accepted!"
+        break
       end
-      Discordrb::Channel.new(data[1], event.bot).send_message data[2]
+      Discordrb::Channel.new(data[1], event.bot, event.server).send_message data[2]
     }
   end
 
