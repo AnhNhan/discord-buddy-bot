@@ -446,7 +446,7 @@ module BuddyBot::Modules::BuddyFunctionality
       if !data
         event.respond "Input not accepted!"
       end
-      Discordrb::Channel.new(data[1]).send_message data[2]
+      Discordrb::Channel.new(data[1], event.bot).send_message data[2]
     }
   end
 
