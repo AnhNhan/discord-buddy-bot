@@ -53,6 +53,8 @@ module BuddyBot::Modules::BuddyFunctionality
     @@new_member_roles = member_config["new_member_roles"]
     @@server_thresholds = member_config["server_thresholds"]
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
+
+    @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
   end
 
   def self.scan_member_message_counts()
@@ -142,13 +144,13 @@ module BuddyBot::Modules::BuddyFunctionality
       # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
       @@initialized = true
     end
-    # event.bot.game = @@motd.sample
+    event.bot.game = @@motd.sample
     self.log "ready!", event.bot
   end
 
-  # message(start_with: /^!motd/) do |event|
-  #   event.bot.game = @@motd.sample
-  # end
+  message(start_with: /^!motd/) do |event|
+    event.bot.game = @@motd.sample
+  end
 
   member_join do |event|
     event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
@@ -275,7 +277,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if event.user.bot_account?
       next
     end
-    self.log "Primary switch attempt by #{event.user.mention}", event.bot
+    self.log "Primary switch attempt by '#{event.user.username} - \##{event.user.id}'", event.bot
     data = event.content.scan(/^!primary\s+(.*?)\s*$/i)[0]
     if data
       data = data[0].downcase
@@ -326,7 +328,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if event.user.bot_account?
       next
     end
-    self.log "Remove attempt by #{event.user.mention}", event.bot
+    self.log "Remove attempt by '#{event.user.username} - \##{event.user.id}'", event.bot
     data = event.content.scan(/^!remove\s+(.*?)\s*$/i)[0]
     if data
       data = data[0]
@@ -375,7 +377,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if event.user.bot_account?
       next
     end
-    self.log "Remove-All attempt by #{event.user.mention}", event.bot
+    self.log "Remove-All attempt by '#{event.user.username} - \##{event.user.id}'", event.bot
     user = event.user.on event.server
     removed_roles = []
     main_roles = user.roles.find_all do |role|
