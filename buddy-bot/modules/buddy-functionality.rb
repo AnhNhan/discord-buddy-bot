@@ -446,7 +446,7 @@ module BuddyBot::Modules::BuddyFunctionality
       if !data
         event.respond "Input not accepted!"
       end
-      Channel(data[1]).send_message data[2]
+      Channel.new(data[1]).send_message data[2]
     }
   end
 
