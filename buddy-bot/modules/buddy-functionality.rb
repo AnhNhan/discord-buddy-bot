@@ -506,12 +506,8 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!print-emoji-lists") do |event|
     self.only_creator(event.user) {
       event.bot.servers.each do |server_id, server|
-        roles = server.emoji.map do |emoji_id, emoji_name|
-          if emoji_name.scan(/</)
-            "`#{emoji_name}` #{emoji_name}\n"
-          else
-            "`<#{emoji_name}#{emoji_id}>` <#{emoji_name}#{emoji_id}>\n"
-          end
+        roles = server.emoji.map do |emoji_id, emoji|
+          "`#{emoji.mention}` #{emoji.mention}\n"
         end.join
         self.log "**#{server.name}**\n#{roles}\n", event.bot
       end
