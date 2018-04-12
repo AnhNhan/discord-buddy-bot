@@ -509,7 +509,7 @@ module BuddyBot::Modules::BuddyFunctionality
         self.log "**#{server.name}**\n", event.bot
         roles = server.emoji.map do |emoji_id, emoji|
           prefix = ""
-          if emoji.animated?
+          if emoji.animated
             prefix = "a"
           end
           "`<#{prefix}:#{emoji.name}:#{emoji.id}>` <#{prefix}:#{emoji.name}:#{emoji.id}>\n"
