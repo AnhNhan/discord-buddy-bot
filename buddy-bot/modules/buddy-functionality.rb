@@ -508,8 +508,12 @@ module BuddyBot::Modules::BuddyFunctionality
       event.bot.servers.each do |server_id, server|
         self.log "**#{server.name}**\n", event.bot
         roles = server.emoji.map do |emoji_id, emoji|
-          "`<:#{emoji.name}:#{emoji.id}>` <:#{emoji.name}:#{emoji.id}>\n"
-        end.each_slice(10)
+          prefix = ""
+          if emoji.animated?
+            prefix = "a"
+          end
+          "`<#{prefix}:#{emoji.name}:#{emoji.id}>` <#{prefix}:#{emoji.name}:#{emoji.id}>\n"
+        end.each_slice(25)
         roles.each do |chunk|
           self.log chunk.join, event.bot
         end
