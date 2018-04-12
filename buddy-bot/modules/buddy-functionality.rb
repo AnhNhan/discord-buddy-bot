@@ -507,7 +507,11 @@ module BuddyBot::Modules::BuddyFunctionality
     self.only_creator(event.user) {
       event.bot.servers.each do |server_id, server|
         roles = server.emoji.map do |emoji_id, emoji_name|
-          "`#{emoji_name}` #{emoji_name}\n"
+          if emoji_name.scan(/</)
+            "`#{emoji_name}` #{emoji_name}\n"
+          else
+            "`<#{emoji_name}#{emoji_id}>` <#{emoji_name}#{emoji_id}>\n"
+          end
         end.join
         self.log "**#{server.name}**\n#{roles}\n", event.bot
       end
