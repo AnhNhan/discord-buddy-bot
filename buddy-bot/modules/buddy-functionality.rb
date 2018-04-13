@@ -345,6 +345,7 @@ module BuddyBot::Modules::BuddyFunctionality
           .map{ |raw| @@global_emoji_map[raw] }
           .map(&:mention)
           .reject()
+          .to_a
           .join
       end
     else
