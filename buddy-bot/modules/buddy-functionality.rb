@@ -329,7 +329,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       if !added_roles.empty?
         added_roles_text = added_roles.join ", "
-        if emoji_start
+        if !emoji_start
           event.send_message find_emoji.call(added_roles_text).map{ |name| @@member_role_emoji_join[name] }.map(&:sample).join
         else
           event.send_message "#{user.mention} your primary bias has been changed to #{added_roles_text}"
