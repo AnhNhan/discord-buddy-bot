@@ -79,50 +79,50 @@ member_names:
 
 member_role_emoji_join:
   yerin:
-    - <:yerin_chuu:285243103877529610>
-    - <:yerinthumbsup:342101928903442432>
-    - <:yerin_muscle:384149119658229770>
-    - <:yerinheart:351908025289801739>
+    - 285243103877529610 # :yerin_chuu:
+    - 342101928903442432 # :yerinthumbsup:
+    - 384149119658229770 # :yerin_muscle:
+    - 351908025289801739 # :yerinheart:
   eunha:
-    - <:eunhatang:292830103337959424>
-    - <:eunha_yang:285237464879333376>
-    - <:eunha_balloon:285237525012938762>
-    - <:sadeunha:344975890427412481>
-    - <:eunhacool:430174078381326336>
+    - 292830103337959424 # :eunhatang:
+    - 285237464879333376 # :eunha_yang:
+    - 285237525012938762 # :eunha_balloon:
+    - 344975890427412481 # :sadeunha:
+    - 430174078381326336 # :eunhacool:
   sinb:
-    - <:sinbV:357311460977672192>
+    - 357311460977672192 # :sinbV:
   sowon:
-    - <:sowon_ok:351178953035087883>
-    - <:sowonwave:351193256828338176>
+    - 351178953035087883 # :sowon_ok:
+    - 351193256828338176 # :sowonwave:
   yuju:
-    - <:yujukissu:351194747391574016>
-    - <:yujuthumbsup:285243398422659073>
-    - <:yuju_pray:353721631279022100>
-    - <:YujuHeart:368193370738130946>
+    - 351194747391574016 # :yujukissu:
+    - 285243398422659073 # :yujuthumbsup:
+    - 353721631279022100 # :yuju_pray:
+    - 368193370738130946 # :YujuHeart:
   umji:
-    - <:umjiheart:292830051383115777>
+    - 292830051383115777 # :umjiheart:
   ot:
-    - <:glass_bong:291561178516422667>
-    - <:blobglassbong:326116072866578432>
+    - 291561178516422667 # :glass_bong:
+    - 326116072866578432 # :blobglassbong:
 
 member_role_emoji_leave:
   yerin:
-    - <:yerinAaah:292832147625213962>
-    - <:yerinpout:357312520853389312>
+    - 292832147625213962 # :yerinAaah:
+    - 357312520853389312 # :yerinpout:
   eunha:
-    - <:eunhapeek:351110044567470080>
+    - 351110044567470080 # :eunhapeek:
   sinb:
-    - <:sinbwtf:230149920877838336>
-    - <:sinbshrug:368168785791811584>
+    - 230149920877838336 # :sinbwtf:
+    - 368168785791811584 # :sinbshrug:
   sowon:
-    - <:sowonderp:344982768368746496>
+    - 344982768368746496 # :sowonderp:
   yuju:
-    - <:yujuLUL:350808296476770305>
+    - 350808296476770305 # :yujuLUL:
   umji:
-    - <:umjipout:292830047457247232>
-    - <:umjicry:350805044200734724>
+    - 292830047457247232 # :umjipout:
+    - 350805044200734724 # :umjicry:
   ot:
-    - <:tumbleweed:431133727528058880>
+    - 431133727528058880 # :tumbleweed:
 
 primary_role_names:
   - eunha
