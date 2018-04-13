@@ -339,7 +339,13 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       if !added_roles.empty?
         added_roles_text = added_roles.join ", "
-        event.send_message find_emoji.call(added_roles_text).map{ |name| @@member_role_emoji_join[name] }.map(&:sample).map(&:mention).join
+        event.send_message find_emoji.call(added_roles_text)
+          .map{ |name| @@member_role_emoji_join[name] }
+          .map(&:sample)
+          .map{ |raw| @@global_emoji_map[raw] }
+          .map(&:mention)
+          .reject()
+          .join
       end
     else
       self.log "Didn't switch role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot
