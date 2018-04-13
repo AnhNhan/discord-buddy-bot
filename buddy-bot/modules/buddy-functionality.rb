@@ -29,6 +29,9 @@ module BuddyBot::Modules::BuddyFunctionality
   @@global_counted_messages = 0
   @@member_message_counts = {}
 
+  @@member_role_emoji_join = {}
+  @@member_role_emoji_leave = {}
+
   def self.is_creator?(user)
     user.id.eql? @@creator_id
   end
@@ -53,6 +56,8 @@ module BuddyBot::Modules::BuddyFunctionality
     @@new_member_roles = member_config["new_member_roles"]
     @@server_thresholds = member_config["server_thresholds"]
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
+    @@member_role_emoji_join = member_config["member_role_emoji_join"]
+    @@member_role_emoji_leave = member_config["member_role_emoji_leave"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
   end
@@ -285,6 +290,8 @@ module BuddyBot::Modules::BuddyFunctionality
       removed_roles = []
       added_roles = []
 
+      emoji_start = [ true, false ].sample
+
       if !(@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_role_names.include?(@@member_names[data])))
         event.send_message "#{user.mention} you didn't give me a possible primary bias"
         next
@@ -308,13 +315,25 @@ module BuddyBot::Modules::BuddyFunctionality
         end
       end
 
+      find_emoji = lambda do |input|
+        names = input.downcase.scan(/([A-z]+)/).select{ |part| @@member_role_emoji_join.include?(part.first) }.flatten
+      end
+
       if !removed_roles.empty?
         removed_roles_text = removed_roles.join ", "
-        event.send_message "#{user.mention} removed bias#{if removed_roles.length > 1 then 'es' end} #{removed_roles_text}"
+        if emoji_start
+          event.send_message find_emoji.call(removed_roles_text).map{ |name| @@member_role_emoji_leave[name] }.map(&:sample).join
+        else
+          event.send_message "#{user.mention} removed bias#{if removed_roles.length > 1 then 'es' end} #{removed_roles_text}"
+        end
       end
       if !added_roles.empty?
         added_roles_text = added_roles.join ", "
-        event.send_message "#{user.mention} your primary bias has been changed to #{added_roles_text}"
+        if emoji_start
+          event.send_message find_emoji.call(added_roles_text).map{ |name| @@member_role_emoji_join[name] }.map(&:sample).join
+        else
+          event.send_message "#{user.mention} your primary bias has been changed to #{added_roles_text}"
+        end
       end
     else
       self.log "Didn't switch role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot
@@ -509,10 +528,10 @@ module BuddyBot::Modules::BuddyFunctionality
         self.log "**#{server.name}**\n", event.bot
         roles = server.emoji.map do |emoji_id, emoji|
           prefix = ""
-          if emoji.animated
-            prefix = "a"
-          end
-          "`<#{prefix}:#{emoji.name}:#{emoji.id}>` <#{prefix}:#{emoji.name}:#{emoji.id}>\n"
+          # if emoji.animated
+          #   prefix = "a"
+          # end
+          "\\<#{prefix}:#{emoji.name}:#{emoji.id}> <#{prefix}:#{emoji.name}:#{emoji.id}>\n"
         end.each_slice(25)
         roles.each do |chunk|
           self.log chunk.join, event.bot

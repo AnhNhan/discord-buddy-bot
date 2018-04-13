@@ -77,6 +77,53 @@ member_names:
   ot: ot
   amino: amino
 
+member_role_emoji_join:
+  yerin:
+    - <:yerin_chuu:285243103877529610>
+    - <:yerinthumbsup:342101928903442432>
+    - <:yerin_muscle:384149119658229770>
+    - <:yerinheart:351908025289801739>
+  eunha:
+    - <:eunhatang:292830103337959424>
+    - <:eunha_yang:285237464879333376>
+    - <:eunha_balloon:285237525012938762>
+    - <:sadeunha:344975890427412481>
+    - <:eunhacool:430174078381326336>
+  sinb:
+    - <:sinbV:357311460977672192>
+  sowon:
+    - <:sowon_ok:351178953035087883>
+    - <:sowonwave:351193256828338176>
+  yuju:
+    - <:yujukissu:351194747391574016>
+    - <:yujuthumbsup:285243398422659073>
+    - <:yuju_pray:353721631279022100>
+    - <:YujuHeart:368193370738130946>
+  umji:
+    - <:umjiheart:292830051383115777>
+  ot:
+    - <:glass_bong:291561178516422667>
+    - <:blobglassbong:326116072866578432>
+
+member_role_emoji_leave:
+  yerin:
+    - <:yerinAaah:292832147625213962>
+    - <:yerinpout:357312520853389312>
+  eunha:
+    - <:eunhapeek:351110044567470080>
+  sinb:
+    - <:sinbwtf:230149920877838336>
+    - <:sinbshrug:368168785791811584>
+  sowon:
+    - <:sowonderp:344982768368746496>
+  yuju:
+    - <:yujuLUL:350808296476770305>
+  umji:
+    - <:umjipout:292830047457247232>
+    - <:umjicry:350805044200734724>
+  ot:
+    - <:tumbleweed:431133727528058880>
+
 primary_role_names:
   - eunha
   - sinb
@@ -85,7 +132,6 @@ primary_role_names:
   - yuju
   - umji
   - ot
-
 
 primary_ids:
   # gfriend
@@ -524,11 +570,3 @@ members_of_other_groups:
     - "Congratz, you are a buddy!"
   eubuddy:
     - "Europa Universalis Buddy!?"
-  testa:
-    - "<:eunhawtf:368568218312245248>"
-  testb:
-    - "<a:yerincopter:424033796271112212>"
-  testc:
-    - "<:afirebreathingnayoung:396345723572191233>"
-  testd:
-    - "<:aolivianani:429789385412837411>"
