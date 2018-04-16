@@ -289,7 +289,6 @@ module BuddyBot::Modules::BuddyFunctionality
     if event.user.bot_account?
       next
     end
-    self.log "Primary switch attempt by '#{event.user.username} - \##{event.user.id}'", event.bot
     data = event.content.scan(/^!primary\s+(.*?)\s*$/i)[0]
     if data
       data = data[0].downcase
@@ -303,6 +302,17 @@ module BuddyBot::Modules::BuddyFunctionality
       end
 
       current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
+      member_name = @@member_names[data]
+      role = self.find_roles(event.server, member_name, true).first
+      if !role
+        self.log "Primary role with name '#{member_name}' not found on server '#{event.server.name}'", event.bot
+        next
+      end
+
+      if current_primary_roles.find{ |current_role| current_role.id == role.id }
+        event.respond "You can't hop to your current primary bias #{BuddyBot.emoji(285237464879333376).mention}"
+        next
+      end
 
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
@@ -310,15 +320,9 @@ module BuddyBot::Modules::BuddyFunctionality
         user.remove_role current_primary_role
       end
 
-      member_name = @@member_names[data]
-      roles = self.find_roles event.server, member_name, true
-      if roles
-        user.add_role roles
-        roles.map do |role|
-          added_roles << "**#{role.name}**"
-          self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
-        end
-      end
+      user.add_role role
+      added_roles << "**#{role.name}**"
+      self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
 
       find_emoji = lambda do |input|
         names = input.downcase.scan(/([A-z]+)/).select{ |part| @@member_role_emoji_join.include?(part.first) }.flatten
