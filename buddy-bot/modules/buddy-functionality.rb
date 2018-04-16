@@ -338,8 +338,8 @@ module BuddyBot::Modules::BuddyFunctionality
           .map{ |name| @@member_role_emoji_join[name] }
           .map(&:sample)
           .map{ |raw| BuddyBot.emoji(raw) }
-          .map(&:mention)
           .reject()
+          .map(&:mention)
           .to_a
           .join
       end
