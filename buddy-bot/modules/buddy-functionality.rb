@@ -68,6 +68,10 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
+  def self.find_emoji(input)
+    input.downcase.scan(/([A-z]+)/).select{ |part| @@member_role_emoji_join.include?(part.first) }.flatten
+  end
+
   def self.find_roles(server, name, requesting_primary)
     name = name.downcase
     searches = []
@@ -264,12 +268,12 @@ module BuddyBot::Modules::BuddyFunctionality
         user.remove_role current_primary_role
       end
       removed_roles_text = removed_roles.join ", "
-      find_emoji.call(removed_roles_text)
+      self.find_emoji.call(removed_roles_text)
         .map{ |name| @@member_role_emoji_leave[name] }
         .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
         .reject()
         .each{ |emoji| event.message.create_reaction(emoji) }
-      event.send_message find_emoji.call('ot')
+      event.send_message self.find_emoji.call('ot')
         .map{ |name| @@member_role_emoji_join[name] }
         .map(&:sample)
         .map{ |raw| BuddyBot.emoji(raw) }
@@ -351,13 +355,9 @@ module BuddyBot::Modules::BuddyFunctionality
       added_roles << "**#{role.name}**"
       self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
 
-      find_emoji = lambda do |input|
-        names = input.downcase.scan(/([A-z]+)/).select{ |part| @@member_role_emoji_join.include?(part.first) }.flatten
-      end
-
       if !removed_roles.empty?
         removed_roles_text = removed_roles.join ", "
-        find_emoji.call(removed_roles_text)
+        self.find_emoji.call(removed_roles_text)
           .map{ |name| @@member_role_emoji_leave[name] }
           .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
           .reject()
@@ -365,7 +365,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       if !added_roles.empty?
         added_roles_text = added_roles.join ", "
-        event.send_message find_emoji.call(added_roles_text)
+        event.send_message self.find_emoji.call(added_roles_text)
           .map{ |name| @@member_role_emoji_join[name] }
           .map(&:sample)
           .map{ |raw| BuddyBot.emoji(raw) }
