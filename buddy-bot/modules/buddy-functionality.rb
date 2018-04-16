@@ -262,28 +262,31 @@ module BuddyBot::Modules::BuddyFunctionality
 
     if text =~ /\bot6\b/i
       removed_roles = []
-      role = self.find_roles event.server, 'ot', true
-      user.add_role role
-      current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
-      current_primary_roles.map do |current_primary_role|
-        removed_roles << "**#{current_primary_role.name}**"
-        self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot
-        user.remove_role current_primary_role
+      role = self.find_roles(event.server, 'ot', true).first
+      if role
+        current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
+        current_primary_roles.map do |current_primary_role|
+          removed_roles << "**#{current_primary_role.name}**"
+          self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot
+          user.remove_role current_primary_role
+        end
+        removed_roles_text = removed_roles.join ", "
+        user.add_role role
+        self.find_emoji(removed_roles_text)
+          .map{ |name| @@member_role_emoji_leave[name] }
+          .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
+          .reject()
+          .each{ |emoji| event.message.create_reaction(emoji) }
+        join_emojis = self.find_emoji('ot')
+          .map{ |name| @@member_role_emoji_join[name] }
+          .map(&:sample)
+          .map{ |raw| BuddyBot.emoji(raw) }
+          .reject{ |emoji| emoji.nil? }
+          .map(&:mention)
+          .to_a
+          .join
+        event.send_message(join_emojis) unless join_emojis
       end
-      removed_roles_text = removed_roles.join ", "
-      self.find_emoji(removed_roles_text)
-        .map{ |name| @@member_role_emoji_leave[name] }
-        .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
-        .reject()
-        .each{ |emoji| event.message.create_reaction(emoji) }
-      event.send_message self.find_emoji('ot')
-        .map{ |name| @@member_role_emoji_join[name] }
-        .map(&:sample)
-        .map{ |raw| BuddyBot.emoji(raw) }
-        .reject()
-        .map(&:mention)
-        .to_a
-        .join
     end
 
     cb_member = lambda do |match, original|
