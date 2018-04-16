@@ -176,10 +176,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # biasgame easter egg
   message(from: 283848369250500608, in: 318787939360571393, contains: /(GFriend .*? vs|vs GFriend .*?\b|Winner: GFriend .*?!)/) do |event|
-    self.log "_biasgame: Entered message '#{event.message}'", event.bot
     data = event.content.scan(/GFriend (\w+)\b/)[0]
-    self.log "_biasgame: Scanned '#{event.content.scan(/GFriend (\w+)\b/)}'", event.bot
-    self.log "_biasgame: First is '#{data}'", event.bot
     if !data
       next
     end
@@ -190,7 +187,7 @@ module BuddyBot::Modules::BuddyFunctionality
         next
       end
       self.log "_biasgame: Adding reaction", event.bot
-      event.message.create_reaction(@@biasgame_easter_eggs[name].sample)
+      event.message.create_reaction(BuddyBot.emoji(@@biasgame_easter_eggs[name].sample))
     end
   end
 
