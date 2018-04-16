@@ -33,6 +33,7 @@ module BuddyBot::Modules::BuddyFunctionality
   @@global_emoji_map = {}
 
   @@biasgame_easter_eggs = {}
+  @@derp_faces = {}
 
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
@@ -49,6 +50,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@member_role_emoji_join = member_config["member_role_emoji_join"]
     @@member_role_emoji_leave = member_config["member_role_emoji_leave"]
     @@biasgame_easter_eggs = member_config["biasgame_easter_eggs"]
+    @@derp_faces = member_config["derp_faces"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
   end
@@ -339,7 +341,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
 
       if current_primary_roles.find{ |current_role| current_role.id == role.id }
-        event.respond "You can't hop to your current primary bias #{BuddyBot.emoji(285237464879333376).mention}"
+        event.respond "You can't hop to your current primary bias #{BuddyBot.emoji(@@derp_faces.sample).mention}"
         next
       end
 
