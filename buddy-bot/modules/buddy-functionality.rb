@@ -183,9 +183,11 @@ module BuddyBot::Modules::BuddyFunctionality
     end
     data = data.map(&:downcase)
     data.each do |name|
+      self.log "_biasgame: Processing '#{name}'", event.bot
       if not @@biasgame_easter_eggs.include? name
         next
       end
+      self.log "_biasgame: Adding reaction", event.bot
       event.message.create_reaction(@@biasgame_easter_eggs[name].sample)
     end
   end
