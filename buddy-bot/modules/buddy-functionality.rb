@@ -32,6 +32,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@global_emoji_map = {}
 
+  @@biasgame_easter_eggs = {}
+
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
 
@@ -46,6 +48,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
     @@member_role_emoji_join = member_config["member_role_emoji_join"]
     @@member_role_emoji_leave = member_config["member_role_emoji_leave"]
+    @@biasgame_easter_eggs = member_config["biasgame_easter_eggs"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
   end
@@ -162,6 +165,21 @@ module BuddyBot::Modules::BuddyFunctionality
       member.roles = roles
       self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot
     rescue
+    end
+  end
+
+  # biasgame easter egg
+  message(from: 283848369250500608, in: 318787939360571393, contains: /(GFriend .*? vs|vs GFriend .*?\b|Winner: GFriend .*?!)/) do |event|
+    data = event.content.scan(/GFriend (.*?)\n/)[0]
+    if !data
+      next
+    end
+    data = data.map(&:downcase)
+    data.each do |name|
+      if not @@biasgame_easter_eggs.include? name
+        next
+      end
+      event.message.create_reaction(@@biasgame_easter_eggs[name].sample)
     end
   end
 

@@ -111,9 +111,11 @@ member_role_emoji_leave:
     - 357312520853389312 # :yerinpout:
   eunha:
     - 351110044567470080 # :eunhapeek:
+    - 434376562142478367 # :eunhashock:
   sinb:
     - 230149920877838336 # :sinbwtf:
     - 368168785791811584 # :sinbshrug:
+    - 434787320860901378 # :SinBNani:
   sowon:
     - 344982768368746496 # :sowonderp:
   yuju:
@@ -123,6 +125,14 @@ member_role_emoji_leave:
     - 350805044200734724 # :umjicry:
   ot:
     - 431133727528058880 # :tumbleweed:
+
+biasgame_easter_eggs:
+  yerin:
+    - 285243103877529610 # :yerin_chuu:
+    - 342101928903442432 # :yerinthumbsup:
+    - 384149119658229770 # :yerin_muscle:
+    - 351908025289801739 # :yerinheart:
+    - 424033796271112212 # :yerincopter:
 
 primary_role_names:
   - eunha
