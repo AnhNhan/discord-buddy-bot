@@ -268,12 +268,12 @@ module BuddyBot::Modules::BuddyFunctionality
         user.remove_role current_primary_role
       end
       removed_roles_text = removed_roles.join ", "
-      self.find_emoji.call(removed_roles_text)
+      self.find_emoji(removed_roles_text)
         .map{ |name| @@member_role_emoji_leave[name] }
         .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
         .reject()
         .each{ |emoji| event.message.create_reaction(emoji) }
-      event.send_message self.find_emoji.call('ot')
+      event.send_message self.find_emoji('ot')
         .map{ |name| @@member_role_emoji_join[name] }
         .map(&:sample)
         .map{ |raw| BuddyBot.emoji(raw) }
@@ -357,7 +357,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
       if !removed_roles.empty?
         removed_roles_text = removed_roles.join ", "
-        self.find_emoji.call(removed_roles_text)
+        self.find_emoji(removed_roles_text)
           .map{ |name| @@member_role_emoji_leave[name] }
           .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
           .reject()
@@ -365,7 +365,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       if !added_roles.empty?
         added_roles_text = added_roles.join ", "
-        event.send_message self.find_emoji.call(added_roles_text)
+        event.send_message self.find_emoji(added_roles_text)
           .map{ |name| @@member_role_emoji_join[name] }
           .map(&:sample)
           .map{ |raw| BuddyBot.emoji(raw) }
