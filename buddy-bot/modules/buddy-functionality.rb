@@ -263,6 +263,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if text =~ /\bot6\b/i
       removed_roles = []
       role = self.find_roles event.server, 'ot', true
+      user.add_role role
       current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
