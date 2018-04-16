@@ -7,8 +7,6 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@initialized = false
 
-  @@creator_id = 139342974776639489
-
   @@member_names = {}
 
   @@primary_role_names = []
@@ -33,18 +31,6 @@ module BuddyBot::Modules::BuddyFunctionality
   @@member_role_emoji_leave = {}
 
   @@global_emoji_map = {}
-
-  def self.is_creator?(user)
-    user.id.eql? @@creator_id
-  end
-
-  def self.only_creator(user, &cb)
-    if self.is_creator? user
-      cb.call
-    else
-      # event.respond "#{user.mention} you do not have permission to complete this command."
-    end
-  end
 
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
@@ -461,7 +447,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!sigh") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       name = "Yerin"
       data = event.content.scan(/^!sigh\s+(.*?)\s*$/i)[0]
       if data
@@ -473,7 +459,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!say") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       data = event.content.scan(/^!say\s+((\d+)\s+(.*?))\s*$/i)[0]
       if !data
         event.respond "Input not accepted!"
@@ -484,7 +470,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-configs") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a config reload!", event.bot
       self.scan_bot_files()
       self.build_emoji_map(event.bot.servers)
@@ -493,7 +479,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-message-counts") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a member message count reload!", event.bot
       self.scan_member_message_counts()
       event.respond "Done! Hopefully..."
@@ -501,7 +487,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!save-message-counts") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a member message count persist!", event.bot
       self.persist_member_message_counts()
       event.respond "Done! Hopefully..."
@@ -509,7 +495,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!print-message-counts") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a member message count print-out on '#{event.server.name}' - '##{event.channel.name}'!", event.bot
       event.respond "Current messages counted at #{@@global_counted_messages}"
       event.respond YAML.dump(@@member_message_counts)
@@ -518,13 +504,13 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # invoke this command if you want to e.g. add new audio clips or memes, but don't want to restart the bot. for now, you also have to invoke e.g. #audio-load manually afterwards.
   message(content: "!git-pull") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull`}"
     }
   end
 
   message(content: "!print-role-lists") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       event.bot.servers.each do |server_id, server|
         roles = server.roles.sort_by(&:position).map do |role|
           "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
@@ -535,7 +521,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!print-emoji-lists") do |event|
-    self.only_creator(event.user) {
+    BuddyBot.only_creator(event.user) {
       event.bot.servers.each do |server_id, server|
         self.log "**#{server.name}**\n", event.bot
         roles = server.emoji.map do |emoji_id, emoji|
