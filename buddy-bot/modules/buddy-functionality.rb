@@ -176,7 +176,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # biasgame easter egg
   message(from: 283848369250500608, in: 318787939360571393, contains: /(GFriend .*? vs|vs GFriend .*?\b|Winner: GFriend .*?!)/) do |event|
-    data = event.content.scan(/GFriend (.*?)\n/)[0]
+    self.log "_biasgame: Entered message '#{event.message}'", event.bot
+    data = event.content.scan(/GFriend (.*?)\b/)[0]
     if !data
       next
     end
