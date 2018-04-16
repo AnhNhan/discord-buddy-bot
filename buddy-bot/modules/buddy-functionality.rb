@@ -314,6 +314,8 @@ module BuddyBot::Modules::BuddyFunctionality
         next
       end
 
+      event.channel.start_typing
+
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
         self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot
