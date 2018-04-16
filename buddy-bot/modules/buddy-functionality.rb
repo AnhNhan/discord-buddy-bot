@@ -341,7 +341,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
 
       if current_primary_roles.find{ |current_role| current_role.id == role.id }
-        event.respond "You can't hop to your current primary bias #{BuddyBot.emoji(@@derp_faces.sample).mention}"
+        event.respond "You can't hop to your current primary bias #{BuddyBot.emoji(@@derp_faces[["yerin", "yuju", "sinB", "umji", "sowon", "eunha"].sample]).mention}"
         next
       end
 
