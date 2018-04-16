@@ -186,7 +186,7 @@ module BuddyBot::Modules::BuddyFunctionality
   # new member counting
   message() do |event|
     server = event.server
-    if event.user.nil? || event.user.bot_account? || !@@server_threshold_remove_roles.include?(server.id) || !@@server_thresholds.include?(server.id)
+    if server.nil? || event.user.nil? || event.user.bot_account? || !@@server_threshold_remove_roles.include?(server.id) || !@@server_thresholds.include?(server.id)
       next
     end
     user = event.user.on server
