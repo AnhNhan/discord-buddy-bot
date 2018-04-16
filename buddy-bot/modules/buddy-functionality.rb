@@ -50,15 +50,6 @@ module BuddyBot::Modules::BuddyFunctionality
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
   end
 
-  def self.build_emoji_map(servers)
-    @@global_emoji_map = {}
-    servers.each do |server_id, server|
-      server.emojis.each do |emoji_id, emoji|
-        @@global_emoji_map[emoji_id] = emoji
-      end
-    end
-  end
-
   def self.scan_member_message_counts()
     @@member_message_counts = YAML.load_file(BuddyBot.path("content/member_message_counts.yml"))
   end
@@ -143,7 +134,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if not @@initialized
       self.scan_bot_files()
       self.scan_member_message_counts()
-      self.build_emoji_map(event.bot.servers)
+      BuddyBot.build_emoji_map(event.bot.servers)
       # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
       @@initialized = true
     end
@@ -319,7 +310,7 @@ module BuddyBot::Modules::BuddyFunctionality
         removed_roles_text = removed_roles.join ", "
         find_emoji.call(removed_roles_text)
           .map{ |name| @@member_role_emoji_leave[name] }
-          .map(&:sample).map{ |raw| @@global_emoji_map[raw] }
+          .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
           .reject()
           .each{ |emoji| event.message.create_reaction(emoji) }
       end
@@ -328,7 +319,7 @@ module BuddyBot::Modules::BuddyFunctionality
         event.send_message find_emoji.call(added_roles_text)
           .map{ |name| @@member_role_emoji_join[name] }
           .map(&:sample)
-          .map{ |raw| @@global_emoji_map[raw] }
+          .map{ |raw| BuddyBot.emoji(raw) }
           .map(&:mention)
           .reject()
           .to_a
@@ -473,7 +464,7 @@ module BuddyBot::Modules::BuddyFunctionality
     BuddyBot.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a config reload!", event.bot
       self.scan_bot_files()
-      self.build_emoji_map(event.bot.servers)
+      BuddyBot.build_emoji_map(event.bot.servers)
       event.respond "Done! Hopefully..."
     }
   end

@@ -33,6 +33,19 @@ module BuddyBot
       # event.respond "#{user.mention} you do not have permission to complete this command."
     end
   end
+
+  def BuddyBot.build_emoji_map(servers)
+    @@global_emoji_map = {}
+    servers.each do |server_id, server|
+      server.emojis.each do |emoji_id, emoji|
+        @@global_emoji_map[emoji_id] = emoji
+      end
+    end
+  end
+
+  def BuddyBot.emoji(id)
+    @@global_emoji_map[id]
+  end
 end
 
 module BuddyBot::Modules
