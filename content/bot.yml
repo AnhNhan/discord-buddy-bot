@@ -87,7 +87,6 @@ member_role_emoji_join:
     - 292830103337959424 # :eunhatang:
     - 285237464879333376 # :eunha_yang:
     - 285237525012938762 # :eunha_balloon:
-    - 344975890427412481 # :sadeunha:
     - 430174078381326336 # :eunhacool:
   sinb:
     - 357311460977672192 # :sinbV:
@@ -110,6 +109,7 @@ member_role_emoji_leave:
     - 292832147625213962 # :yerinAaah:
     - 357312520853389312 # :yerinpout:
   eunha:
+    - 344975890427412481 # :sadeunha:
     - 351110044567470080 # :eunhapeek:
     - 434376562142478367 # :eunhashock:
   sinb:
