@@ -670,7 +670,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
 
       trivia_list_name = data[0].downcase
-      if !@@trivia_lists.include trivia_list_name
+      if !@@trivia_lists.include? trivia_list_name
         event.send_message "A list with the name #{trivia_list_name} does not exist... #{self.random_derp_emoji()}"
       end
 
