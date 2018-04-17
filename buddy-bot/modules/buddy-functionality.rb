@@ -637,7 +637,7 @@ module BuddyBot::Modules::BuddyFunctionality
         self.trivia_no_ongoing_game_msg(event)
         next
       end
-      event.send_message "Current score:\n```#{@@trivia_lists.keys.join(", ")}```"
+      event.send_message "Current score:\n```#{@@trivia_current_list_scoreboard}```"
     }
   end
 
@@ -656,7 +656,7 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
-  message(start_with: /^!trivia start\s+/i) do |event|
+  message(start_with: /^!trivia start\b/i) do |event|
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if self.trivia_game_running?()
         event.send_message "There already is an ongoing game using the #{@@trivia_current_list_name} list... #{self.random_derp_emoji()}"
@@ -669,8 +669,17 @@ module BuddyBot::Modules::BuddyFunctionality
         next
       end
 
-      event.send_message "Selected trivia list: #{data}"
-      # if !@@trivia_lists.include data
+      trivia_list_name = data[0].downcase
+      if !@@trivia_lists.include trivia_list_name
+        event.send_message "A list with the name #{trivia_list_name} does not exist... #{self.random_derp_emoji()}"
+      end
+
+      @@trivia_current_list_name = trivia_list_name
+      @@trivia_current_list_path = @@trivia_lists[trivia_list_name]
+      @@trivia_current_list = self.parse_trivia_list(@@trivia_current_list_path)
+      @@trivia_current_list_scoreboard = {}
+
+      event.send_message "Test: #{@@trivia_current_list}"
     }
   end
 
@@ -693,7 +702,7 @@ module BuddyBot::Modules::BuddyFunctionality
   def self.scan_trivia_lists()
     @@trivia_lists = {}
     Dir.glob(BuddyBot.path("content/trivia/**/*.txt")).reject{ |file| [ ".", ",," ].include?(file) || File.directory?(file) }.each do |file|
-      @@trivia_lists[File.basename(file, ".txt")] = file
+      @@trivia_lists[File.basename(file, ".txt").downcase] = file
     end
   end
 
