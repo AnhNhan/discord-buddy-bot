@@ -601,13 +601,18 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@trivia_current_list_name = ""
   @@trivia_current_list_path = ""
+  @@tr
 
   # question => answers[]
   @@trivia_current_list = {}
   @@trivia_current_list_scoreboard = {}
 
-  def self.no_ongoing_game_msg()
+  def self.trivia_no_ongoing_game_msg()
     event.send_message "There is no ongoing trivia game... #{self.random_derp_emoji()}"
+  end
+
+  def self.trivia_game_running?()
+    !@@trivia_current_list_name.empty?
   end
 
   message(content: "!bot-commands-only-test") do |event|
@@ -628,8 +633,8 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!trivia score") do |event|
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      if !@@trivia_current_list_name
-        self.no_ongoing_game_msg()
+      if !self.trivia_game_running?()
+        self.trivia_no_ongoing_game_msg()
         next
       end
       event.send_message "Current score:\n```#{@@trivia_lists.keys.join(", ")}```"
@@ -639,8 +644,8 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!trivia stop") do |event|
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      if !@@trivia_current_list_name
-        self.no_ongoing_game_msg()
+      if !self.trivia_game_running?()
+        self.trivia_no_ongoing_game_msg()
         next
       end
       event.send_message "Stopping game for #{@@trivia_current_list_name}, no points will be awarded :sadeunha:..."
@@ -653,7 +658,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(start_with: /^!trivia start\s+/i) do |event|
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      if @@trivia_current_list_name
+      if self.trivia_game_running?()
         event.send_message "There already is an ongoing game using the #{@@trivia_current_list_name} list... #{self.random_derp_emoji()}"
         next
       end
@@ -671,7 +676,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message() do |event|
     next unless event.server
-    next unless @@trivia_current_list_name
+    next unless self.trivia_game_running?()
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       event.send_message "Pong!"
     }
@@ -681,7 +686,7 @@ module BuddyBot::Modules::BuddyFunctionality
     BuddyBot.only_creator(event.user) {
       self.log "'#{event.user.name}' just requested a trivia list reload!", event.bot
       self.scan_trivia_lists()
-      event.respond "Done! Hopefully..."
+      event.respond "Done! Hopefully... (existing games are unaffected)"
     }
   end
 
