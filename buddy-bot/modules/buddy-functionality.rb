@@ -607,7 +607,7 @@ module BuddyBot::Modules::BuddyFunctionality
   @@trivia_current_list = {}
   @@trivia_current_list_scoreboard = {}
 
-  def self.trivia_no_ongoing_game_msg()
+  def self.trivia_no_ongoing_game_msg(event)
     event.send_message "There is no ongoing trivia game... #{self.random_derp_emoji()}"
   end
 
@@ -634,7 +634,7 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if !self.trivia_game_running?()
-        self.trivia_no_ongoing_game_msg()
+        self.trivia_no_ongoing_game_msg(event)
         next
       end
       event.send_message "Current score:\n```#{@@trivia_lists.keys.join(", ")}```"
@@ -645,7 +645,7 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if !self.trivia_game_running?()
-        self.trivia_no_ongoing_game_msg()
+        self.trivia_no_ongoing_game_msg(event)
         next
       end
       event.send_message "Stopping game for #{@@trivia_current_list_name}, no points will be awarded :sadeunha:..."
