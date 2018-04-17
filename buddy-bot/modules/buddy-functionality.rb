@@ -76,6 +76,10 @@ module BuddyBot::Modules::BuddyFunctionality
     input.downcase.scan(/([A-z]+)/).select{ |part| @@member_role_emoji_join.include?(part.first) }.flatten
   end
 
+  def self.random_derp_emoji()
+     BuddyBot.emoji(@@derp_faces[["yerin", "yuju", "sinb", "umji", "sowon", "eunha"].sample]).mention
+  end
+
   def self.find_roles(server, name, requesting_primary)
     name = name.downcase
     searches = []
@@ -348,7 +352,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
 
       if current_primary_roles.find{ |current_role| current_role.id == role.id }
-        event.respond "You can't hop to your current primary bias #{BuddyBot.emoji(@@derp_faces[["yerin", "yuju", "sinb", "umji", "sowon", "eunha"].sample]).mention}"
+        event.respond "You can't hop to your current primary bias #{self.random_derp_emoji()}"
         next
       end
 
@@ -592,11 +596,19 @@ module BuddyBot::Modules::BuddyFunctionality
   # trivia-name => file path
   @@trivia_lists = {}
 
+  # for later usage maybe...
+  @@trivia_global_scoreboard = {}
+
   @@trivia_current_list_name = ""
   @@trivia_current_list_path = ""
 
   # question => answers[]
   @@trivia_current_list = {}
+  @@trivia_current_list_scoreboard = {}
+
+  def self.no_ongoing_game_msg()
+    event.send_message "There is no ongoing trivia game... #{self.random_derp_emoji()}"
+  end
 
   message(content: "!bot-commands-only-test") do |event|
     next unless event.server
@@ -612,11 +624,64 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  # score for the current game
+  message(content: "!trivia score") do |event|
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if !@@trivia_current_list_name
+        self.no_ongoing_game_msg()
+        next
+      end
+      event.send_message "Current score:\n```#{@@trivia_lists.keys.join(", ")}```"
+    }
+  end
+
+  message(content: "!trivia stop") do |event|
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if !@@trivia_current_list_name
+        self.no_ongoing_game_msg()
+        next
+      end
+      event.send_message "Stopping game for #{@@trivia_current_list_name}, no points will be awarded :sadeunha:..."
+      @@trivia_current_list_name = ""
+      @@trivia_current_list_path = ""
+      @@trivia_current_list = {}
+      @@trivia_current_list_scoreboard = {}
+    }
+  end
+
+  message(start_with: /^!trivia start\s+/i) do |event|
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if @@trivia_current_list_name
+        event.send_message "There already is an ongoing game using the #{@@trivia_current_list_name} list... #{self.random_derp_emoji()}"
+        next
+      end
+
+      data = event.content.scan(/^!trivia start\s+(.*?)\s*$/i)[0]
+      if !data
+        event.send_message "You need to specify a trivia list name... #{self.random_derp_emoji()}"
+        next
+      end
+
+      event.send_message "Selected trivia list: #{data}"
+      # if !@@trivia_lists.include data
+    }
+  end
+
   message() do |event|
     next unless event.server
     next unless @@trivia_current_list_name
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       event.send_message "Pong!"
+    }
+  end
+
+  message(content: "!reload-trivia-lists") do |event|
+    BuddyBot.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a trivia list reload!", event.bot
+      self.scan_trivia_lists()
+      event.respond "Done! Hopefully..."
     }
   end
 
