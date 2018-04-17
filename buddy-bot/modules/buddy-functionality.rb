@@ -601,11 +601,12 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@trivia_current_list_name = ""
   @@trivia_current_list_path = ""
-  @@tr
-
+  @@trivia_current_channel = nil
+  @@trivia_current_question = ""
   # question => answers[]
   @@trivia_current_list = {}
   @@trivia_current_list_scoreboard = {}
+  @@trivia_question_counter = 0
 
   def self.trivia_no_ongoing_game_msg(event)
     event.send_message "There is no ongoing trivia game... #{self.random_derp_emoji()}"
@@ -648,18 +649,21 @@ module BuddyBot::Modules::BuddyFunctionality
         self.trivia_no_ongoing_game_msg(event)
         next
       end
-      event.send_message "Stopping game for #{@@trivia_current_list_name}, no points will be awarded :sadeunha:..."
+      event.send_message "Stopping game for `#{@@trivia_current_list_name}`, no points will be awarded :sadeunha:... ~~not that we'd have actual score boards :SowonKek:~~"
       @@trivia_current_list_name = ""
       @@trivia_current_list_path = ""
+      @@trivia_current_channel = nil
+      @@trivia_current_question = ""
       @@trivia_current_list = {}
       @@trivia_current_list_scoreboard = {}
+      @@trivia_question_counter = 0
     }
   end
 
   message(start_with: /^!trivia start\b/i) do |event|
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if self.trivia_game_running?()
-        event.send_message "There already is an ongoing game using the #{@@trivia_current_list_name} list... #{self.random_derp_emoji()}"
+        event.send_message "There already is an ongoing game using the `#{@@trivia_current_list_name}` list... #{self.random_derp_emoji()}"
         next
       end
 
@@ -676,10 +680,49 @@ module BuddyBot::Modules::BuddyFunctionality
 
       @@trivia_current_list_name = trivia_list_name
       @@trivia_current_list_path = @@trivia_lists[trivia_list_name]
+      @@trivia_current_channel = event.channel
       @@trivia_current_list = self.parse_trivia_list(@@trivia_current_list_path)
       @@trivia_current_list_scoreboard = {}
+      @@trivia_question_counter = 0
 
       event.send_message "Test: #{@@trivia_current_list}"
+
+      self.trivia_choose_question()
+      self.trivia_post_question()
+    }
+  end
+
+  def self.trivia_post_question()
+    @@trivia_current_channel.send_message "Question ##{@@trivia_question_counter}: **#{@@trivia_current_question}**"
+  end
+
+  def self.trivia_choose_question()
+    @@trivia_current_question = @@trivia_current_list.keys.sample
+    @@trivia_question_counter = @@trivia_question_counter + 1
+  end
+
+  # repeat question
+  message(content: "!trivia repeat") do |event|
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if !self.trivia_game_running?()
+        self.trivia_no_ongoing_game_msg(event)
+        next
+      end
+      self.trivia_post_question()
+    }
+  end
+
+  # skip question... for now...
+  message(content: "!trivia skip") do |event|
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if !self.trivia_game_running?()
+        self.trivia_no_ongoing_game_msg(event)
+        next
+      end
+      self.trivia_choose_question()
+      self.trivia_post_question()
     }
   end
 
@@ -687,7 +730,10 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless event.server
     next unless self.trivia_game_running?()
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      event.send_message "Pong!"
+      # for now exact match
+      if @@trivia_current_list[@@trivia_current_question].include? event.content
+        event.send_message "Boo yeah!"
+      end
     }
   end
 
