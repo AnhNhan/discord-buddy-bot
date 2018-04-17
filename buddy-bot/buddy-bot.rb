@@ -29,8 +29,12 @@ module BuddyBot
   def BuddyBot.only_creator(user, &cb)
     if BuddyBot.is_creator? user
       cb.call
-    else
-      # event.respond "#{user.mention} you do not have permission to complete this command."
+    end
+  end
+
+  def BuddyBot.only_channels(channel, id_list, &cb)
+    if (id_list || []).include?(channel.id)
+      cb.call
     end
   end
 

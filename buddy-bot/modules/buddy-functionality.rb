@@ -23,6 +23,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@server_thresholds = {}
   @@server_threshold_remove_roles = {}
+  @@server_bot_commands = {}
 
   @@global_counted_messages = 0
   @@member_message_counts = {}
@@ -47,6 +48,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@new_member_roles = member_config["new_member_roles"]
     @@server_thresholds = member_config["server_thresholds"]
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
+    @@server_bot_commands = member_config["server_bot_commands"]
     @@member_role_emoji_join = member_config["member_role_emoji_join"]
     @@member_role_emoji_leave = member_config["member_role_emoji_leave"]
     @@biasgame_easter_eggs = member_config["biasgame_easter_eggs"]
@@ -144,6 +146,7 @@ module BuddyBot::Modules::BuddyFunctionality
       self.scan_bot_files()
       self.scan_member_message_counts()
       BuddyBot.build_emoji_map(event.bot.servers)
+      self.scan_trivia_lists()
       # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
       @@initialized = true
     end
@@ -582,6 +585,55 @@ module BuddyBot::Modules::BuddyFunctionality
         end
       end
     }
+  end
+
+  # Trivia stuff
+
+  # trivia-name => file path
+  @@trivia_lists = {}
+
+  @@trivia_current_list_name = ""
+  @@trivia_current_list_path = ""
+
+  # question => answers[]
+  @@trivia_current_list = {}
+
+  message(content: "!bot-commands-only-test") do |event|
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      event.send_message "Pong!"
+    }
+  end
+
+  message(content: "!trivia list") do |event|
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      event.send_message "The following trivias are available:\n```#{@@trivia_lists.keys.join(", ")}```"
+    }
+  end
+
+  message() do |event|
+    next unless event.server
+    next unless @@trivia_current_list_name
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      event.send_message "Pong!"
+    }
+  end
+
+  def self.scan_trivia_lists()
+    @@trivia_lists = {}
+    Dir.glob(BuddyBot.path("content/trivia/**/*.txt")).reject{ |file| [ ".", ",," ].include?(file) || File.directory?(file) }.each do |file|
+      @@trivia_lists[File.basename(file, ".txt")] = file
+    end
+  end
+
+  def self.parse_trivia_list(path)
+    lines = File.readlines(path)
+    zip = lines.reject().map do |line|
+      question, *answers = line.strip.split "`"
+      [ question, answers ]
+    end
+    Hash[zip]
   end
 
 end
