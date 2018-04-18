@@ -219,6 +219,15 @@ server_threshold_remove_roles:
   165551300375871488: # anh-test
     - 430694026954670081 # new
 
+server_threshold_ignore_channels:
+  166304074252288000: # gfcord
+    - 166340324355080193 # whos-your-bias
+    - 166770380260900864 # music
+    - 318787939360571393 # bot-commands
+  165551300375871488: # anh-test
+    - 168814529902280704 # whos-your-bias
+    - 435593424117301259 # bot-commands
+
 # if set, whitelisted channels for bot commands
 server_bot_commands:
   166304074252288000: # gfcord

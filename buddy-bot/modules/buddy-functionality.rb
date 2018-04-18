@@ -23,6 +23,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@server_thresholds = {}
   @@server_threshold_remove_roles = {}
+  @@server_threshold_ignore_channels = {}
   @@server_bot_commands = {}
 
   @@global_counted_messages = 0
@@ -48,6 +49,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@new_member_roles = member_config["new_member_roles"]
     @@server_thresholds = member_config["server_thresholds"]
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
+    @@server_threshold_ignore_channels = member_config["server_threshold_ignore_channels"]
     @@server_bot_commands = member_config["server_bot_commands"]
     @@member_role_emoji_join = member_config["member_role_emoji_join"]
     @@member_role_emoji_leave = member_config["member_role_emoji_leave"]
@@ -202,6 +204,11 @@ module BuddyBot::Modules::BuddyFunctionality
     if server.nil? || event.user.nil? || event.user.bot_account? || !@@server_threshold_remove_roles.include?(server.id) || !@@server_thresholds.include?(server.id)
       next
     end
+
+    if @@server_threshold_ignore_channels.include?(server.id) && @@server_threshold_ignore_channels[server.id].include?(event.channel.id)
+      next
+    end
+
     user = event.user.on server
 
     remove_roles_ids = @@server_threshold_remove_roles[server.id]
