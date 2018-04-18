@@ -613,6 +613,7 @@ module BuddyBot::Modules::BuddyFunctionality
   @@trivia_current_question = ""
   # question => answers[]
   @@trivia_current_list = {}
+  @@trivia_current_matchers = {}
   @@trivia_current_list_scoreboard = {}
   @@trivia_current_question_counter = 0
 
@@ -636,8 +637,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.parse_trivia_list(path)
     lines = File.readlines(path)
-    zip = lines.reject().map do |line|
-      question, *answers = line.strip.split "`"
+    zip = lines.map(&:strip).reject{|line| line.empty? || line.start_with?('#')}.map do |line|
+      question, *answers = line.split "`"
       [ question, answers ]
     end
     Hash[zip]
@@ -650,6 +651,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@trivia_current_question = ""
     @@trivia_current_list = {}
     @@trivia_current_list_scoreboard = {}
+    @@trivia_current_matchers = {}
     @@trivia_current_question_counter = 0
     @@trivia_user_map = {}
   end
@@ -698,6 +700,33 @@ module BuddyBot::Modules::BuddyFunctionality
         next
       end
       self.trivia_print_score_list(event)
+    }
+  end
+
+  # repeat question
+  message(content: "!trivia repeat") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if !self.trivia_game_running?()
+        self.trivia_no_ongoing_game_msg(event)
+        next
+      end
+      self.trivia_post_question()
+    }
+  end
+
+  # skip question... for now...
+  message(content: "!trivia skip") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if !self.trivia_game_running?()
+        self.trivia_no_ongoing_game_msg(event)
+        next
+      end
+      self.trivia_choose_question()
+      self.trivia_post_question()
     }
   end
 
@@ -751,33 +780,7 @@ module BuddyBot::Modules::BuddyFunctionality
   def self.trivia_choose_question()
     @@trivia_current_question = @@trivia_current_list.keys.sample
     @@trivia_current_question_counter = @@trivia_current_question_counter + 1
-  end
-
-  # repeat question
-  message(content: "!trivia repeat") do |event|
-    next unless !event.user.bot_account?
-    next unless event.server
-    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      if !self.trivia_game_running?()
-        self.trivia_no_ongoing_game_msg(event)
-        next
-      end
-      self.trivia_post_question()
-    }
-  end
-
-  # skip question... for now...
-  message(content: "!trivia skip") do |event|
-    next unless !event.user.bot_account?
-    next unless event.server
-    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      if !self.trivia_game_running?()
-        self.trivia_no_ongoing_game_msg(event)
-        next
-      end
-      self.trivia_choose_question()
-      self.trivia_post_question()
-    }
+    @@trivia_current_matchers = self.build_matchers(question, answers)
   end
 
   message() do |event|
@@ -811,4 +814,62 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  def self.build_matchers(question, answers)
+    answers.map do |answer|
+      data = event.content.scan(/\s+\[(.*?)\]\s*$/i)[0]
+      type, *typeargs = (data[0] || "default").downcase.split(",").map(&:strip)
+      case type
+      where "date"
+      self.trivia_matcher_date(answer)
+      where "year"
+      self.trivia_matcher_year(answer)
+      else
+        self.trivia_matcher_default(answer)
+      end
+    end
+  end
+
+  def self.trivia_normalize(input)
+    input.downcase.gsub /[\W_]+/, ""
+  end
+
+  def self.trivia_normalize_light(input)
+    # only remove punctuation
+    input.downcase.gsub /[,.\/\?<>;:'"=\-_\+\|\\\!@#\$%^&\*\(\)\s]+/, ""
+  end
+
+  def self.trivia_matcher_default(term)
+    term_n = self.trivia_normalize(term)
+    lambda do |input|
+      input_n = self.trivia_normalize(input)
+      term_n.eql? input_n
+    end
+  end
+
+  def self.trivia_matcher_year(term)
+    term_n = self.trivia_normalize(term)
+    lambda do |input|
+      input_n = self.trivia_normalize(input)
+      if input_n.length > 1
+        term_n =~ /#{Regexp.quote(input_n)}$/
+      else
+        false
+      end
+    end
+  end
+
+  # requires Y-M-D in N U M B E R S
+  def self.trivia_matcher_date(term)
+    year, month, day = term.split("-")
+    months = [ "stub", "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" ]
+    months_short = months.map{|month| month[0..3]}
+    lambda do |input|
+      year_input, month_input, day_input = nil
+      case input
+      when /(\d+)(?:st|nd|th)?[\s.-]+(\d+|#{months.join "|"})[\s.-]+/i
+      else
+        raise "date format not recognized: '#{input}'"
+      end
+    end
+  end
 end

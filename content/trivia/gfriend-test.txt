@@ -1,5 +1,9 @@
-In which year did GFriend debut?`2015
-What is the release date of GFriend's debut mini album _Season of Glass_?`2015-01-15
-Who are Yerin's BFFs?`Hayoung and Joy
+In which year did GFriend debut? [year]`2015
+What is the release date of GFriend's debut mini album _Season of Glass_? [date]`2015-01-15
+When did GFriend perform _Glass Bead_ for the first time? [date]`2015-01-16
+Who are Yerin's BFFs? [multiple, 2]`Hayoung and Joy
+What year did Yerin graduate? [year]`2015
+What year did Eunha and Yuju graduate? [year]`2016
+What year did SinB and Umji graduate? [year]`2017
 Which high school did GFriend's leader, Sowon, attend?`Hanlim Multi Art School`HAMS`Hanlim
 Which high school did the majority of GFriend's members attend?`School of Performing Arts Seoul`SOPA
