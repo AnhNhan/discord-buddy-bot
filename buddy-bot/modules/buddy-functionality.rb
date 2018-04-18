@@ -501,6 +501,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # tells everybody how long the bot has been running. also tells everybody when I last restarted the bot.
   message(content: "!uptime") do |event|
+    next unless !event.user.bot_account?
     pid = Process.pid
     uptime = `ps -p #{pid} -o etime=`
     event.respond "I have been running for exactly **#{uptime.strip}**, and counting!"
@@ -613,7 +614,10 @@ module BuddyBot::Modules::BuddyFunctionality
   # question => answers[]
   @@trivia_current_list = {}
   @@trivia_current_list_scoreboard = {}
-  @@trivia_question_counter = 0
+  @@trivia_current_question_counter = 0
+
+  # :(
+  @@trivia_user_map = {}
 
   def self.trivia_no_ongoing_game_msg(event)
     event.send_message "There is no ongoing trivia game... #{self.random_derp_emoji()}"
@@ -623,7 +627,53 @@ module BuddyBot::Modules::BuddyFunctionality
     !@@trivia_current_list_name.empty?
   end
 
+  def self.scan_trivia_lists()
+    @@trivia_lists = {}
+    Dir.glob(BuddyBot.path("content/trivia/**/*.txt")).reject{ |file| [ ".", ",," ].include?(file) || File.directory?(file) }.each do |file|
+      @@trivia_lists[File.basename(file, ".txt").downcase] = file
+    end
+  end
+
+  def self.parse_trivia_list(path)
+    lines = File.readlines(path)
+    zip = lines.reject().map do |line|
+      question, *answers = line.strip.split "`"
+      [ question, answers ]
+    end
+    Hash[zip]
+  end
+
+  def self.trivia_reset_game(event)
+    @@trivia_current_list_name = ""
+    @@trivia_current_list_path = ""
+    @@trivia_current_channel = nil
+    @@trivia_current_question = ""
+    @@trivia_current_list = {}
+    @@trivia_current_list_scoreboard = {}
+    @@trivia_current_question_counter = 0
+    @@trivia_user_map = {}
+  end
+
+  def self.trivia_print_score_list(event)
+    message = "**Trivia score board:**\n```"
+    @@trivia_current_list_scoreboard.each do |user_id, count|
+      user = @@trivia_user_map[user_id]
+      message << " '#{user.nick || user.username}': #{count}"
+    end
+    message << "```"
+    event.send_message message
+  end
+
+  message(content: "!reload-trivia-lists") do |event|
+    BuddyBot.only_creator(event.user) {
+      self.log "'#{event.user.name}' just requested a trivia list reload!", event.bot
+      self.scan_trivia_lists()
+      event.respond "Done! Hopefully... (existing games are unaffected)"
+    }
+  end
+
   message(content: "!bot-commands-only-test") do |event|
+    next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       event.send_message "Pong!"
@@ -631,6 +681,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!trivia list") do |event|
+    next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       event.send_message "The following trivias are available:\n```#{@@trivia_lists.keys.join(", ")}```"
@@ -639,17 +690,19 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # score for the current game
   message(content: "!trivia score") do |event|
+    next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if !self.trivia_game_running?()
         self.trivia_no_ongoing_game_msg(event)
         next
       end
-      event.send_message "Current score:\n```#{@@trivia_current_list_scoreboard}```"
+      self.trivia_print_score_list(event)
     }
   end
 
   message(content: "!trivia stop") do |event|
+    next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if !self.trivia_game_running?()
@@ -657,17 +710,12 @@ module BuddyBot::Modules::BuddyFunctionality
         next
       end
       event.send_message "Stopping game for `#{@@trivia_current_list_name}`, no points will be awarded :sadeunha:... ~~not that we'd have actual score boards :SowonKek:~~"
-      @@trivia_current_list_name = ""
-      @@trivia_current_list_path = ""
-      @@trivia_current_channel = nil
-      @@trivia_current_question = ""
-      @@trivia_current_list = {}
-      @@trivia_current_list_scoreboard = {}
-      @@trivia_question_counter = 0
+      self.trivia_reset_game(event)
     }
   end
 
   message(start_with: /^!trivia start\b/i) do |event|
+    next unless !event.user.bot_account?
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if self.trivia_game_running?()
         event.send_message "There already is an ongoing game using the `#{@@trivia_current_list_name}` list... #{self.random_derp_emoji()}"
@@ -685,12 +733,11 @@ module BuddyBot::Modules::BuddyFunctionality
         event.send_message "A list with the name #{trivia_list_name} does not exist... #{self.random_derp_emoji()}"
       end
 
+      self.trivia_reset_game(event)
       @@trivia_current_list_name = trivia_list_name
       @@trivia_current_list_path = @@trivia_lists[trivia_list_name]
       @@trivia_current_channel = event.channel
       @@trivia_current_list = self.parse_trivia_list(@@trivia_current_list_path)
-      @@trivia_current_list_scoreboard = {}
-      @@trivia_question_counter = 0
 
       event.send_message "Test: #{@@trivia_current_list}"
 
@@ -700,16 +747,17 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   def self.trivia_post_question()
-    @@trivia_current_channel.send_message "Question ##{@@trivia_question_counter}: **#{@@trivia_current_question}**"
+    @@trivia_current_channel.send_message "Question ##{@@trivia_current_question_counter}: **#{@@trivia_current_question}**"
   end
 
   def self.trivia_choose_question()
     @@trivia_current_question = @@trivia_current_list.keys.sample
-    @@trivia_question_counter = @@trivia_question_counter + 1
+    @@trivia_current_question_counter = @@trivia_current_question_counter + 1
   end
 
   # repeat question
   message(content: "!trivia repeat") do |event|
+    next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if !self.trivia_game_running?()
@@ -722,6 +770,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # skip question... for now...
   message(content: "!trivia skip") do |event|
+    next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if !self.trivia_game_running?()
@@ -734,38 +783,34 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message() do |event|
+    next unless !event.user.bot_account?
     next unless event.server
     next unless self.trivia_game_running?()
+    next unless event.content !~ /^[!_]\w/i # ignore robyul and buddy-bot commands
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      answers = @@trivia_current_list[@@trivia_current_question]
       # for now exact match
-      if @@trivia_current_list[@@trivia_current_question].include? event.content
-        event.send_message "Boo yeah!"
+      if answers.include? event.content
+        event.send_message "Boo yeah **#{event.user.nick || event.user.username}**!"
+
+        user_current_score = @@trivia_current_list_scoreboard[event.user.id] || 0
+        user_current_score = user_current_score + 1
+        @@trivia_current_list_scoreboard[event.user.id] = user_current_score
+        @@trivia_user_map[event.user.id] = event.user
+
+        @@trivia_current_list.delete @@trivia_current_question
+
+        if @@trivia_current_list.empty?
+          event.send_message "Game finished!"
+          self.trivia_print_score_list(event)
+          self.trivia_reset_game(event)
+          next
+        end
+
+        self.trivia_choose_question()
+        self.trivia_post_question()
       end
     }
-  end
-
-  message(content: "!reload-trivia-lists") do |event|
-    BuddyBot.only_creator(event.user) {
-      self.log "'#{event.user.name}' just requested a trivia list reload!", event.bot
-      self.scan_trivia_lists()
-      event.respond "Done! Hopefully... (existing games are unaffected)"
-    }
-  end
-
-  def self.scan_trivia_lists()
-    @@trivia_lists = {}
-    Dir.glob(BuddyBot.path("content/trivia/**/*.txt")).reject{ |file| [ ".", ",," ].include?(file) || File.directory?(file) }.each do |file|
-      @@trivia_lists[File.basename(file, ".txt").downcase] = file
-    end
-  end
-
-  def self.parse_trivia_list(path)
-    lines = File.readlines(path)
-    zip = lines.reject().map do |line|
-      question, *answers = line.strip.split "`"
-      [ question, answers ]
-    end
-    Hash[zip]
   end
 
 end
