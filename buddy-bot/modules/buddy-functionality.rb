@@ -739,8 +739,6 @@ module BuddyBot::Modules::BuddyFunctionality
       @@trivia_current_channel = event.channel
       @@trivia_current_list = self.parse_trivia_list(@@trivia_current_list_path)
 
-      event.send_message "Test: #{@@trivia_current_list}"
-
       self.trivia_choose_question()
       self.trivia_post_question()
     }
