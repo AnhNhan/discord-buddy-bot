@@ -730,6 +730,22 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  # spoil the game for all
+  message(content: "!trivia reveal") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if !self.trivia_game_running?()
+        self.trivia_no_ongoing_game_msg(event)
+        next
+      end
+      event.send_message "The answer would have been '**#{@@trivia_current_list[@@trivia_current_question].sample}**'! No point has been awarded for this question... #{self.random_derp_emoji()}"
+      @@trivia_current_list.delete @@trivia_current_question
+      self.trivia_choose_question()
+      self.trivia_post_question()
+    }
+  end
+
   message(content: "!trivia stop") do |event|
     next unless !event.user.bot_account?
     next unless event.server
