@@ -796,7 +796,7 @@ module BuddyBot::Modules::BuddyFunctionality
   def self.trivia_choose_question()
     @@trivia_current_question = @@trivia_current_list.keys.sample
     @@trivia_current_question_counter = @@trivia_current_question_counter + 1
-    @@trivia_current_matchers = self.build_matchers(question, answers)
+    @@trivia_current_matchers = self.build_matchers(@@trivia_current_question, @@trivia_current_list[@@trivia_current_question])
   end
 
   message() do |event|
@@ -805,9 +805,9 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless self.trivia_game_running?()
     next unless event.content !~ /^[!_]\w/i # ignore robyul and buddy-bot commands
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      answers = @@trivia_current_list[@@trivia_current_question]
-      # for now exact match
-      if answers.include? event.content
+      if @@trivia_current_matchers.map do |answer, matcher|
+        matcher.call(event.content)
+      end.any?
         event.send_message "Boo yeah **#{event.user.nick || event.user.username}**!"
 
         user_current_score = @@trivia_current_list_scoreboard[event.user.id] || 0
@@ -831,18 +831,27 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   def self.build_matchers(question, answers)
-    answers.map do |answer|
-      data = event.content.scan(/\s+\[(.*?)\]\s*$/i)[0]
+    matchers = answers.map do |answer|
+      matcher = nil
+      data = question.scan(/\s+\[(.*?)\]\s*$/i)[0] || []
       type, *typeargs = (data[0] || "default").downcase.split(",").map(&:strip)
       case type
-      where "date"
-      self.trivia_matcher_date(answer)
-      where "year"
-      self.trivia_matcher_year(answer)
+      # when "date"
+      # matcher = self.trivia_matcher_date(answer)
+      when "year"
+        matcher = self.trivia_matcher_year(answer)
+      when "multiple"
+        if typeargs.length < 1
+          self.log "Question has insufficient typespec for multiple: '#{question}'"
+          next
+        end
+        matcher = self.trivia_matcher_multiple(answer, typeargs[0])
       else
-        self.trivia_matcher_default(answer)
+        matcher = self.trivia_matcher_default(answer)
       end
+      [ answer, matcher ]
     end
+    Hash[matchers]
   end
 
   def self.trivia_normalize(input)
@@ -851,7 +860,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.trivia_normalize_light(input)
     # only remove punctuation
-    input.downcase.gsub /[,.\/\?<>;:'"=\-_\+\|\\\!@#\$%^&\*\(\)\s]+/, ""
+    input.downcase.gsub /[,.\/\?<>;:'"=\-_\+\|\\\!@#\$%^&\*\(\)]+/, ""
   end
 
   def self.trivia_matcher_default(term)
@@ -886,6 +895,16 @@ module BuddyBot::Modules::BuddyFunctionality
       else
         raise "date format not recognized: '#{input}'"
       end
+      event.send_message "Debug Year: input '#{input_n}' term '#{term_n}'"
+    end
+  end
+
+  def self.trivia_matcher_multiple(term, count)
+    separator_words = [ "and", "," ]
+    terms = trivia_normalize_light(term.downcase).split.reject{ |term| separator_words.include? term }
+    lambda do |input|
+      matching_parts = trivia_normalize_light(input.downcase).split.select{ |part| terms.include? part }.uniq
+      matching_parts.length >= count
     end
   end
 end
