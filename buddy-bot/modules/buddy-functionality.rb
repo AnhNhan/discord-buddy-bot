@@ -55,6 +55,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@member_role_emoji_leave = member_config["member_role_emoji_leave"]
     @@biasgame_easter_eggs = member_config["biasgame_easter_eggs"]
     @@derp_faces = member_config["derp_faces"]
+    @@trivia_config_reveal_after = member_config["trivia_config_reveal_after"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
   end
@@ -607,6 +608,8 @@ module BuddyBot::Modules::BuddyFunctionality
   # for later usage maybe...
   @@trivia_global_scoreboard = {}
 
+  @@trivia_config_reveal_after = 0
+
   @@trivia_current_list_name = ""
   @@trivia_current_list_path = ""
   @@trivia_current_channel = nil
@@ -616,6 +619,7 @@ module BuddyBot::Modules::BuddyFunctionality
   @@trivia_current_matchers = {}
   @@trivia_current_list_scoreboard = {}
   @@trivia_current_question_counter = 0
+  @@trivia_current_question_time = 0 # the time at which the question was issued
 
   # :(
   @@trivia_user_map = {}
@@ -637,7 +641,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.parse_trivia_list(path)
     lines = File.readlines(path)
-    zip = lines.map(&:strip).reject{|line| line.empty? || line.start_with?('#')}.map do |line|
+    zip = lines.map(&:strip).reject{|line| line.empty? || line.start_with?('#') || !line.include?('`')}.map do |line|
       question, *answers = line.split "`"
       [ question, answers ]
     end
@@ -653,6 +657,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@trivia_current_list_scoreboard = {}
     @@trivia_current_matchers = {}
     @@trivia_current_question_counter = 0
+    @@trivia_current_question_time = 0
     @@trivia_user_map = {}
   end
 
@@ -739,6 +744,11 @@ module BuddyBot::Modules::BuddyFunctionality
         self.trivia_no_ongoing_game_msg(event)
         next
       end
+      time_diff = 0
+      if (time_diff = Time.now.getutc.to_i - @@trivia_current_question_time) < @@trivia_config_reveal_after
+        event.send_message "Please wait another #{time_diff} seconds until revealing the answer... #{self.random_derp_emoji()}"
+        next
+      end
       event.send_message "The answer would have been '**#{@@trivia_current_list[@@trivia_current_question].sample}**'! No point has been awarded for this question... #{self.random_derp_emoji()}"
       @@trivia_current_list.delete @@trivia_current_question
       self.trivia_choose_question()
@@ -797,6 +807,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@trivia_current_question = @@trivia_current_list.keys.sample
     @@trivia_current_question_counter = @@trivia_current_question_counter + 1
     @@trivia_current_matchers = self.build_matchers(@@trivia_current_question, @@trivia_current_list[@@trivia_current_question])
+    @@trivia_current_question_time = Time.now.getutc.to_i
   end
 
   message() do |event|
@@ -805,10 +816,11 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless self.trivia_game_running?()
     next unless event.content !~ /^[!_]\w/i # ignore robyul and buddy-bot commands
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      if @@trivia_current_matchers.map do |answer, matcher|
+      correct_answer = nil
+      if correct_answer = @@trivia_current_matchers.find do |answer, matcher|
         matcher.call(event.content)
-      end.any?
-        event.send_message "Boo yeah **#{event.user.nick || event.user.username}**!"
+      end
+        event.send_message "Boo yeah **#{event.user.nick || event.user.username}**! '#{correct_answer}' indeed."
 
         user_current_score = @@trivia_current_list_scoreboard[event.user.id] || 0
         user_current_score = user_current_score + 1

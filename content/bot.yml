@@ -236,6 +236,8 @@ server_bot_commands:
   165551300375871488: # anh-test
     - 435593424117301259 # bot-commands
 
+trivia_config_reveal_after: 300 # 5 minutes
+
 members_of_other_groups:
   momo:
     - "*nico nico ni~*"
