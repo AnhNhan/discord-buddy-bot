@@ -845,7 +845,7 @@ module BuddyBot::Modules::BuddyFunctionality
           self.log "Question has insufficient typespec for multiple: '#{question}'"
           next
         end
-        matcher = self.trivia_matcher_multiple(answer, typeargs[0])
+        matcher = self.trivia_matcher_multiple(answer, (typeargs[0] || 0).to_i)
       else
         matcher = self.trivia_matcher_default(answer)
       end
