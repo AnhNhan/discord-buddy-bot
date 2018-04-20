@@ -1,38 +1,45 @@
 In which year did GFriend debut? [year]`2015
 What is the release date of GFriend's debut mini album _Season of Glass_? [date]`2015-01-15
 When did GFriend perform _Glass Bead_ for the first time? [date]`2015-01-16
+
 Who are Yerin's BFFs? [multiple, 2]`Hayoung and Joy
 Who are SinB's BFFs? [multiple, 2]`Chanwoo and Moonbin`Eunha and Moonbin
-Who is Sowon's BFFs?`Nayoung
+Who is Sowon's BFF?`Nayoung
+
 What year did Yerin graduate? [year]`2015
 What year did Eunha and Yuju graduate? [year]`2016
 What year did SinB and Umji graduate? [year]`2017
 Which high school did GFriend's leader, Sowon, attend?`Hanlim Multi Art School`HAMS`Hanlim
 Which high school did the majority of GFriend's members attend?`School of Performing Arts Seoul`SOPA
+
 In which city was Yerin born?`Incheon
 In which city was Umji born?`Incheon
 In which city was SinB born?`Cheongju
 In which city was Yuju born?`Ilsan
 In which city was Sowon born?`Seoul`Eunpyeong`Eunpyeong-gu
-In which city was Seoul born?`Seoul
+In which city was Eunha born?`Seoul
+
 What is Sowon's birthday? [date]`1995-12-07
 What is Yerin's birthday? [date]`1996-08-19
 What is Yuju's birthday? [date]`1997-10-04
 What is Eunha's birthday? [date]`1997-05-30
 What is SinB's birthday? [date]`1998-06-03
 What is Umji's birthday? [date]`1998-08-19
+
 What is Sowon's real name? [multiple, 2]`Kim, Sojung`Kim, So Jung`Kim, Sojeong`Kim, So Jeong
 What is Yerin's real name? [multiple, 2]`Jung, Yerin`Jung, Ye Rin
 What is Yuju's real name? [multiple, 2]`Choi, Yuna`Choi, Yu Na`Choi, Yoona`Choi, Yoo Na
 What is Eunha's real name? [multiple, 2]`Jung, Eunbi`Jung, Eun Bi
 What is SinB's real name? [multiple, 2]`Hwang, Eunbi`Hwang, Eun Bi
 What is Umji's real name? [multiple, 2]`Kim, Yewon`Kim, Ye Won
+
 Which cover song did _Sowon_ perform for _Season of Glass_? [multiple, 2]`Sunmi, Gashina
-Which cover song did _Yerin_ perform for _Season of Glass_? [multiple, 2]`Lee Hyori, U Go Girl
+Which cover song did _Yerin_ perform for _Season of Glass_? [multiple, 5]`Lee Hyori, U Go Girl
 Which cover song did _Yuju_ perform for _Season of Glass_? [multiple, 2]`Ailee, Heaven
 Which cover song did _Eunha_ perform for _Season of Glass_? [multiple, 2]`Gain, Bloom
 Which cover song did _SinB_ perform for _Season of Glass_? [multiple, 2]`BoA, No. 1
 Which cover song did _Umji_ perform for _Season of Glass_? [multiple, 2]`IU, Twenty Three`IU, 23
+
 Who is the strongest member of GFriend?`Yerin
 Who is the Many Faced Goddess?`Sowon
 Who is a big fan of Harry Potter?`SinB
@@ -41,7 +48,24 @@ Who is Eunha's role model?`IU`Lee Jieun
 Who is Sowon's role model?`IU`Lee Jieun
 Which show did Yuju participate in before debut?`K-Pop Star 1
 In which movie did Eunha appear before debut?`Love and War
+
 At which company did Sowon train before she came to Source Music?`DSP Media
 At which company did Yuju train before she came to Source Music?`LOEN Entertainment
 At which company did SinB and Eunha train before they came to Source Music?`BigHit Entertainment
 At which companies did Yerin train before she came to Source Music? [multiple, 2]`CUBE Entertainment, Fantagio
+
+# credits https://docs.google.com/spreadsheets/d/1-3DuRUIKN66-0bL7IilGvG910J31rTDebMCTLCXNanY/edit#gid=0
+
+What nickname was given to Yuju for being able to memorize fan's names?`Choi Sweet
+
+What is Yuju's zodiac sign?`Libra
+
+What is Yerin's favourite color?`Yellow
+
+What book series is SinB especially fond of?`Harry Potter
+
+How many songs did Umji sing in her first episode of "Umji Live"? [number]`5`five
+
+How many years was SinB a trainee at Bit Hit Entertainment?`5`five
+
+In one of the scenes in the Love Whisper MV, what did Yerin whisper to SinB?`beef`sogogi`소고기
