@@ -511,11 +511,16 @@ module BuddyBot::Modules::BuddyFunctionality
   message(start_with: "!sigh") do |event|
     BuddyBot.only_creator(event.user) {
       name = "Yerin"
+      emoji = "<:yerinlove:437006461751656470>"
       data = event.content.scan(/^!sigh\s+(.*?)\s*$/i)[0]
       if data
         name = data[0]
       end
-      event.respond "_\\*sigh\\* #{name} is so beautiful~_"
+      name = name.strip
+      if !name.downcase.eql? "yerin"
+        emoji = ""
+      end
+      event.respond "_\\*sigh\\* #{name} is so beautiful~_ #{emoji}"
       event.message.delete()
     }
   end
