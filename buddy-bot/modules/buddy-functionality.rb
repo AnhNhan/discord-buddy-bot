@@ -820,7 +820,7 @@ module BuddyBot::Modules::BuddyFunctionality
       if correct_answer = @@trivia_current_matchers.find do |answer, matcher|
         matcher.call(event.content)
       end
-        event.send_message "Boo yeah **#{event.user.nick || event.user.username}**! '#{correct_answer}' indeed."
+        event.send_message "Boo yeah **#{event.user.nick || event.user.username}**! '#{correct_answer[0]}' indeed."
 
         user_current_score = @@trivia_current_list_scoreboard[event.user.id] || 0
         user_current_score = user_current_score + 1
