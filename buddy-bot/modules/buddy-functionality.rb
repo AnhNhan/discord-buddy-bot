@@ -886,7 +886,7 @@ module BuddyBot::Modules::BuddyFunctionality
   def self.trivia_matcher_year(term)
     term_n = self.trivia_normalize(term)
     lambda do |input|
-      input_n = self.trivia_normalize(input)
+      input_n = self.trivia_normalize(input).gsub /\D+/, ""
       if input_n.length > 1
         term_n =~ /#{Regexp.quote(input_n)}$/
       else
