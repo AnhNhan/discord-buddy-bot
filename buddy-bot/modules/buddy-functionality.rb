@@ -926,7 +926,7 @@ module BuddyBot::Modules::BuddyFunctionality
         "#{day}-#{month}-#{year[2,2]}",
         "#{day}-#{month}-#{year}",
       ].each do |format_base|
-        formats << format_base.gsub "-", separator
+        formats << format_base.gsub("-", separator)
       end
     end
     puts "#{formats}"
