@@ -919,6 +919,9 @@ module BuddyBot::Modules::BuddyFunctionality
 
       "#{months_short[month.to_i]} #{day}th #{year[2,2]}",
       "#{months_short[month.to_i]} #{day}th #{year}",
+
+      "#{year}#{month}#{day}",
+      "#{year[2,2]}#{month}#{day}",
     ]
     [ "-", ".", "/" ].each do |separator|
       [
