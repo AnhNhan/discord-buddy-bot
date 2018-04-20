@@ -898,26 +898,27 @@ module BuddyBot::Modules::BuddyFunctionality
   # requires Y-M-D in N U M B E R S
   def self.trivia_matcher_date(term)
     year, month, day = term.split("-")
+
     months = [ "stub", "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" ]
     months_short = months.map{|month| month[0..3]}
     formats = [
-      "#{day}th #{months[month]} #{year[2,2]}",
-      "#{day}th #{months[month]} #{year}",
+      "#{day}th #{months[month.to_i]} #{year[2,2]}",
+      "#{day}th #{months[month.to_i]} #{year}",
 
-      "#{day}th #{months_short[month]} #{year[2,2]}",
-      "#{day}th #{months_short[month]} #{year}",
+      "#{day}th #{months_short[month.to_i]} #{year[2,2]}",
+      "#{day}th #{months_short[month.to_i]} #{year}",
 
-      "#{day}. #{months[month]} #{year[2,2]}",
-      "#{day}. #{months[month]} #{year}",
+      "#{day}. #{months[month.to_i]} #{year[2,2]}",
+      "#{day}. #{months[month.to_i]} #{year}",
 
-      "#{day}. #{months_short[month]} #{year[2,2]}",
-      "#{day}. #{months_short[month]} #{year}",
+      "#{day}. #{months_short[month.to_i]} #{year[2,2]}",
+      "#{day}. #{months_short[month.to_i]} #{year}",
 
-      "#{months[month]} #{day}th #{year[2,2]}",
-      "#{months[month]} #{day}th #{year}",
+      "#{months[month.to_i]} #{day}th #{year[2,2]}",
+      "#{months[month.to_i]} #{day}th #{year}",
 
-      "#{months_short[month]} #{day}th #{year[2,2]}",
-      "#{months_short[month]} #{day}th #{year}",
+      "#{months_short[month.to_i]} #{day}th #{year[2,2]}",
+      "#{months_short[month.to_i]} #{day}th #{year}",
     ]
     [ "-", ".", "/" ].each do |separator|
       [
