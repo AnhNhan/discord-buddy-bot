@@ -900,7 +900,7 @@ module BuddyBot::Modules::BuddyFunctionality
     year, month, day = term.split("-")
 
     months = [ "stub", "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" ]
-    months_short = months.map{|month| month[0..3]}
+    months_short = months.map{|month| month[0..2]}
     formats = [
       "#{day}th #{months[month.to_i]} #{year[2,2]}",
       "#{day}th #{months[month.to_i]} #{year}",
