@@ -848,8 +848,8 @@ module BuddyBot::Modules::BuddyFunctionality
       data = question.scan(/\s+\[(.*?)\]\s*$/i)[0] || []
       type, *typeargs = (data[0] || "default").downcase.split(",").map(&:strip)
       case type
-      # when "date"
-      # matcher = self.trivia_matcher_date(answer)
+      when "date"
+      matcher = self.trivia_matcher_date(answer)
       when "year"
         matcher = self.trivia_matcher_year(answer)
       when "multiple"
@@ -900,14 +900,39 @@ module BuddyBot::Modules::BuddyFunctionality
     year, month, day = term.split("-")
     months = [ "stub", "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" ]
     months_short = months.map{|month| month[0..3]}
-    lambda do |input|
-      year_input, month_input, day_input = nil
-      case input
-      when /(\d+)(?:st|nd|th)?[\s.-]+(\d+|#{months.join "|"})[\s.-]+/i
-      else
-        raise "date format not recognized: '#{input}'"
+    formats = [
+      "#{day}th #{months[month]} #{year[2,2]}",
+      "#{day}th #{months[month]} #{year}",
+
+      "#{day}th #{months_short[month]} #{year[2,2]}",
+      "#{day}th #{months_short[month]} #{year}",
+
+      "#{day}. #{months[month]} #{year[2,2]}",
+      "#{day}. #{months[month]} #{year}",
+
+      "#{day}. #{months_short[month]} #{year[2,2]}",
+      "#{day}. #{months_short[month]} #{year}",
+
+      "#{months[month]} #{day}th #{year[2,2]}",
+      "#{months[month]} #{day}th #{year}",
+
+      "#{months_short[month]} #{day}th #{year[2,2]}",
+      "#{months_short[month]} #{day}th #{year}",
+    ]
+    [ "-", ".", "/" ].each do |separator|
+      [
+        term,
+        "#{year[2,2]}-#{month}-#{day}",
+        "#{day}-#{month}-#{year[2,2]}",
+        "#{day}-#{month}-#{year}",
+      ].each do |format_base|
+        formats << format_base.gsub "-", separator
       end
-      event.send_message "Debug Year: input '#{input_n}' term '#{term_n}'"
+    end
+    puts "#{formats}"
+    formats = formats.uniq
+    lambda do |input|
+      formats.include? input.downcase.gsub(/[,!?]+/, "").gsub(/[ ]+/, " ")
     end
   end
 
