@@ -930,7 +930,6 @@ module BuddyBot::Modules::BuddyFunctionality
         formats << format_base.gsub("-", separator)
       end
     end
-    puts "#{formats}"
     formats = formats.uniq
     lambda do |input|
       formats.include? input.downcase.gsub(/[,!?]+/, "").gsub(/[ ]+/, " ")
