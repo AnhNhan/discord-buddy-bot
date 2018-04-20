@@ -17,7 +17,7 @@ In which city was Sowon born?`Seoul`Eunpyeong`Eunpyeong-gu
 In which city was Seoul born?`Seoul
 What is Sowon's birthday? [date]`1995-12-07
 What is Yerin's birthday? [date]`1996-08-19
-What is Yuju's birthday? [date]`1997-07-04
+What is Yuju's birthday? [date]`1997-10-04
 What is Eunha's birthday? [date]`1997-05-30
 What is SinB's birthday? [date]`1998-06-03
 What is Umji's birthday? [date]`1998-08-19
