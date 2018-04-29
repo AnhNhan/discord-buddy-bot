@@ -166,7 +166,6 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   member_join do |event|
-    event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
     begin
       server = event.server
       if !@@new_member_roles.include? server.id
@@ -180,6 +179,7 @@ module BuddyBot::Modules::BuddyFunctionality
       member = event.user.on(server)
       member.roles = roles
       self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot
+      event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
     rescue
     end
   end
