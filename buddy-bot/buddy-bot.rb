@@ -48,7 +48,7 @@ module BuddyBot
   end
 
   def BuddyBot.emoji(id)
-    @@global_emoji_map[id]
+    @@global_emoji_map[id] || @@global_emoji_map[431133727528058880]
   end
 end
 
