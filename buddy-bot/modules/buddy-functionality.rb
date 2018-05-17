@@ -669,9 +669,10 @@ module BuddyBot::Modules::BuddyFunctionality
             next
           end
 
-          event.send_message "**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}\n" +
+          event.send_message "Giveaway #**#{giveaway_list_name}** - use `!giveaway join #{giveaway_list_name}` to join the draw!\n" +
+                            "Subject: #{@@giveaways[giveaway_list_name]['subject']}\n" +
                             "Restrictions: #{@@giveaways[giveaway_list_name]['restrictions']}\n" +
-                            "Responsible: <#{@@giveaways[giveaway_list_name]['responsible_name']}>\n" +
+                            "Responsible: **<#{@@giveaways[giveaway_list_name]['responsible_name']}>**\n" +
                             "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end']}\n" +
                             "**Disclaimer: we are some random dudes on the internet, can't be held liable, don't trust us about anything**"
           event.message.delete()
@@ -706,7 +707,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
         if !@@giveaway_joins.include? giveaway_list_name
           @@giveaway_joins[giveaway_list_name] = {
-            "joined": []
+            "joined" => []
           }
         end
 
