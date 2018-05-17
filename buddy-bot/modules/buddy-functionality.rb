@@ -25,6 +25,7 @@ module BuddyBot::Modules::BuddyFunctionality
   @@server_threshold_remove_roles = {}
   @@server_threshold_ignore_channels = {}
   @@server_bot_commands = {}
+  @@giveaway_channels = {}
 
   @@global_counted_messages = 0
   @@member_message_counts = {}
@@ -36,6 +37,9 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@biasgame_easter_eggs = {}
   @@derp_faces = {}
+
+  @@giveaways = {}
+  @@giveaway_joins = {}
 
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
@@ -51,6 +55,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
     @@server_threshold_ignore_channels = member_config["server_threshold_ignore_channels"]
     @@server_bot_commands = member_config["server_bot_commands"]
+    @@giveaway_channels = member_config["giveaway_channels"]
     @@member_role_emoji_join = member_config["member_role_emoji_join"]
     @@member_role_emoji_leave = member_config["member_role_emoji_leave"]
     @@biasgame_easter_eggs = member_config["biasgame_easter_eggs"]
@@ -58,6 +63,8 @@ module BuddyBot::Modules::BuddyFunctionality
     @@trivia_config_reveal_after = member_config["trivia_config_reveal_after"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
+
+    @@giveaways = YAML.load_file(BuddyBot.path("content/giveaways.yml"))
   end
 
   def self.scan_member_message_counts()
@@ -66,6 +73,14 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.persist_member_message_counts()
     File.open(BuddyBot.path("content/member_message_counts.yml"), "w") { |file| file.write(YAML.dump(@@member_message_counts)) }
+  end
+
+  def self.scan_giveaway_joins()
+    @@giveaway_joins = YAML.load_file(BuddyBot.path("content/giveaway-joins.yml"))
+  end
+
+  def self.persist_giveaway_joins()
+    File.open(BuddyBot.path("content/giveaway-joins.yml"), "w") { |file| file.write(YAML.dump(@@giveaway_joins)) }
   end
 
   def self.log(msg, bot)
@@ -152,11 +167,12 @@ module BuddyBot::Modules::BuddyFunctionality
     if not @@initialized
       self.scan_bot_files()
       self.scan_member_message_counts()
-      BuddyBot.build_emoji_map(event.bot.servers)
+      self.scan_giveaway_joins()
       self.scan_trivia_lists()
       # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
       @@initialized = true
     end
+    BuddyBot.build_emoji_map(event.bot.servers)
     event.bot.game = @@motd.sample
     self.log "ready!", event.bot
   end
@@ -547,16 +563,18 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: "!reload-message-counts") do |event|
     BuddyBot.only_creator(event.user) {
-      self.log "'#{event.user.name}' just requested a member message count reload!", event.bot
+      self.log "'#{event.user.name}' just requested a dynamic data reload!", event.bot
       self.scan_member_message_counts()
+      self.scan_giveaway_joins()
       event.respond "Done! Hopefully..."
     }
   end
 
-  message(content: "!save-message-counts") do |event|
+  message(content: "!save-all") do |event|
     BuddyBot.only_creator(event.user) {
-      self.log "'#{event.user.name}' just requested a member message count persist!", event.bot
+      self.log "'#{event.user.name}' just requested a dynamic data persist!", event.bot
       self.persist_member_message_counts()
+      self.persist_giveaway_joins
       event.respond "Done! Hopefully..."
     }
   end
@@ -601,6 +619,56 @@ module BuddyBot::Modules::BuddyFunctionality
         roles.each do |chunk|
           self.log chunk.join, event.bot
         end
+      end
+    }
+  end
+
+  # Giveaway stuff
+
+  message(content: "!giveaway list") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+      if @giveaways.length
+        event.send_message "The following trivias are available:\n```#{@@trivia_lists.keys.join(", ")}```"
+      else
+        event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
+      end
+    }
+  end
+
+  message(start_with: "!giveaway join ") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+      if @giveaways.length
+        data = event.content.scan(/^!trivia start\s+(.*?)\s*$/i)[0]
+        if !data
+          event.send_message "You need to specify a trivia list name... #{self.random_derp_emoji()}"
+          next
+        end
+
+        giveaway_list_name = data[0].downcase
+        if !@@giveaways.include? giveaway_list_name
+          event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
+          next
+        end
+
+        if !@@giveaway_joins.include? giveaway_list_name
+          @@giveaway_joins[giveaway_list_name] = {
+            "joined": []
+          }
+        end
+
+        if @@giveaway_joins[giveaway_list_name]["joined"].include? event.user.id
+          event.send_message "#{event.user.mention} you already joined the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name][subject]}'... <:eunhathink:350850054900416512>"
+        end
+        @@giveaway_joins[giveaway_list_name]["joined"] << event.user.id
+        event.send_message "Ba-duntz! #{event.user.mention} you joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name][subject]}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
+
+        self.log "New member joined giveaway '**#{giveaway_list_name}**' - '#{event.user.username}' / '#{event.user.nick}'", event.bot
+      else
+        event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
       end
     }
   end
@@ -791,6 +859,7 @@ module BuddyBot::Modules::BuddyFunctionality
       trivia_list_name = data[0].downcase
       if !@@trivia_lists.include? trivia_list_name
         event.send_message "A list with the name #{trivia_list_name} does not exist... #{self.random_derp_emoji()}"
+        next
       end
 
       self.trivia_reset_game(event)

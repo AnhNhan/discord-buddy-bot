@@ -229,12 +229,19 @@ server_threshold_ignore_channels:
     - 168814529902280704 # whos-your-bias
     - 435593424117301259 # bot-commands
 
-# if set, whitelisted channels for bot commands
+# if set, whitelisted channels for bot commands & giveaway status requests
 server_bot_commands:
   166304074252288000: # gfcord
     - 318787939360571393 # bot-commands
   165551300375871488: # anh-test
     - 435593424117301259 # bot-commands
+
+# whitelisted channels for giveaway status requests
+giveaway_channels:
+  166304074252288000: # gfcord
+    - 318787939360571393 # bot-commands
+  165551300375871488: # anh-test
+    - 446755943384875008 # giveaways
 
 trivia_config_reveal_after: 300 # 5 minutes
 
