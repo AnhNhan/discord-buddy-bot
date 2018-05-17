@@ -635,7 +635,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   def self.gdpr_disclaimer()
-    "As per EU regulation 2016/679 aka the General Data Protection Regulation (GDPR), when you join a giveaway solely your Discord ID will be recorded.\n" +
+    "As per EU regulation 2016/679 aka the General Data Protection Regulation (GDPR), only the bare minimum amount of information is going to be recorded. When you join a giveaway solely your Discord ID will be recorded.\n" +
     "Should you be drawn as the winner your Discord ID will be shared with the mod team and the responsible person.\n" +
     "DO NOT SHARE YOUR PERSONAL INFORMATION with anyone other than the responsible person of the giveaway.\n" +
     "Neither the bot, its owner nor anyone of the mod team will require your personal information like your address.\nWe merely handle the recording of participation and the drawing process."
