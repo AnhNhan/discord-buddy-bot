@@ -634,13 +634,30 @@ module BuddyBot::Modules::BuddyFunctionality
       "**Disclaimer: we are some random dudes on the internet, can't be held liable, don't trust us about anything**"
   end
 
+  def self.gdpr_disclaimer()
+    "As per EU regulation 2016/679 aka the General Data Protection Regulation (GDPR), when you join a giveaway solely your Discord ID will be recorded. " +
+    "Should you be drawn as the winner your Discord ID will be shared with the mod team and the responsible person. " +
+    "DO NOT SHARE YOUR PERSONAL INFORMATION with anyone other than the responsible person of the giveaway. " +
+    "Neither the bot, its owner nor anyone of the mod team will require your personal information like your address. We merely handle the recording of participation and the drawing process."
+  end
+
+  message(content: "!gdpr-giveaway") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_creator(event.user) {
+      BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+        event.send_message self.gdpr_disclaimer()
+      }
+    }
+  end
+
   message(content: "!giveaway list") do |event|
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
       if @@giveaways.length
         contents = @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name) }.join("\n\n")
-        event.user.pm(contents)
+        event.user.pm(contents + "\n\n" + self.gdpr_disclaimer())
         event.send_message "#{event.user.mention} please check your DMs!"
       else
         event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
