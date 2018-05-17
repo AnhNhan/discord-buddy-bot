@@ -637,6 +637,49 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(content: "!giveaway status") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_creator(event.user) {
+      BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+        if @@giveaway_joins.length
+          event.send_message "#{@@giveaway_joins}"
+        else
+          event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
+        end
+      }
+    }
+  end
+
+  message(start_with: "!giveaway announce ") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_creator(event.user) {
+      BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+        if @@giveaways.length
+          data = event.content.scan(/^!giveaway announce\s+(.*?)\s*$/i)[0]
+          if !data
+            event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
+            next
+          end
+
+          giveaway_list_name = data[0].downcase
+          if !@@giveaways.include? giveaway_list_name
+            event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
+            next
+          end
+
+          event.send_message "**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}\n" +
+                            "Restrictions: #{@@giveaways[giveaway_list_name]['restrictions']}\n" +
+                            "Responsible: <@#{@@giveaways[giveaway_list_name]['responsible_id']}>\n" +
+                            "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end']}"
+        else
+          event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
+        end
+      }
+    }
+  end
+
   message(start_with: "!giveaway join ") do |event|
     next unless !event.user.bot_account?
     next unless event.server
@@ -644,7 +687,7 @@ module BuddyBot::Modules::BuddyFunctionality
       if @@giveaways.length
         data = event.content.scan(/^!giveaway join\s+(.*?)\s*$/i)[0]
         if !data
-          event.send_message "You need to specify a trivia list name... #{self.random_derp_emoji()}"
+          event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
           next
         end
 
@@ -672,7 +715,7 @@ module BuddyBot::Modules::BuddyFunctionality
         @@giveaway_joins[giveaway_list_name]["joined"] << event.user.id
         event.send_message "Ba-duntz! #{event.user.mention} you joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
 
-        self.log "New member joined giveaway '**#{giveaway_list_name}**' - '#{event.user.username}' / '#{event.user.nick}'", event.bot
+        self.log "New member joined giveaway '**#{giveaway_list_name}**' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot
       else
         event.send_message "No ongoing giveaways... #{self.random_derp_emoji()}"
       end
