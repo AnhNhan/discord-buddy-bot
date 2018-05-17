@@ -667,6 +667,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
         if @@giveaway_joins[giveaway_list_name]["joined"].include? event.user.id
           event.send_message "#{event.user.mention} you already joined the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'... <:eunhathink:350850054900416512>"
+          next
         end
         @@giveaway_joins[giveaway_list_name]["joined"] << event.user.id
         event.send_message "Ba-duntz! #{event.user.mention} you joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
