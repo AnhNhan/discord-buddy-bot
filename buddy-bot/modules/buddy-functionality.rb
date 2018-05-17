@@ -654,8 +654,9 @@ module BuddyBot::Modules::BuddyFunctionality
           next
         end
 
-        if @@giveaways[giveaway_list_name]['join_end'] > Time.now
+        if @@giveaways[giveaway_list_name]['join_end'] < Time.now
           event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
+          next
         end
 
         if !@@giveaway_joins.include? giveaway_list_name
