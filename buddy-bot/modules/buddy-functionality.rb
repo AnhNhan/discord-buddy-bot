@@ -625,12 +625,21 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # Giveaway stuff
 
+  def self.format_giveaway(giveaway_list_name)
+    "Giveaway #**#{giveaway_list_name}** - use `!giveaway join #{giveaway_list_name}` to join the draw!\n" +
+      "Subject: #{@@giveaways[giveaway_list_name]['subject']}\n" +
+      "Restrictions: #{@@giveaways[giveaway_list_name]['restrictions']}\n" +
+      "Responsible: **<#{@@giveaways[giveaway_list_name]['responsible_name']}>**\n" +
+      "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end']}\n" +
+      "**Disclaimer: we are some random dudes on the internet, can't be held liable, don't trust us about anything**"
+  end
+
   message(content: "!giveaway list") do |event|
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
       if @@giveaways.length
-        event.send_message "The following trivias are available:\n```#{@@giveaways.keys.join(", ")}```"
+        event.send_message "The following giveaways are available:\n```#{@@giveaways.keys.map(&self.format_giveaway).join("\n\n")}```"
       else
         event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
       end
@@ -669,12 +678,7 @@ module BuddyBot::Modules::BuddyFunctionality
             next
           end
 
-          event.send_message "Giveaway #**#{giveaway_list_name}** - use `!giveaway join #{giveaway_list_name}` to join the draw!\n" +
-                            "Subject: #{@@giveaways[giveaway_list_name]['subject']}\n" +
-                            "Restrictions: #{@@giveaways[giveaway_list_name]['restrictions']}\n" +
-                            "Responsible: **<#{@@giveaways[giveaway_list_name]['responsible_name']}>**\n" +
-                            "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end']}\n" +
-                            "**Disclaimer: we are some random dudes on the internet, can't be held liable, don't trust us about anything**"
+          event.send_message self.format_giveaway(giveaway_list_name)
           event.message.delete()
         else
           event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
