@@ -642,7 +642,7 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless event.server
     BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
       if @@giveaways.length
-        data = event.content.scan(/^!trivia start\s+(.*?)\s*$/i)[0]
+        data = event.content.scan(/^!giveaway join\s+(.*?)\s*$/i)[0]
         if !data
           event.send_message "You need to specify a trivia list name... #{self.random_derp_emoji()}"
           next
