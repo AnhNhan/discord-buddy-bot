@@ -654,8 +654,7 @@ module BuddyBot::Modules::BuddyFunctionality
           next
         end
 
-        puts "#{@@giveaways[giveaway_list_name]['join_end'].class}"
-        if Date.parse(@@giveaways[giveaway_list_name]['join_end']).past?
+        if @@giveaways[giveaway_list_name]['join_end'].past?
           event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
         end
 
