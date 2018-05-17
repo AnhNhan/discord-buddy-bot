@@ -640,7 +640,8 @@ module BuddyBot::Modules::BuddyFunctionality
     BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
       if @@giveaways.length
         contents = @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name) }.join("\n\n")
-        event.send_message "The following giveaways are available:\n```#{contents}```"
+        event.user.pm(contents)
+        event.send_message "#{event.user.mention} please check your DMs!"
       else
         event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
       end
