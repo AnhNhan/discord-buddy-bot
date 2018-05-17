@@ -706,7 +706,8 @@ module BuddyBot::Modules::BuddyFunctionality
           next
         end
 
-        if @@giveaways[giveaway_list_name]['join_end'] < Time.now
+        puts "---\nEnd: #{@@giveaways[giveaway_list_name]['join_end'].utc}\nNow: #{Time.now.utc}\n"
+        if @@giveaways[giveaway_list_name]['join_end'].utc < Time.now.utc
           event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
           next
         end
