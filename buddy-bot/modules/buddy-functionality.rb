@@ -654,6 +654,10 @@ module BuddyBot::Modules::BuddyFunctionality
           next
         end
 
+        if Date.parse(@@giveaways[giveaway_list_name]['join_end']).past?
+          event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
+        end
+
         if !@@giveaway_joins.include? giveaway_list_name
           @@giveaway_joins[giveaway_list_name] = {
             "joined": []
@@ -661,14 +665,14 @@ module BuddyBot::Modules::BuddyFunctionality
         end
 
         if @@giveaway_joins[giveaway_list_name]["joined"].include? event.user.id
-          event.send_message "#{event.user.mention} you already joined the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name][subject]}'... <:eunhathink:350850054900416512>"
+          event.send_message "#{event.user.mention} you already joined the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'... <:eunhathink:350850054900416512>"
         end
         @@giveaway_joins[giveaway_list_name]["joined"] << event.user.id
-        event.send_message "Ba-duntz! #{event.user.mention} you joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name][subject]}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
+        event.send_message "Ba-duntz! #{event.user.mention} you joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
 
         self.log "New member joined giveaway '**#{giveaway_list_name}**' - '#{event.user.username}' / '#{event.user.nick}'", event.bot
       else
-        event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
+        event.send_message "No ongoing giveaways... #{self.random_derp_emoji()}"
       end
     }
   end
