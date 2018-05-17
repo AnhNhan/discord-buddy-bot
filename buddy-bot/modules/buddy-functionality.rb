@@ -639,7 +639,8 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless event.server
     BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
       if @@giveaways.length
-        event.send_message "The following giveaways are available:\n```#{@@giveaways.keys.map(&self.format_giveaway).join("\n\n")}```"
+        contents = @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name) }.join("\n\n")
+        event.send_message "The following giveaways are available:\n```#{contents}```"
       else
         event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
       end
