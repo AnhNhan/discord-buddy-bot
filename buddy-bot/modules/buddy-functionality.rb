@@ -647,6 +647,7 @@ module BuddyBot::Modules::BuddyFunctionality
     BuddyBot.only_creator(event.user) {
       BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
         event.send_message self.gdpr_disclaimer()
+        event.message.delete()
       }
     }
   end
