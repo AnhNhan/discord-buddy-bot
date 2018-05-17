@@ -629,8 +629,8 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
-      if @giveaways.length
-        event.send_message "The following trivias are available:\n```#{@@trivia_lists.keys.join(", ")}```"
+      if @@giveaways.length
+        event.send_message "The following trivias are available:\n```#{@@giveaways.keys.join(", ")}```"
       else
         event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
       end
@@ -641,7 +641,7 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
-      if @giveaways.length
+      if @@giveaways.length
         data = event.content.scan(/^!trivia start\s+(.*?)\s*$/i)[0]
         if !data
           event.send_message "You need to specify a trivia list name... #{self.random_derp_emoji()}"
