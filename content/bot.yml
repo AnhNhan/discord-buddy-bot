@@ -238,8 +238,8 @@ server_bot_commands:
 
 # whitelisted channels for giveaway status requests
 giveaway_channels:
-  166304074252288000: # gfcord
-    - 318787939360571393 # bot-commands
+  # 166304074252288000: # gfcord
+  #   - 318787939360571393 # bot-commands
   165551300375871488: # anh-test
     - 446755943384875008 # giveaways
 
