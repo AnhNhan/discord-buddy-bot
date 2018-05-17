@@ -1,6 +1,7 @@
 localconf.yml
 pokemon-list.json
 content/member_message_counts.yml
+content/giveaway-joins.yml
 Thumbs.db
 
 *.gem
