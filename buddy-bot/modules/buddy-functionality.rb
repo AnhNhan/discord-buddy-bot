@@ -671,8 +671,10 @@ module BuddyBot::Modules::BuddyFunctionality
 
           event.send_message "**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}\n" +
                             "Restrictions: #{@@giveaways[giveaway_list_name]['restrictions']}\n" +
-                            "Responsible: <@#{@@giveaways[giveaway_list_name]['responsible_id']}>\n" +
-                            "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end']}"
+                            "Responsible: <#{@@giveaways[giveaway_list_name]['responsible_name']}>\n" +
+                            "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end']}\n" +
+                            "**Disclaimer: we are some random dudes on the internet, can't be held liable, don't trust us about anything**"
+          event.message.delete()
         else
           event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
         end
