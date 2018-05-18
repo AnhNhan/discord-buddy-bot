@@ -512,7 +512,10 @@ module BuddyBot::Modules::BuddyFunctionality
         "  **!remove**               Removes a bias.\n\n" +
         "  **!remove-all**           Removes all biases. You will have to start deciding \n" +
         "                            again who you stan and in which order.\n\n" +
-        "  **!help** / **!commands** Displays this help. It cures cancer and brings world peace.\n" +
+        "  **!help** / **!commands** Displays this help. It cures cancer and brings world peace.\n\n" +
+        "Did you know? I also help managing giveaways! The following commands will work in the giveaway channel:\n" +
+        "  **!giveaway list**        Show available giveaways\n" +
+        "  **!giveaway join <name>   Join an active giveaway\n" +
         "```\n"
   end
 
