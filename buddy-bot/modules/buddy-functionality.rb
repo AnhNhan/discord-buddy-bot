@@ -707,6 +707,62 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(start_with: "!giveaway draw ") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_creator(event.user) {
+      BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+        if @@giveaways.length
+          data = event.content.scan(/^!giveaway draw\s+(.*?)\s*$/i)[0]
+          if !data
+            event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
+            next
+          end
+
+          giveaway_list_name = data[0].downcase
+          if !@@giveaways.include? giveaway_list_name
+            event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
+            next
+          end
+
+          if @@giveaways[giveaway_list_name]['join_end'].utc > Time.now.utc
+            event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' did not end yet #{self.random_derp_emoji()}"
+            next
+          end
+
+          if !@@giveaway_joins[giveaway_list_name] || !@@giveaway_joins[giveaway_list_name]["joined"] || @@giveaway_joins[giveaway_list_name]["joined"].length == 0
+            event.send_message "No members entered the giveaway #{self.random_derp_emoji()}"
+            next
+          end
+
+          winner = @@giveaway_joins[giveaway_list_name]["joined"].sample
+          self.log "Winner decided for giveaway '#{giveaway_list_name}' by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} ----- it's '#{winner}'", event.bot
+
+          event.message.delete()
+
+          event.send_message "_\*drum roll\*_"
+          event.channel.start_typing
+          sleep(2)
+          event.send_message "_staring at #{@@giveaway_joins[giveaway_list_name]["joined"].length} people..._"
+          sleep(2)
+          event.send_message "_and only one can win..._"
+          event.channel.start_typing
+          sleep(2)
+          event.send_message "The lucky winner of '#{giveaway_list_name} - #{@@giveaways[giveaway_list_name]['subject']}'..."
+          sleep(2)
+          event.send_message "is ..."
+          event.channel.start_typing
+          sleep(6)
+          event.send_message ":tada: :confetti_ball: <@#{winner}> :confetti_ball: :tada:"
+          sleep(2)
+          event.send_message "<@#{@@giveaways[giveaway_list_name]['responsible_id']}> fyi"
+        else
+          event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
+        end
+      }
+    }
+  end
+
   message(start_with: "!giveaway join ") do |event|
     next unless !event.user.bot_account?
     next unless event.server
@@ -744,9 +800,11 @@ module BuddyBot::Modules::BuddyFunctionality
           next
         end
         @@giveaway_joins[giveaway_list_name]["joined"] << event.user.id
-        event.send_message "Ba-duntz! #{event.user.mention} you joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
+        event.send_message "Ka-ching! #{event.user.mention} you joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
+        # event.message.create_reaction(BuddyBot.emoji(342101928903442432))
+        event.message.delete()
 
-        self.log "New member joined giveaway '**#{giveaway_list_name}**' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot
+        self.log "New member joined giveaway '#{giveaway_list_name}' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot
       else
         event.send_message "No ongoing giveaways... #{self.random_derp_emoji()}"
       end
