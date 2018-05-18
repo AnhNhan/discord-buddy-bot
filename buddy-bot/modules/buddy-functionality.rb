@@ -728,6 +728,10 @@ module BuddyBot::Modules::BuddyFunctionality
           event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
           next
         end
+        if @@giveaways[giveaway_list_name]['join_start'].utc > Time.now.utc
+          event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' hasn't even started yet #{self.random_derp_emoji()}"
+          next
+        end
 
         if !@@giveaway_joins.include? giveaway_list_name
           @@giveaway_joins[giveaway_list_name] = {
