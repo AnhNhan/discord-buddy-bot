@@ -670,7 +670,7 @@ module BuddyBot::Modules::BuddyFunctionality
           !member.roles.find {|role| role.id == 166339124129693696 }
         end
 
-        self.log "Members without Buddy for #{server.name}: #{members.map{|member| member.username + (if member.nick then ' aka ' + member.nick end) + ' (' + member.id.to_s + ')'}}", event.bot
+        self.log "Members without Buddy for #{server.name}: #{members.map{|member| member.username + (if member.nick then ' aka ' + member.nick else '' end) + ' (' + member.id.to_s + ')'}}", event.bot
       end
     }
   end
