@@ -626,6 +626,33 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(content: "!fix-gfcord-non-buddies") do |event|
+    BuddyBot.only_creator(event.user) {
+      event.bot.servers.each do |server_id, server|
+        if server_id != 166304074252288000 # gfcord only
+          next
+        end
+
+        role_ids = @@new_member_roles[server.id]
+        roles = role_ids.map do |role_id|
+          server.role role_id
+        end
+        server.members.each do |member|
+          if member.roles.find {|role| role.id == 166339124129693696 } # check for buddy role
+            next
+          end
+
+          roles.each do |role|
+            member.add_role role
+          end
+
+          self.log "Fix roles: Added roles '#{roles.map(&:name).join(', ')}' to '#{member.username} - \##{member.id}'", event.bot
+          server.general_channel.send_message "(#{BuddyBot.emoji(441696920851972118)}) #{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
+        end
+      end
+    }
+  end
+
   # Giveaway stuff
 
   def self.format_giveaway(giveaway_list_name)
