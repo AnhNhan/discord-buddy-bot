@@ -710,6 +710,47 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(start_with: "!giveaway fix ") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_creator(event.user) {
+      BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+        if @@giveaways.length
+          data = event.content.scan(/^!giveaway fix\s+(.*?)\s+(\d+)\s*$/i)[0]
+          if !data
+            event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
+            next
+          end
+
+          giveaway_list_name = data[0].downcase
+          user_id = data[1].to_i
+          if !@@giveaways.include? giveaway_list_name
+            event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
+            next
+          end
+
+          if !@@giveaway_joins.include? giveaway_list_name
+            @@giveaway_joins[giveaway_list_name] = {
+              "joined" => []
+            }
+          end
+
+          if @@giveaway_joins[giveaway_list_name]["joined"].include? user_id
+            event.send_message "#{event.user.mention} '#{user_id}' already joined the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'... <:eunhathink:350850054900416512>"
+            next
+          end
+          @@giveaway_joins[giveaway_list_name]["joined"] << user_id
+          event.send_message "Ka-ching! #{event.user.mention} '#{user_id}' joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
+          event.message.delete()
+
+          self.log "Re-added member joined giveaway '#{giveaway_list_name}' - by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} -- '#{user_id}'", event.bot
+        else
+          event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
+        end
+      }
+    }
+  end
+
   message(start_with: "!giveaway draw ") do |event|
     next unless !event.user.bot_account?
     next unless event.server
