@@ -648,7 +648,8 @@ module BuddyBot::Modules::BuddyFunctionality
           end
 
           self.log "Fix roles: Added roles '#{roles.map(&:name).join(', ')}' to '#{member.username} - \##{member.id}'", event.bot
-          server.general_channel.send_message "(#{BuddyBot.emoji(441696920851972118)}) #{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
+
+          # No belated greeting per server mods
         end
       end
     }
