@@ -655,6 +655,26 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(content: "!list-gfcord-non-buddies") do |event|
+    BuddyBot.only_creator(event.user) {
+      event.bot.servers.each do |server_id, server|
+        if server_id != 166304074252288000 # gfcord only
+          next
+        end
+
+        role_ids = @@new_member_roles[server.id]
+        roles = role_ids.map do |role_id|
+          server.role role_id
+        end
+        members = server.members.find_all do |member|
+          !member.roles.find {|role| role.id == 166339124129693696 }
+        end
+
+        self.log "Members without Buddy for #{server.name}: #{members.map{|member| member.username + (if member.nick then ' aka ' + member.nick end) + ' (' + member.id.to_s + ')'}}", event.bot
+      end
+    }
+  end
+
   # Giveaway stuff
 
   def self.format_giveaway(giveaway_list_name)
