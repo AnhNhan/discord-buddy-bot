@@ -40,6 +40,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@giveaways = {}
   @@giveaway_joins = {}
+  @@global_counted_giveaway_joins = 0
 
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
@@ -876,6 +877,13 @@ module BuddyBot::Modules::BuddyFunctionality
         event.message.delete()
 
         self.log "New member joined giveaway '#{giveaway_list_name}' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot
+
+        @@global_counted_giveaway_joins = @@global_counted_giveaway_joins + 1
+
+        # save every three messages
+        if @@global_counted_giveaway_joins % 3 == 0
+          self.persist_giveaway_joins()
+        end
       else
         event.send_message "No ongoing giveaways... #{self.random_derp_emoji()}"
       end
