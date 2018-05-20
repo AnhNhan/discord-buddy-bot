@@ -677,13 +677,13 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # Giveaway stuff
 
-  def self.format_giveaway(giveaway_list_name)
-    "Giveaway #**#{giveaway_list_name}** - use `!giveaway join #{giveaway_list_name}` to join the draw!\n" +
-      "Subject: #{@@giveaways[giveaway_list_name]['subject']}\n" +
+  def self.format_giveaway(giveaway_list_name, server)
+    "Giveaway #**#{giveaway_list_name}** - use `!giveaway join #{giveaway_list_name}` in #{@@server_bot_commands[server.id].map{|channel_id| '<#' + channel_id.to_s + '>' }.join(' or ')} to join the draw!\n" +
+      "Subject: **#{@@giveaways[giveaway_list_name]['subject']}**\n" +
       "Restrictions: #{@@giveaways[giveaway_list_name]['restrictions']}\n" +
       "Responsible: **<#{@@giveaways[giveaway_list_name]['responsible_name']}>**\n" +
-      "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end']}\n" +
-      "**Disclaimer: we are some random dudes on the internet, can't be held liable, don't trust us about anything**"
+      "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end'].utc}\n" +
+      "**Disclaimer: It is not subject to legal recourse. We are some random dudes on the internet and can't be held liable. Please don't trust us about anything**"
   end
 
   def self.gdpr_disclaimer()
@@ -709,8 +709,8 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if @@giveaways.length
-        contents = @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name) }.join("\n\n")
-        event.user.pm(contents + "\n\n" + self.gdpr_disclaimer())
+        @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name, event.server) }.each { |giveaway| event.user.pm(giveaway) }
+        event.user.pm(self.gdpr_disclaimer())
         event.send_message "#{event.user.mention} please check your DMs!"
       else
         event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
@@ -750,7 +750,10 @@ module BuddyBot::Modules::BuddyFunctionality
             next
           end
 
-          event.send_message self.format_giveaway(giveaway_list_name)
+          event.send_message self.format_giveaway(giveaway_list_name, event.server)
+          if @@giveaways.values.reject{ |giveaway| giveaway['join_end'].utc < Time.now.utc }.length > 1
+            event.send_message "Hold up, there's more than one giveaway going on 👀. Use `!giveaway list` in #{@@server_bot_commands[event.server.id].map{|channel_id| '<#' + channel_id.to_s + '>' }.join(' or ')} to know more about them!"
+          end
           event.message.delete()
         else
           event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
