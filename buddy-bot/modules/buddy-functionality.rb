@@ -323,9 +323,12 @@ module BuddyBot::Modules::BuddyFunctionality
 
     cb_member = lambda do |match, original|
       member_name = @@member_names[match]
-      role = self.find_roles event.server, member_name, self.determine_requesting_primary(user, member_name)
-      user.add_role role
-      role.map do |role|
+      roles = self.find_roles event.server, member_name, self.determine_requesting_primary(user, member_name)
+      if roles.find{ |role| user.role? role }
+        next
+      end
+      user.add_role roles
+      roles.map do |role|
         added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
         self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
       end
