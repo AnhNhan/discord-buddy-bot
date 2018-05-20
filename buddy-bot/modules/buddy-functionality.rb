@@ -885,6 +885,13 @@ module BuddyBot::Modules::BuddyFunctionality
           next
         end
 
+        # block new people from joining
+        if @@server_threshold_remove_roles[event.server.id]
+          if @@server_threshold_remove_roles[event.server.id].find{ |role_id| event.user.role?(role_id) }
+            next
+          end
+        end
+
         if !@@giveaway_joins.include? giveaway_list_name
           @@giveaway_joins[giveaway_list_name] = {
             "joined" => []
