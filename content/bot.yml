@@ -225,6 +225,7 @@ server_threshold_ignore_channels:
     - 166340324355080193 # whos-your-bias
     - 166770380260900864 # music
     - 318787939360571393 # bot-commands
+    - 447567170117828638 # sales-and-trades
   165551300375871488: # anh-test
     - 168814529902280704 # whos-your-bias
     - 435593424117301259 # bot-commands
