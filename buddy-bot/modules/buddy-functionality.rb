@@ -707,7 +707,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!giveaway list") do |event|
     next unless !event.user.bot_account?
     next unless event.server
-    BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if @@giveaways.length
         contents = @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name) }.join("\n\n")
         event.user.pm(contents + "\n\n" + self.gdpr_disclaimer())
@@ -763,7 +763,7 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_creator(event.user) {
-      BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+      BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
         if @@giveaways.length
           data = event.content.scan(/^!giveaway fix\s+(.*?)\s+(\d+)\s*$/i)[0]
           if !data
@@ -859,7 +859,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(start_with: "!giveaway join ") do |event|
     next unless !event.user.bot_account?
     next unless event.server
-    BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if @@giveaways.length
         data = event.content.scan(/^!giveaway join\s+(.*?)\s*$/i)[0]
         if !data
