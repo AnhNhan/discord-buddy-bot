@@ -637,18 +637,13 @@ module BuddyBot::Modules::BuddyFunctionality
           next
         end
 
-        role_ids = @@new_member_roles[server.id]
-        roles = role_ids.map do |role_id|
-          server.role role_id
-        end
         server.members.each do |member|
           if member.roles.find {|role| role.id == 166339124129693696 } # check for buddy role
             next
           end
 
-          roles.each do |role|
-            member.add_role role
-          end
+          # explicitly only add buddy role, not all new roles
+          member.add_role 166339124129693696
 
           self.log "Fix roles: Added roles '#{roles.map(&:name).join(', ')}' to '#{member.username} - \##{member.id}'", event.bot
 
