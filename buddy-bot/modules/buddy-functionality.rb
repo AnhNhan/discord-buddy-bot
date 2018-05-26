@@ -508,6 +508,9 @@ module BuddyBot::Modules::BuddyFunctionality
     end
 
     main_roles.map do |role|
+      if not user.role? role
+        next
+      end
       user.remove_role role
       removed_roles << "**#{role.name}**"
       self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
