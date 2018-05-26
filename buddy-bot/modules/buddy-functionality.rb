@@ -574,7 +574,8 @@ module BuddyBot::Modules::BuddyFunctionality
         event.respond "Input not accepted!"
         break
       end
-      Discordrb::Channel.new(data[1], event.bot, event.server).send_message data[2]
+      self.log "'#{event.user.name}' just said something in <##{data[1]}>!", event.bot, event.server
+      event.bot.send_message data[1], data[2]
     }
   end
 
