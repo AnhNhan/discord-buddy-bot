@@ -103,10 +103,10 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  def self.log(msg, bot)
+  def self.log(msg, bot, server = nil)
     msg.scan(/.{1,2000}/m).map do |chunk|
       # buddy bot log on anh-test
-      bot.send_message 189800756403109889, chunk
+      bot.send_message (if server && @@server_log_channels[server.id] then @@server_log_channels[server.id] else 189800756403109889 end), chunk
     end
   end
 
@@ -205,7 +205,7 @@ module BuddyBot::Modules::BuddyFunctionality
     begin
       server = event.server
       if !@@new_member_roles.include? server.id
-        self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot
+        self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot, event.server
         next
       end
       role_ids = @@new_member_roles[server.id]
@@ -214,7 +214,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       member = event.user.on(server)
       member.roles = roles
-      self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot
+      self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
       event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
     rescue
     end
@@ -271,7 +271,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if @@member_message_counts[user.id]["count"] > remove_threshold
       user.remove_role removable_roles #, "Reached new member message threshold of #{remove_threshold}" wtf only one arg supported?
       @@member_message_counts.delete user.id
-      self.log "Upgraded '#{event.user.username} - \##{event.user.id}' to a normal user", event.bot
+      self.log "Upgraded '#{event.user.username} - \##{event.user.id}' to a normal user", event.bot, event.server
     end
 
     # save every five messages
@@ -283,7 +283,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(start_with: /^!suggest-bias\s*/i, in: "whos-your-bias") do |event|
     if event.user.nil?
-      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
+      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
     if event.user.bot_account?
       next
@@ -298,7 +298,7 @@ module BuddyBot::Modules::BuddyFunctionality
       next
     end
     if event.user.nil?
-      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
+      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
     if event.user.bot_account?
       next
@@ -318,7 +318,7 @@ module BuddyBot::Modules::BuddyFunctionality
         current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
         current_primary_roles.map do |current_primary_role|
           removed_roles << "**#{current_primary_role.name}**"
-          self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot
+          self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot, event.server
           user.remove_role current_primary_role
         end
         removed_roles_text = removed_roles.join ", "
@@ -349,12 +349,12 @@ module BuddyBot::Modules::BuddyFunctionality
       user.add_role roles
       roles.map do |role|
         added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
-        self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
+        self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot, event.server
       end
     end
     cb_other_member = lambda do |match, original|
       rejected_names << match
-      self.log "Warning, '#{event.user.name}' requested '#{match}'.", event.bot
+      self.log "Warning, '#{event.user.name}' requested '#{match}'.", event.bot, event.server
     end
     cb_special = lambda do |match, original, user_id|
       member = event.server.member(user_id)
@@ -373,7 +373,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(start_with: /^!primary\s*/i, in: "whos-your-bias") do |event|
     if event.user.nil?
-      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
+      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
     if event.user.bot_account?
       next
@@ -394,7 +394,7 @@ module BuddyBot::Modules::BuddyFunctionality
       member_name = @@member_names[data]
       role = self.find_roles(event.server, member_name, true).first
       if !role
-        self.log "Primary role with name '#{member_name}' not found on server '#{event.server.name}'", event.bot
+        self.log "Primary role with name '#{member_name}' not found on server '#{event.server.name}'", event.bot, event.server
         next
       end
 
@@ -407,13 +407,13 @@ module BuddyBot::Modules::BuddyFunctionality
 
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
-        self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot
+        self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot, event.server
         user.remove_role current_primary_role
       end
 
       user.add_role role
       added_roles << "**#{role.name}**"
-      self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot
+      self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot, event.server
 
       if !removed_roles.empty?
         removed_roles_text = removed_roles.join ", "
@@ -435,18 +435,18 @@ module BuddyBot::Modules::BuddyFunctionality
           .join
       end
     else
-      self.log "Didn't switch role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot
+      self.log "Didn't switch role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot, event.server
     end
   end
 
   message(start_with: /^!remove\s+/i, in: "whos-your-bias") do |event|
     if event.user.nil?
-      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
+      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
     if event.user.bot_account?
       next
     end
-    self.log "Remove attempt by '#{event.user.username} - \##{event.user.id}'", event.bot
+    self.log "Remove attempt by '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
     data = event.content.scan(/^!remove\s+(.*?)\s*$/i)[0]
     if data
       data = data[0]
@@ -463,12 +463,12 @@ module BuddyBot::Modules::BuddyFunctionality
         user.remove_role role
         role.map do |role|
           removed_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
-          self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot
+          self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
         end
       end
       cb_other_member = lambda do |match, original|
         rejected_names << match
-        self.log "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot
+        self.log "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot, event.server
       end
       cb_special = lambda do |match, original, user_id|
         member = event.server.member(user_id)
@@ -484,18 +484,18 @@ module BuddyBot::Modules::BuddyFunctionality
         self.print_rejected_names rejected_names, event
       end
     else
-      self.log "Didn't remove role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot
+      self.log "Didn't remove role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot, event.server
     end
   end
 
   message(content: ["!remove-all"]) do |event|
     if event.user.nil?
-      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot
+      self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
     if event.user.bot_account?
       next
     end
-    self.log "Remove-All attempt by '#{event.user.username} - \##{event.user.id}'", event.bot
+    self.log "Remove-All attempt by '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
     user = event.user.on event.server
     removed_roles = []
     main_roles = user.roles.find_all do |role|
@@ -510,7 +510,7 @@ module BuddyBot::Modules::BuddyFunctionality
     main_roles.map do |role|
       user.remove_role role
       removed_roles << "**#{role.name}**"
-      self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot
+      self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
     end
     if !removed_roles.empty?
       removed_roles_text = removed_roles.join ", "
@@ -580,7 +580,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: "!reload-configs") do |event|
     self.only_mods(event.server, event.user) {
-      self.log "'#{event.user.name}' just requested a config reload!", event.bot
+      self.log "'#{event.user.name}' just requested a config reload!", event.bot, event.server
       self.scan_bot_files()
       BuddyBot.build_emoji_map(event.bot.servers)
       event.respond "Done! Hopefully..."
@@ -589,7 +589,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: "!reload-message-counts") do |event|
     self.only_mods(event.server, event.user) {
-      self.log "'#{event.user.name}' just requested a dynamic data reload!", event.bot
+      self.log "'#{event.user.name}' just requested a dynamic data reload!", event.bot, event.server
       self.scan_member_message_counts()
       self.scan_giveaway_joins()
       event.respond "Done! Hopefully..."
@@ -598,7 +598,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: "!save-all") do |event|
     self.only_mods(event.server, event.user) {
-      self.log "'#{event.user.name}' just requested a dynamic data persist!", event.bot
+      self.log "'#{event.user.name}' just requested a dynamic data persist!", event.bot, event.server
       self.persist_member_message_counts()
       self.persist_giveaway_joins
       event.respond "Done! Hopefully..."
@@ -607,7 +607,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: "!print-message-counts") do |event|
     self.only_mods(event.server, event.user) {
-      self.log "'#{event.user.name}' just requested a member message count print-out on '#{event.server.name}' - '##{event.channel.name}'!", event.bot
+      self.log "'#{event.user.name}' just requested a member message count print-out on '#{event.server.name}' - '##{event.channel.name}'!", event.bot, event.server
       event.respond "Current messages counted at #{@@global_counted_messages}"
       event.respond YAML.dump(@@member_message_counts)
     }
@@ -626,7 +626,7 @@ module BuddyBot::Modules::BuddyFunctionality
         roles = server.roles.sort_by(&:position).map do |role|
           "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
         end.join
-        self.log "**#{server.name}**\n#{roles}\n", event.bot
+        self.log "**#{server.name}**\n#{roles}\n", event.bot, event.server
       end
     }
   end
@@ -634,7 +634,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!print-emoji-lists") do |event|
     self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
-        self.log "**#{server.name}**\n", event.bot
+        self.log "**#{server.name}**\n", event.bot, event.server
         roles = server.emoji.map do |emoji_id, emoji|
           prefix = ""
           # if emoji.animated
@@ -643,7 +643,7 @@ module BuddyBot::Modules::BuddyFunctionality
           "\\<#{prefix}:#{emoji.name}:#{emoji.id}> <#{prefix}:#{emoji.name}:#{emoji.id}>\n"
         end.each_slice(25)
         roles.each do |chunk|
-          self.log chunk.join, event.bot
+          self.log chunk.join, event.bot, event.server
         end
       end
     }
@@ -664,7 +664,7 @@ module BuddyBot::Modules::BuddyFunctionality
           # explicitly only add buddy role, not all new roles
           member.add_role 166339124129693696
 
-          self.log "Fix roles: Added roles '#{roles.map(&:name).join(', ')}' to '#{member.username} - \##{member.id}'", event.bot
+          self.log "Fix roles: Added roles '#{roles.map(&:name).join(', ')}' to '#{member.username} - \##{member.id}'", event.bot, event.server
 
           # No belated greeting per server mods
         end
@@ -687,7 +687,7 @@ module BuddyBot::Modules::BuddyFunctionality
           !member.roles.find {|role| role.id == 166339124129693696 }
         end
 
-        self.log "Members without Buddy for #{server.name}: #{members.map{|member| member.username + (if member.nick then ' aka ' + member.nick else '' end) + ' (' + member.id.to_s + ', joined ' + member.joined_at.to_s + ')'}}", event.bot
+        self.log "Members without Buddy for #{server.name}: #{members.map{|member| member.username + (if member.nick then ' aka ' + member.nick else '' end) + ' (' + member.id.to_s + ', joined ' + member.joined_at.to_s + ')'}}", event.bot, event.server
       end
     }
   end
@@ -812,7 +812,7 @@ module BuddyBot::Modules::BuddyFunctionality
           event.send_message "Ka-ching! #{event.user.mention} '#{user_id}' joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
           event.message.delete()
 
-          self.log "Re-added member joined giveaway '#{giveaway_list_name}' - by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} -- '#{user_id}'", event.bot
+          self.log "Re-added member joined giveaway '#{giveaway_list_name}' - by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} -- '#{user_id}'", event.bot, event.server
         else
           event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
         end
@@ -849,7 +849,7 @@ module BuddyBot::Modules::BuddyFunctionality
           end
 
           winner = @@giveaway_joins[giveaway_list_name]["joined"].sample
-          self.log "Winner decided for giveaway '#{giveaway_list_name}' by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} ----- it's '#{winner}'", event.bot
+          self.log "Winner decided for giveaway '#{giveaway_list_name}' by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} ----- it's '#{winner}'", event.bot, event.server
 
           event.message.delete()
 
@@ -924,7 +924,7 @@ module BuddyBot::Modules::BuddyFunctionality
         # event.message.create_reaction(BuddyBot.emoji(342101928903442432))
         event.message.delete()
 
-        self.log "New member joined giveaway '#{giveaway_list_name}' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot
+        self.log "New member joined giveaway '#{giveaway_list_name}' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot, event.server
 
         @@global_counted_giveaway_joins = @@global_counted_giveaway_joins + 1
 
@@ -1011,7 +1011,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(content: "!reload-trivia-lists") do |event|
     self.only_mods(event.server, event.user) {
-      self.log "'#{event.user.name}' just requested a trivia list reload!", event.bot
+      self.log "'#{event.user.name}' just requested a trivia list reload!", event.bot, event.server
       self.scan_trivia_lists()
       event.respond "Done! Hopefully... (existing games are unaffected)"
     }
@@ -1193,7 +1193,7 @@ module BuddyBot::Modules::BuddyFunctionality
         matcher = self.trivia_matcher_year(answer)
       when "multiple"
         if typeargs.length < 1
-          self.log "Question has insufficient typespec for multiple: '#{question}'"
+          self.log "Question has insufficient typespec for multiple: '#{question}'", event.server
           next
         end
         matcher = self.trivia_matcher_multiple(answer, (typeargs[0] || 0).to_i)
