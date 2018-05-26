@@ -354,7 +354,6 @@ module BuddyBot::Modules::BuddyFunctionality
     end
     cb_other_member = lambda do |match, original|
       rejected_names << match
-      self.log "Warning, '#{event.user.name}' requested '#{match}'.", event.bot, event.server
     end
     cb_special = lambda do |match, original, user_id|
       member = event.server.member(user_id)
@@ -434,8 +433,6 @@ module BuddyBot::Modules::BuddyFunctionality
           .to_a
           .join
       end
-    else
-      self.log "Didn't switch role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot, event.server
     end
   end
 
@@ -446,7 +443,6 @@ module BuddyBot::Modules::BuddyFunctionality
     if event.user.bot_account?
       next
     end
-    self.log "Remove attempt by '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
     data = event.content.scan(/^!remove\s+(.*?)\s*$/i)[0]
     if data
       data = data[0]
@@ -483,8 +479,6 @@ module BuddyBot::Modules::BuddyFunctionality
       if !rejected_names.empty?
         self.print_rejected_names rejected_names, event
       end
-    else
-      self.log "Didn't remove role. No input in '#{event.message.content}' #{event.channel.mention}", event.bot, event.server
     end
   end
 
