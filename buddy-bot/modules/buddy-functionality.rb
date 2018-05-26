@@ -307,8 +307,8 @@ module BuddyBot::Modules::BuddyFunctionality
     added_roles = []
     rejected_names = []
 
-    if text =~ /^!secondary /i
-      event.send_message "#{user.mention} you do not need to provide the !secondary command."
+    if text =~ /^!(secondary|bias) /i
+      event.send_message "#{user.mention} you do not need to provide the `!secondary` / `!bias` command."
     end
 
     if text =~ /\bot6\b/i
