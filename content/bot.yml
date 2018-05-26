@@ -210,7 +210,7 @@ server_log_channels:
 
 server_moderator_roles:
   166304074252288000:
-    - 166351823932751873 # Moderator 🔨
+    - 166349311871811585 # Bot Commander
 
 new_member_roles:
   166304074252288000: # gfcord
