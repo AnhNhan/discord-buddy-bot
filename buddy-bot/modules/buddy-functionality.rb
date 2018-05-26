@@ -7,6 +7,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@initialized = false
 
+  @@bot_owner_id = 0
+
   @@member_names = {}
 
   @@primary_role_names = []
@@ -26,6 +28,8 @@ module BuddyBot::Modules::BuddyFunctionality
   @@server_threshold_ignore_channels = {}
   @@server_bot_commands = {}
   @@giveaway_channels = {}
+  @@server_log_channels = {}
+  @@server_moderator_roles = {}
 
   @@global_counted_messages = 0
   @@member_message_counts = {}
@@ -62,6 +66,9 @@ module BuddyBot::Modules::BuddyFunctionality
     @@biasgame_easter_eggs = member_config["biasgame_easter_eggs"]
     @@derp_faces = member_config["derp_faces"]
     @@trivia_config_reveal_after = member_config["trivia_config_reveal_after"]
+    @@bot_owner_id = member_config["bot_owner_id"]
+    @@server_log_channels = member_config["server_log_channels"]
+    @@server_moderator_roles = member_config["server_moderator_roles"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
 
@@ -82,6 +89,18 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.persist_giveaway_joins()
     File.open(BuddyBot.path("content/giveaway-joins.yml"), "w") { |file| file.write(YAML.dump(@@giveaway_joins)) }
+  end
+
+  def self.is_mod?(server, user)
+    member = user.on server
+    mod_role_match = @@server_moderator_roles.has_key?(server.id) && member.roles.find{ |role| @@server_moderator_roles[server.id].include?(role.id) }
+    mod_role_match || user.id.eql?(@@bot_owner_id)
+  end
+
+  def self.only_mods(server, user, &cb)
+    if self.is_mod? server, user
+      cb.call
+    end
   end
 
   def self.log(msg, bot)
@@ -532,7 +551,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!sigh") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       name = "Yerin"
       emoji = "<:yerinlove:437006461751656470>"
       data = event.content.scan(/^!sigh\s+(.*?)\s*$/i)[0]
@@ -549,7 +568,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!say") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       data = event.content.scan(/^!say\s+((\d+)\s+(.*?))\s*$/i)[0]
       if !data
         event.respond "Input not accepted!"
@@ -560,7 +579,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-configs") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a config reload!", event.bot
       self.scan_bot_files()
       BuddyBot.build_emoji_map(event.bot.servers)
@@ -569,7 +588,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-message-counts") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a dynamic data reload!", event.bot
       self.scan_member_message_counts()
       self.scan_giveaway_joins()
@@ -578,7 +597,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!save-all") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a dynamic data persist!", event.bot
       self.persist_member_message_counts()
       self.persist_giveaway_joins
@@ -587,7 +606,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!print-message-counts") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a member message count print-out on '#{event.server.name}' - '##{event.channel.name}'!", event.bot
       event.respond "Current messages counted at #{@@global_counted_messages}"
       event.respond YAML.dump(@@member_message_counts)
@@ -596,13 +615,13 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # invoke this command if you want to e.g. add new audio clips or memes, but don't want to restart the bot. for now, you also have to invoke e.g. #audio-load manually afterwards.
   message(content: "!git-pull") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull`}"
     }
   end
 
   message(content: "!print-role-lists") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         roles = server.roles.sort_by(&:position).map do |role|
           "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
@@ -613,7 +632,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!print-emoji-lists") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         self.log "**#{server.name}**\n", event.bot
         roles = server.emoji.map do |emoji_id, emoji|
@@ -631,7 +650,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!fix-gfcord-non-buddies") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         if server_id != 166304074252288000 # gfcord only
           next
@@ -654,7 +673,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!list-gfcord-non-buddies") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         if server_id != 166304074252288000 # gfcord only
           next
@@ -694,7 +713,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!gdpr-giveaway") do |event|
     next unless !event.user.bot_account?
     next unless event.server
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
         event.send_message self.gdpr_disclaimer()
         event.message.delete()
@@ -719,7 +738,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(content: "!giveaway status") do |event|
     next unless !event.user.bot_account?
     next unless event.server
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
         if @@giveaway_joins.length
           event.send_message "#{@@giveaway_joins}"
@@ -733,7 +752,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(start_with: "!giveaway announce ") do |event|
     next unless !event.user.bot_account?
     next unless event.server
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
         if @@giveaways.length
           data = event.content.scan(/^!giveaway announce\s+(.*?)\s*$/i)[0]
@@ -763,7 +782,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(start_with: "!giveaway fix ") do |event|
     next unless !event.user.bot_account?
     next unless event.server
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
         if @@giveaways.length
           data = event.content.scan(/^!giveaway fix\s+(.*?)\s+(\d+)\s*$/i)[0]
@@ -804,7 +823,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(start_with: "!giveaway draw ") do |event|
     next unless !event.user.bot_account?
     next unless event.server
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
         if @@giveaways.length
           data = event.content.scan(/^!giveaway draw\s+(.*?)\s*$/i)[0]
@@ -991,7 +1010,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-trivia-lists") do |event|
-    BuddyBot.only_creator(event.user) {
+    self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a trivia list reload!", event.bot
       self.scan_trivia_lists()
       event.respond "Done! Hopefully... (existing games are unaffected)"
