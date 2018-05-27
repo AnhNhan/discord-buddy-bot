@@ -336,7 +336,7 @@ module BuddyBot::Modules::BuddyFunctionality
           .map(&:mention)
           .to_a
           .join
-        event.send_message(join_emojis) unless join_emojis
+        event.send_message(join_emojis) unless join_emojis.length
       end
     end
 
