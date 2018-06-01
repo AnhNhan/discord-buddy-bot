@@ -942,6 +942,70 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(start_with: "!giveaway leave ") do |event|
+    next unless !event.user.bot_account?
+    next unless event.server
+    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
+      if @@giveaways.length
+        data = event.content.scan(/^!giveaway leave\s+(.*?)\s*$/i)[0]
+        if !data
+          event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
+          event.message.delete()
+          next
+        end
+
+        giveaway_list_name = data[0].downcase
+        if !@@giveaways.include? giveaway_list_name
+          event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
+          event.message.delete()
+          next
+        end
+
+        if @@giveaways[giveaway_list_name]['join_end'].utc < Time.now.utc
+          event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
+          event.message.delete()
+          next
+        end
+
+        if @@giveaways[giveaway_list_name]['join_start'].utc > Time.now.utc
+          event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' hasn't even started yet #{self.random_derp_emoji()}"
+          event.message.delete()
+          next
+        end
+
+        # block new people from joining
+        if @@server_threshold_remove_roles[event.server.id]
+          if @@server_threshold_remove_roles[event.server.id].find{ |role_id| event.user.role?(role_id) }
+            event.message.delete() # blackhole
+            next
+          end
+        end
+
+        if !@@giveaway_joins.include?(giveaway_list_name) || !@@giveaway_joins[giveaway_list_name]["joined"].include?(event.user.id)
+          event.send_message "#{event.user.mention} you did not join the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'... <:eunhathink:350850054900416512>"
+          event.message.delete()
+          next
+        end
+
+        @@giveaway_joins[giveaway_list_name]["joined"] = @@giveaway_joins[giveaway_list_name]["joined"].reject{ |id| id == event.user.id } event.user.id
+        event.send_message "Ka-ching! #{event.user.mention} you **left** the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
+        # event.message.create_reaction(BuddyBot.emoji(342101928903442432))
+        event.message.delete()
+
+        self.log "Old member left giveaway '#{giveaway_list_name}' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot, event.server
+
+        @@global_counted_giveaway_joins = @@global_counted_giveaway_joins + 1
+
+        # save every three messages
+        if @@global_counted_giveaway_joins % 3 == 0
+          self.persist_giveaway_joins()
+        end
+      else
+        event.send_message "No ongoing giveaways... #{self.random_derp_emoji()}"
+      end
+    }
+  end
+
   # Trivia stuff
 
   # trivia-name => file path
