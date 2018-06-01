@@ -882,27 +882,32 @@ module BuddyBot::Modules::BuddyFunctionality
         data = event.content.scan(/^!giveaway join\s+(.*?)\s*$/i)[0]
         if !data
           event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
+          event.message.delete()
           next
         end
 
         giveaway_list_name = data[0].downcase
         if !@@giveaways.include? giveaway_list_name
           event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
+          event.message.delete()
           next
         end
 
         if @@giveaways[giveaway_list_name]['join_end'].utc < Time.now.utc
           event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
+          event.message.delete()
           next
         end
         if @@giveaways[giveaway_list_name]['join_start'].utc > Time.now.utc
           event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' hasn't even started yet #{self.random_derp_emoji()}"
+          event.message.delete()
           next
         end
 
         # block new people from joining
         if @@server_threshold_remove_roles[event.server.id]
           if @@server_threshold_remove_roles[event.server.id].find{ |role_id| event.user.role?(role_id) }
+            event.message.delete() # blackhole
             next
           end
         end
@@ -915,6 +920,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
         if @@giveaway_joins[giveaway_list_name]["joined"].include? event.user.id
           event.send_message "#{event.user.mention} you already joined the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'... <:eunhathink:350850054900416512>"
+          event.message.delete()
           next
         end
         @@giveaway_joins[giveaway_list_name]["joined"] << event.user.id
