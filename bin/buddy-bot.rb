@@ -13,6 +13,7 @@ require 'yaml'
 require 'buddy-bot'
 require 'modules/buddy-functionality'
 require 'modules/invite-bot'
+require 'modules/tistory'
 # require 'modules/memes'
 
 ###########################################################
@@ -43,6 +44,7 @@ bot.message(with_text: /^!ping\W*$/i) do |event|
 end
 
 bot.include! BuddyBot::Modules::BuddyFunctionality
+bot.include! BuddyBot::Modules::Tistory
 # bot.include! BuddyBot::Modules::InviteBot
 # bot.include! BuddyBot::Modules::Memes
 
