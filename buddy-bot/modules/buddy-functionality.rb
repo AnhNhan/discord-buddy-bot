@@ -987,7 +987,7 @@ module BuddyBot::Modules::BuddyFunctionality
           next
         end
 
-        @@giveaway_joins[giveaway_list_name]["joined"] = @@giveaway_joins[giveaway_list_name]["joined"].reject{ |id| id == event.user.id } event.user.id
+        @@giveaway_joins[giveaway_list_name]["joined"] = @@giveaway_joins[giveaway_list_name]["joined"].reject{ |id| id == event.user.id }
         event.send_message "Ka-ching! #{event.user.mention} you **left** the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
         # event.message.create_reaction(BuddyBot.emoji(342101928903442432))
         event.message.delete()
