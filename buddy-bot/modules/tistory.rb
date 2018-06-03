@@ -15,19 +15,7 @@ module BuddyBot::Modules::Tistory
       end
 
       trivia_list_name = data[0].downcase
-      if !@@trivia_lists.include? trivia_list_name
-        event.send_message "A list with the name #{trivia_list_name} does not exist... #{self.random_derp_emoji()}"
-        next
-      end
-
-      self.trivia_reset_game(event)
-      @@trivia_current_list_name = trivia_list_name
-      @@trivia_current_list_path = @@trivia_lists[trivia_list_name]
-      @@trivia_current_channel = event.channel
-      @@trivia_current_list = self.parse_trivia_list(@@trivia_current_list_path)
-
-      self.trivia_choose_question()
-      self.trivia_post_question()
+      #
     }
   end
 end
