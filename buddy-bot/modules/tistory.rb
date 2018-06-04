@@ -108,7 +108,7 @@ module BuddyBot::Modules::Tistory
           break
         end
 
-        url = "http://#{page_name}.tistory.com/#{page_number}"
+        url = "http://#{page_name}.tistory.com/m/#{page_number}"
         result = self.process_page(url, url, event)
 
         if result.is_a?(Integer)
