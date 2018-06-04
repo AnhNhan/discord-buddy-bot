@@ -179,7 +179,7 @@ module BuddyBot::Modules::Tistory
       }
     end
 
-    if @@pages_downloaded[page_name][page_number]["expected"] && @@pages_downloaded[page_name][page_number]["expected"] != urls.length
+    if @@pages_downloaded[page_name][page_number]["expected"] != 0 && @@pages_downloaded[page_name][page_number]["expected"] != urls.length
       self.log ":warning: Page `#{orig_input}` had `#{urls.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
     end
     orig_expected = @@pages_downloaded[page_name][page_number]["expected"]
@@ -189,7 +189,7 @@ module BuddyBot::Modules::Tistory
     end
     File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
 
-    if orig_expected && orig_expected != @@pages_downloaded[page_name][page_number]["files"].keys.length
+    if orig_expected != 0 && orig_expected != @@pages_downloaded[page_name][page_number]["files"].keys.length
       self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
     end
 
