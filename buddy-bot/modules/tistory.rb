@@ -32,6 +32,10 @@ module BuddyBot::Modules::Tistory
     @@pages_downloaded = pages_downloaded['pages']
   end
 
+  def self.log(message, bot)
+    BuddyBot::Modules::BuddyFunctionality.log message, bot, Struct.new(:id).new(123456)
+  end
+
   ready do |event|
     if !@@initialized
       self.scan_bot_files()
@@ -82,7 +86,7 @@ module BuddyBot::Modules::Tistory
 
     if !urls.length
       event.send_message "No images found on the site, aborting!"
-      BuddyBot::Modules::BuddyFunctionality.log "Tistory: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
+      self.log "Tistory: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
       next
     end
 
@@ -90,7 +94,7 @@ module BuddyBot::Modules::Tistory
     event.send_message "**#{page_title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
     event.message.delete() unless event.channel.pm?
 
-    BuddyBot::Modules::BuddyFunctionality.log "Tistory: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
+    self.log "Tistory: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
     download_results = {}
     urls.each do |url|
       result = self.upload_tistory_file(url, page_name, page_number, page_title, event)
@@ -109,7 +113,7 @@ module BuddyBot::Modules::Tistory
     end
 
     if @@pages_downloaded[page_name][page_number]["expected"] && @@pages_downloaded[page_name][page_number]["expected"] != urls.length
-      BuddyBot::Modules::BuddyFunctionality.log "Tistory: page `#{orig_input}` had `#{urls.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
+      self.log "Tistory: page `#{orig_input}` had `#{urls.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
     end
     @@pages_downloaded[page_name][page_number]["expected"] = [ urls.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
     download_results.keys.each do |id|
@@ -118,11 +122,11 @@ module BuddyBot::Modules::Tistory
     File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
 
     if @@pages_downloaded[page_name][page_number]["expected"] != @@pages_downloaded[page_name][page_number]["files"].keys.length
-      BuddyBot::Modules::BuddyFunctionality.log "Tistory: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length} exist, **#{download_results.keys.length}** from just now", event.bot
+      self.log "Tistory: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length} exist, **#{download_results.keys.length}** from just now", event.bot
     end
 
     final_message = "Tistory: Done replicating <#{orig_input}>"
-    BuddyBot::Modules::BuddyFunctionality.log(final_message, event.bot)
+    self.log(final_message, event.bot)
     event.send_message(final_message) if event.channel.pm? && event.user.id == 139342974776639489
   end
 
@@ -179,20 +183,20 @@ module BuddyBot::Modules::Tistory
 
     if @@pages_downloaded[page_name] && @@pages_downloaded[page_name][page_number] && @@pages_downloaded[page_name][page_number]["files"] && @@pages_downloaded[page_name][page_number]["files"][file_id]
       # Already replicated
-      BuddyBot::Modules::BuddyFunctionality.log "Tistory: Already replicated `#{url}` @ `#{@@pages_downloaded[page_name][page_number]["files"][file_id]}`", event.bot
+      self.log "Tistory: Already replicated `#{url}` @ `#{@@pages_downloaded[page_name][page_number]["files"][file_id]}`", event.bot
       return nil
     end
 
     response = HTTParty.get(url)
 
     if response.code != 200
-      BuddyBot::Modules::BuddyFunctionality.log "Tistory: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```", event.bot
+      self.log "Tistory: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```", event.bot
       return
     end
 
     params = CGI.parse(response.headers["content-disposition"])
     if !params || !params[" filename"] || params[" filename"].length > 1
-      BuddyBot::Modules::BuddyFunctionality.log "Tistory: Url <#{url}> had malicious content-disposition!\n```\n#{response.headers.inspect}\n```", event.bot
+      self.log "Tistory: Url <#{url}> had malicious content-disposition!\n```\n#{response.headers.inspect}\n```", event.bot
       return nil
     end
     file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '') # filename is wrapped in quotes
@@ -214,11 +218,11 @@ module BuddyBot::Modules::Tistory
         end
       end
     rescue Exception => e
-      BuddyBot::Modules::BuddyFunctionality.log "Tistory: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
+      self.log "Tistory: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return nil
     end
     final_message = "Tistory: Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}"
-    BuddyBot::Modules::BuddyFunctionality.log(final_message, event.bot)
+    self.log(final_message, event.bot)
     event.send_message(final_message) if event.channel.pm? && event.user.id == 139342974776639489
 
     { "id": file_id, "path": s3_filename }
