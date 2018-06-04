@@ -51,10 +51,10 @@ module BuddyBot::Modules::Tistory
   end
 
   message(start_with: /^!tistory\s/i) do |event|
-    next unless !event.user.bot_account?
+    next if event.user.bot_account?
     data = event.content.scan(/^!tistory\s+<?(.*?)\s*>?\s*$/i)[0]
     if !data
-      event.send_message "You need to specify a trivia list name... #{self.random_derp_emoji()}"
+      event.send_message "You need to specify a tistory page link... #{BuddyBot::Modules::BuddyFunctionality.random_derp_emoji()}"
       next
     end
 
@@ -70,27 +70,54 @@ module BuddyBot::Modules::Tistory
       url = "http://#{parts[0]}.tistory.com/m/#{parts[1]}"
     end
 
-    parts = url.scan(/\/\/(.*?)\.tistory\.com\/m\/(\d+)$/)[0]
-    page_name = parts[0]
-    page_number = parts[1]
+    self.process_page(url, orig_input, event)
+  end
 
+  pm(start_with: /!tistory-queue-page\s/i) do |event|
+    data = event.content.scan(/^!tistory-queue-page\s+([\w-]+)\s*$/i)[0]
+    if !data
+      event.send_message "You need to specify a trivia list name..."
+      next
+    end
+
+    url = data[0].downcase
+    if @@pages.include? url
+      event.send_message "Already got #{url} :yerinlaughingatyou:"
+      next
+    end
+    @@pages << url
+    File.open(BuddyBot.path("content/tistory-list.yml"), "w") { |file| file.write(YAML.dump(@@pages)) }
+    event.send_message "Added '#{url}' :sowonsalute:"
+  end
+
+  pm(start_with: /!tistory-queue-run\s/i) do |event|
+    next unless event.user.id == 139342974776639489
+
+    #
+  end
+
+  def self.process_page(url, orig_input, event)
     response = HTTParty.get(url)
 
     if response.code != 200
       event.send_message "Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```\n#{response.body}"
-      next
+      return response.code
     end
 
     doc = Nokogiri::HTML(response.body)
     urls = self.parse_page(doc, orig_input, event)
 
+    parts = url.scan(/\/\/(.*?)\.tistory\.com\/m\/(\d+)$/)[0]
+    page_name = parts[0]
+    page_number = parts[1]
+    page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
+
     if !urls.length
       event.send_message "No images found on the site, aborting!"
       self.log "Tistory: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
-      next
+      return nil
     end
 
-    page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
     event.send_message "**#{page_title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
     event.message.delete() unless event.channel.pm?
 
@@ -128,29 +155,6 @@ module BuddyBot::Modules::Tistory
     final_message = "Tistory: Done replicating <#{orig_input}>"
     self.log(final_message, event.bot)
     event.send_message(final_message) if event.channel.pm? && event.user.id == 139342974776639489
-  end
-
-  pm(start_with: /!tistory-queue-page\s/i) do |event|
-    data = event.content.scan(/^!tistory-queue-page\s+([\w-]+)\s*$/i)[0]
-    if !data
-      event.send_message "You need to specify a trivia list name..."
-      next
-    end
-
-    url = data[0].downcase
-    if @@pages.include? url
-      event.send_message "Already got #{url} :yerinlaughingatyou:"
-      next
-    end
-    @@pages << url
-    File.open(BuddyBot.path("content/tistory-list.yml"), "w") { |file| file.write(YAML.dump(@@pages)) }
-    event.send_message "Added '#{url}' :sowonsalute:"
-  end
-
-  pm(start_with: /!tistory-queue-run\s/i) do |event|
-    next unless event.user.id == 139342974776639489
-
-    #
   end
 
   # gib html, get urls
