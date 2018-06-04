@@ -163,6 +163,7 @@ module BuddyBot::Modules::Tistory
     download_results = {}
     urls.each do |url|
       result = self.upload_tistory_file(url, page_name, page_number, page_title, event)
+      self.log ":information_desk_person: Aggregating results, `#{result}`"
       next if result.nil?
       download_results[result["id"]] = result["path"]
     end
@@ -264,8 +265,9 @@ module BuddyBot::Modules::Tistory
       return nil
     end
     self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}", event.bot
-
-    return { "id": file_id, "path": s3_filename }
+    result = { "id": file_id, "path": s3_filename }
+    self.log ":information_desk_person: Uploaded file, `#{result}`"
+    return result
   end
 
   def self.format_object_name(page_name, page_number, page_title, file_name, file_id, file_extension)
