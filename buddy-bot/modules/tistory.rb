@@ -184,7 +184,6 @@ module BuddyBot::Modules::Tistory
     end
     orig_expected = @@pages_downloaded[page_name][page_number]["expected"]
     @@pages_downloaded[page_name][page_number]["expected"] = [ urls.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
-    self.log ":information_desk_person: Got for `#{orig_input}`: `#{download_results}`", event.bot
     download_results.keys.each do |id|
       @@pages_downloaded[page_name][page_number]["files"][id] = download_results[id]
     end
