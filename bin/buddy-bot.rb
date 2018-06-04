@@ -10,6 +10,8 @@ end
 require 'discordrb'
 require 'yaml'
 
+require 'aws-sdk'
+
 require 'buddy-bot'
 require 'modules/buddy-functionality'
 require 'modules/invite-bot'
@@ -24,12 +26,19 @@ if !File.exists?(BuddyBot.localconf_filename)
   puts "Local config file not found - empty config file '#{BuddyBot.localconf_filename}' will be created"
   puts "Please add configuration and try again"
   config_file = File.open(BuddyBot.localconf_filename, "w")
-  config_file.puts "token: ''\nappid: 0\n"
+  config_file.puts "token: ''\nappid: 0\ns3access: ''\ns3secret: ''\ns3bucket: ''\ns3region: ''\n"
   config_file.close
   exit false
 end
 
 localconf = YAML::load(File.read(BuddyBot.localconf_filename))
+
+Aws.config.update({
+  credentials: Aws::Credentials.new(localconf['s3access'], localconf['s3secret']),
+  region: localconf['s3region'],
+})
+
+BuddyBot::Modules::Tistory.set_s3_bucket_name(localconf['s3bucket'])
 
 bot = nil
 if localconf["token"] && localconf["token"].length && localconf["appid"] != 0
