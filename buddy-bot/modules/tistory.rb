@@ -54,14 +54,14 @@ module BuddyBot::Modules::Tistory
     next if event.user.bot_account?
     data = event.content.scan(/^!tistory\s+<?(.*?)\s*>?\s*$/i)[0]
     if !data
-      event.send_message "You need to specify a tistory page link... #{BuddyBot::Modules::BuddyFunctionality.random_derp_emoji()}"
+      event.send_message ":warning: You need to specify a tistory page link... #{BuddyBot::Modules::BuddyFunctionality.random_derp_emoji()}"
       next
     end
 
     orig_input = url = data[0].downcase
 
     if url !~ /https?:\/\/.*?\.tistory\.com(\/m)?\/\d+$/
-      event.send_message "URL is not a specific page, try e.g. <http://gfriendcom.tistory.com/163>"
+      event.send_message ":warning: URL is not a specific page, try e.g. <http://gfriendcom.tistory.com/163>"
       next
     end
 
@@ -76,7 +76,7 @@ module BuddyBot::Modules::Tistory
   pm(start_with: /!tistory-queue-page\s/i) do |event|
     data = event.content.scan(/^!tistory-queue-page\s+([\w-]+)\s*$/i)[0]
     if !data
-      event.send_message "You need to specify a trivia list name..."
+      event.send_message ":warning: You need to specify a trivia list name..."
       next
     end
 
@@ -87,7 +87,7 @@ module BuddyBot::Modules::Tistory
     end
     @@pages << url
     File.open(BuddyBot.path("content/tistory-list.yml"), "w") { |file| file.write(YAML.dump(@@pages)) }
-    event.send_message "Added '#{url}' :sowonsalute:"
+    event.send_message ":information_desk_person: Added '#{url}' :sowonsalute:"
   end
 
   pm(start_with: /!tistory-queue-run\s/i) do |event|
@@ -113,15 +113,15 @@ module BuddyBot::Modules::Tistory
     page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
 
     if !urls.length
-      event.send_message "No images found on the site, aborting!"
-      self.log "Tistory: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
+      event.send_message ":warning: No images found on the site, aborting!"
+      self.log ":warning: Page `#{page_title}` <#{orig_input}> had no images!", event.bot
       return nil
     end
 
     event.send_message "**#{page_title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
     event.message.delete() unless event.channel.pm?
 
-    self.log "Tistory: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
+    self.log ":information_desk_person: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
     download_results = {}
     urls.each do |url|
       result = self.upload_tistory_file(url, page_name, page_number, page_title, event)
@@ -140,7 +140,7 @@ module BuddyBot::Modules::Tistory
     end
 
     if @@pages_downloaded[page_name][page_number]["expected"] && @@pages_downloaded[page_name][page_number]["expected"] != urls.length
-      self.log "Tistory: page `#{orig_input}` had `#{urls.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
+      self.log ":warning: Page `#{orig_input}` had `#{urls.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
     end
     @@pages_downloaded[page_name][page_number]["expected"] = [ urls.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
     download_results.keys.each do |id|
@@ -149,10 +149,10 @@ module BuddyBot::Modules::Tistory
     File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
 
     if @@pages_downloaded[page_name][page_number]["expected"] != @@pages_downloaded[page_name][page_number]["files"].keys.length
-      self.log "Tistory: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length} exist, **#{download_results.keys.length}** from just now", event.bot
+      self.log ":warning: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length} exist, **#{download_results.keys.length}** from just now", event.bot
     end
 
-    self.log "Tistory: Done replicating <#{orig_input}>", event.bot
+    self.log "Done replicating <#{orig_input}>", event.bot
   end
 
   # gib html, get urls
@@ -161,16 +161,16 @@ module BuddyBot::Modules::Tistory
     doc.css('.imageblock > .img_thumb').each do |img|
       uri = URI.parse(img.attribute('src'))
       if !uri.query
-        event.send_message "Url '<#{input_url}>' had an invalid image, no query found, please advise <@139342974776639489>"
+        event.send_message ":warning: Url '<#{input_url}>' had an invalid image, no query found, please advise <@139342974776639489>"
         next
       end
       params = CGI.parse(uri.query)
       if !params["fname"]
-        event.send_message "Url '<#{input_url}>' had an invalid image, no fname found, please advise <@139342974776639489>"
+        event.send_message ":warning: Url '<#{input_url}>' had an invalid image, no fname found, please advise <@139342974776639489>"
         next
       end
       if params["fname"].length > 1
-        event.send_message "Url '<#{input_url}>' had an invalid image, multiple fname found, please advise <@139342974776639489>"
+        event.send_message ":warning: Url '<#{input_url}>' had an invalid image, multiple fname found, please advise <@139342974776639489>"
         next
       end
       fname = params["fname"][0]
@@ -185,20 +185,20 @@ module BuddyBot::Modules::Tistory
 
     if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number]["files"].include?(file_id)
       # Already replicated
-      self.log "Tistory: Already replicated `#{url}` @ `#{@@pages_downloaded[page_name][page_number]["files"][file_id]}`", event.bot
+      self.log ":ballot_box_with_check: Already replicated `#{url}` @ `#{@@pages_downloaded[page_name][page_number]["files"][file_id]}`", event.bot
       return nil
     end
 
     response = HTTParty.get(url)
 
     if response.code != 200
-      self.log "Tistory: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```", event.bot
+      self.log ":warning: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```", event.bot
       return
     end
 
     params = CGI.parse(response.headers["content-disposition"])
     if !params || !params[" filename"] || params[" filename"].length > 1
-      self.log "Tistory: Url <#{url}> had malicious content-disposition!\n```\n#{response.headers.inspect}\n```", event.bot
+      self.log ":warning: Url <#{url}> had malicious content-disposition!\n```\n#{response.headers.inspect}\n```", event.bot
       return nil
     end
     file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '') # filename is wrapped in quotes
@@ -220,10 +220,10 @@ module BuddyBot::Modules::Tistory
         end
       end
     rescue Exception => e
-      self.log "Tistory: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
+      self.log ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return nil
     end
-    self.log "Tistory: Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}", event.bot
+    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}", event.bot
 
     { "id": file_id, "path": s3_filename }
   end
