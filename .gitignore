@@ -2,6 +2,9 @@ localconf.yml
 pokemon-list.json
 content/member_message_counts.yml
 content/giveaway-joins.yml
+content/tistory-list.yml
+content/tistory-pages-downloaded.yml
+tmp/
 Thumbs.db
 
 *.gem
