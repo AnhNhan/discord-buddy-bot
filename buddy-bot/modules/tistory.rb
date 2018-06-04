@@ -265,7 +265,7 @@ module BuddyBot::Modules::Tistory
       return nil
     end
     self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}", event.bot
-    result = { "id": file_id, "path": s3_filename }
+    result = { "id" => file_id, "path" => s3_filename }
     self.log ":information_desk_person: Uploaded file, `#{result}`", event.bot
     return result
   end
