@@ -129,11 +129,14 @@ module BuddyBot::Modules::Tistory
     end
   end
 
-  def self.process_page(url, orig_input, event, send_message = nil)
+  def self.process_page(url, orig_input, event, verbose = nil)
     response = HTTParty.get(url)
 
     if response.code != 200
-      event.send_message "Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```\n#{response.body}"
+      if verbose
+        self.log ":warning: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```\n#{response.body}", event.bot
+        event.send_message ":warning: Encountered an error while loading the page! `#{response.code} #{response.message}`"
+      end
       return response.code
     end
 
@@ -146,12 +149,12 @@ module BuddyBot::Modules::Tistory
     page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
 
     if !urls.length
-      event.send_message ":warning: No images found on the site, aborting!" if send_message
+      event.send_message ":warning: No images found on the site, aborting!" if verbose
       self.log ":warning: Page `#{page_title}` <#{orig_input}> had no images!", event.bot
       return nil
     end
 
-    if send_message
+    if verbose
       event.send_message "**#{page_title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
       event.message.delete() unless event.channel.pm?
     end
