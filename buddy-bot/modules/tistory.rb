@@ -259,10 +259,13 @@ module BuddyBot::Modules::Tistory
 
     object = @@s3_bucket.object(s3_filename)
 
+    file_size = 0
+
     begin
       Tempfile.create('tmpf') do |tempfile|
         tempfile.write response.body
         tempfile.rewind
+        file_size = tempfile.size
         result = object.upload_file(tempfile.path)
         if !result
           puts "hi"
@@ -273,7 +276,7 @@ module BuddyBot::Modules::Tistory
       self.log ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return nil
     end
-    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}", event.bot
+    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` (#{(file_size.to_f / 2 ** 20).round(2)} MB): #{object.presigned_url(:get, expires_in: 604800)}", event.bot
     result = { "id" => file_id, "path" => s3_filename }
     return result
   end
