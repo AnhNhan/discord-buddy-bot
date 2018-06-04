@@ -183,7 +183,7 @@ module BuddyBot::Modules::Tistory
   def self.upload_tistory_file(url, page_name, page_number, page_title, event)
     file_id = url.scan(/\/original\/(\w+)$/)[0][0]
 
-    if @@pages_downloaded[page_name] && @@pages_downloaded[page_name][page_number] && @@pages_downloaded[page_name][page_number]["files"] && @@pages_downloaded[page_name][page_number]["files"][file_id]
+    if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number]["files"].include?(file_id)
       # Already replicated
       self.log "Tistory: Already replicated `#{url}` @ `#{@@pages_downloaded[page_name][page_number]["files"][file_id]}`", event.bot
       return nil
