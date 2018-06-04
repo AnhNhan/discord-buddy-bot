@@ -112,7 +112,7 @@ module BuddyBot::Modules::Tistory
 
         url = "http://#{page_name}.tistory.com/m/#{page_number}"
 
-        if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number].include?("expected") && @@pages_downloaded[page_name][page_number]["files"].keys.length == @@pages_downloaded[page_name][page_number]["expected"]
+        if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number]["files"].keys.length == @@pages_downloaded[page_name][page_number]["expected"]
           # Already replicated
           self.log ":ballot_box_with_check: Already replicated `#{url}`", event.bot
           # TODO: reset count_first_404 ?
@@ -201,7 +201,7 @@ module BuddyBot::Modules::Tistory
       self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
     end
 
-    self.log "Done replicating <#{orig_input}>", event.bot
+    self.log ":ballot_box_with_check: Done replicating <#{orig_input}>", event.bot
     return true
   end
 
@@ -276,7 +276,7 @@ module BuddyBot::Modules::Tistory
       self.log ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return nil
     end
-    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` (#{(file_size.to_f / 2 ** 20).round(2)} MB): #{object.presigned_url(:get, expires_in: 604800)}", event.bot
+    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` (#{(file_size.to_f / 2 ** 20).round(2)} MB): <#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
     result = { "id" => file_id, "path" => s3_filename }
     return result
   end
