@@ -152,9 +152,7 @@ module BuddyBot::Modules::Tistory
       self.log "Tistory: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length} exist, **#{download_results.keys.length}** from just now", event.bot
     end
 
-    final_message = "Tistory: Done replicating <#{orig_input}>"
-    self.log(final_message, event.bot)
-    event.send_message(final_message) if event.channel.pm? && event.user.id == 139342974776639489
+    self.log "Tistory: Done replicating <#{orig_input}>", event.bot
   end
 
   # gib html, get urls
@@ -225,9 +223,7 @@ module BuddyBot::Modules::Tistory
       self.log "Tistory: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return nil
     end
-    final_message = "Tistory: Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}"
-    self.log(final_message, event.bot)
-    event.send_message(final_message) if event.channel.pm? && event.user.id == 139342974776639489
+    self.log "Tistory: Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}", event.bot
 
     { "id": file_id, "path": s3_filename }
   end
