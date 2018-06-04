@@ -93,6 +93,8 @@ module BuddyBot::Modules::Tistory
   pm(start_with: /!tistory-queue-run/i) do |event|
     next unless event.user.id == 139342974776639489
 
+    self.log ":information_desk_person: Starting to process the page queue! :sujipraise:", event.bot
+
     @@pages.each do |page_name|
       count_done = 0 # all done, successful, failed and 404
       count_404 = 0 # count of only 404
