@@ -6,6 +6,10 @@
   - levenshtein
   - levenshtein-ffi
   - rbnacl-libsodium (if your `rbnacl` somehow doesn't want to recognize the `libsodium` on your system)
+  - aws-sdk
+  - image_size
+  - nokogiri
+  - httparty
 3. Install other dependencies
   - libopus / `opus.dll`
   - ffmpeg available on `PATH`
