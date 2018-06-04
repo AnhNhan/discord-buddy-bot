@@ -90,7 +90,7 @@ module BuddyBot::Modules::Tistory
     event.send_message ":information_desk_person: Added '#{url}' :sowonsalute:"
   end
 
-  pm(start_with: /!tistory-queue-run\s/i) do |event|
+  pm(start_with: /!tistory-queue-run/i) do |event|
     next unless event.user.id == 139342974776639489
 
     @@pages.each do |page_name|
