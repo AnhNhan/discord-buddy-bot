@@ -55,7 +55,6 @@ module BuddyBot::Modules::Tistory
     end
 
     orig_input = url = data[0].downcase
-    # event.send_message "You gave me '#{url}'"
 
     if url !~ /https?:\/\/.*?\.tistory\.com(\/m)?\/\d+$/
       event.send_message "URL is not a specific page, try e.g. <http://gfriendcom.tistory.com/163>"
@@ -65,7 +64,6 @@ module BuddyBot::Modules::Tistory
     if url =~ /tistory\.com\/\d+$/
       parts = url.scan(/\/\/(.*?)\.tistory\.com\/(\d+)$/)[0]
       url = "http://#{parts[0]}.tistory.com/m/#{parts[1]}"
-      # event.send_message "Converted to '#{url}'"
     end
 
     parts = url.scan(/\/\/(.*?)\.tistory\.com\/m\/(\d+)$/)[0]
@@ -87,14 +85,29 @@ module BuddyBot::Modules::Tistory
       next
     end
 
-    title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
-    event.send_message "**#{title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
+    page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
+    event.send_message "**#{page_title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
     event.message.delete() unless event.channel.pm?
 
-    BuddyBot::Modules::BuddyFunctionality.log "Downloading #{urls.length} images from `#{title}` <#{orig_input}>", event.bot
-    urls.each do |url|
-      self.upload_tistory_file(url, page_name, page_number, event)
+    BuddyBot::Modules::BuddyFunctionality.log "Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
+    download_results = urls.map do |url|
+      self.upload_tistory_file(url, page_name, page_number, page_title, event)
     end
+
+    if !@@pages_downloaded.include? page_name
+      @@pages_downloaded[page_name] = {}
+    end
+    if !@@pages_downloaded[page_name].include? page_number
+      @@pages_downloaded[page_name][page_number] = {
+        "expected" => urls.length,
+        "ids" => download_results,
+      }
+    end
+    File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
+
+    final_message = "Done replicating <#{orig_input}>"
+    BuddyBot::Modules::BuddyFunctionality.log(final_message, event.bot)
+    event.send_message(final_message) if event.user.id == 139342974776639489
   end
 
   # pm(start_with: /!tistory-page\s/i) do |event|
@@ -145,7 +158,7 @@ module BuddyBot::Modules::Tistory
     return urls
   end
 
-  def self.upload_tistory_file(url, page_name, page_number, event)
+  def self.upload_tistory_file(url, page_name, page_number, page_title, event)
     file_id = url.scan(/\/original\/(\w+)$/)[0][0]
     response = HTTParty.get(url)
 
@@ -163,7 +176,7 @@ module BuddyBot::Modules::Tistory
     file_name = File.basename(file_full_name, ".*")
     file_extension = File.extname(file_full_name)
     file_extension[0] = ""
-    s3_filename = self.format_object_name(page_name, page_number, file_name, file_id, file_extension)
+    s3_filename = self.format_object_name(page_name, page_number, page_title, file_name, file_id, file_extension)
 
     object = @@s3_bucket.object(s3_filename)
 
@@ -181,10 +194,14 @@ module BuddyBot::Modules::Tistory
       BuddyBot::Modules::BuddyFunctionality.log "Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return
     end
-    BuddyBot::Modules::BuddyFunctionality.log "Uploaded <#{url}> / `#{s3_filename}`: <#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
+    final_message = "Uploaded <#{url}> / `#{s3_filename}`: #{object.presigned_url(:get, expires_in: 604800)}"
+    BuddyBot::Modules::BuddyFunctionality.log(final_message, event.bot)
+    event.send_message(final_message) if event.channel.pm?
+
+    s3_filename
   end
 
-  def self.format_object_name(page_name, page_number, file_name, file_id, file_extension)
-    "tistory/#{page_name}/#{page_number}/#{file_name}-#{file_id}.#{file_extension}"
+  def self.format_object_name(page_name, page_number, page_title, file_name, file_id, file_extension)
+    "tistory/#{page_name}/#{page_number} - #{page_title}/#{file_name}-#{file_id}.#{file_extension}"
   end
 end
