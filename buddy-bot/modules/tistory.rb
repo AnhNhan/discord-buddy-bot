@@ -29,7 +29,7 @@ module BuddyBot::Modules::Tistory
     pages_downloaded = YAML.load_file(BuddyBot.path("content/tistory-pages-downloaded.yml"))
 
     @@pages = pages
-    @@pages_downloaded = pages_downloaded['pages']
+    @@pages_downloaded = pages_downloaded
   end
 
   def self.log(message, bot)
