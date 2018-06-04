@@ -112,7 +112,7 @@ module BuddyBot::Modules::Tistory
 
         url = "http://#{page_name}.tistory.com/m/#{page_number}"
 
-        if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number].include?("expected") && @@pages_downloaded[page_name][page_number]["files"].keys.length == @@pages_downloaded[page_name][page_number]["expected"]
+        if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number]["files"].keys.length == @@pages_downloaded[page_name][page_number]["expected"]
           # Already replicated
           self.log ":ballot_box_with_check: Already replicated `#{url}`", event.bot
           # TODO: reset count_first_404 ?
