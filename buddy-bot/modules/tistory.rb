@@ -70,7 +70,7 @@ module BuddyBot::Modules::Tistory
       url = "http://#{parts[0]}.tistory.com/m/#{parts[1]}"
     end
 
-    self.process_page(url, orig_input, event)
+    self.process_page(url, orig_input, event, true)
   end
 
   pm(start_with: /!tistory-queue-page\s/i) do |event|
@@ -93,10 +93,43 @@ module BuddyBot::Modules::Tistory
   pm(start_with: /!tistory-queue-run\s/i) do |event|
     next unless event.user.id == 139342974776639489
 
-    #
+    @@pages.each do |page_name|
+      count_done = 0 # all done, successful, failed and 404
+      count_404 = 0 # count of only 404
+      count_first_404 = 0 # index of first 404 in 404 range, reset with every success
+      threshold_404 = 100
+      threshold_really_max = 100000
+
+      range = 1..threshold_really_max
+      range.each do |page_number|
+        if page_number > threshold_404 && count_first_404 > threshold_404
+          break
+        end
+
+        url = "http://#{page_name}.tistory.com/#{page_number}"
+        result = self.process_page(url, url, event)
+
+        if result.is_a?(Integer)
+          if result == 404
+            count_404 = count_404 + 1
+            if count_first_404 == 0
+              count_first_404 = page_number
+            end
+          else
+            self.log ":warning: :warning: `#{url}` received a `#{result}`"
+          end
+        elsif result.nil?
+          # uh...
+        elsif result == true
+          count_first_404 = 0
+        end
+
+        count_done = count_done + 1
+      end
+    end
   end
 
-  def self.process_page(url, orig_input, event)
+  def self.process_page(url, orig_input, event, send_message = nil)
     response = HTTParty.get(url)
 
     if response.code != 200
@@ -113,13 +146,15 @@ module BuddyBot::Modules::Tistory
     page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
 
     if !urls.length
-      event.send_message ":warning: No images found on the site, aborting!"
+      event.send_message ":warning: No images found on the site, aborting!" if send_message
       self.log ":warning: Page `#{page_title}` <#{orig_input}> had no images!", event.bot
       return nil
     end
 
-    event.send_message "**#{page_title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
-    event.message.delete() unless event.channel.pm?
+    if send_message
+      event.send_message "**#{page_title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
+      event.message.delete() unless event.channel.pm?
+    end
 
     self.log ":information_desk_person: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
     download_results = {}
@@ -143,6 +178,7 @@ module BuddyBot::Modules::Tistory
       self.log ":warning: Page `#{orig_input}` had `#{urls.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
     end
     @@pages_downloaded[page_name][page_number]["expected"] = [ urls.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
+    self.log ":information_desk_person: Got for `#{orig_input}`: `#{download_results}`", event.bot
     download_results.keys.each do |id|
       @@pages_downloaded[page_name][page_number]["files"][id] = download_results[id]
     end
@@ -153,6 +189,7 @@ module BuddyBot::Modules::Tistory
     end
 
     self.log "Done replicating <#{orig_input}>", event.bot
+    return true
   end
 
   # gib html, get urls
@@ -161,16 +198,16 @@ module BuddyBot::Modules::Tistory
     doc.css('.imageblock > .img_thumb').each do |img|
       uri = URI.parse(img.attribute('src'))
       if !uri.query
-        event.send_message ":warning: Url '<#{input_url}>' had an invalid image, no query found, please advise <@139342974776639489>"
+        self.log ":warning: Url '<#{input_url}>' had an invalid image, no query found: `#{img.attribute('src')}`", event.bot
         next
       end
       params = CGI.parse(uri.query)
       if !params["fname"]
-        event.send_message ":warning: Url '<#{input_url}>' had an invalid image, no fname found, please advise <@139342974776639489>"
+        self.log ":warning: Url '<#{input_url}>' had an invalid image, no fname found: `#{img.attribute('src')}`", event.bot
         next
       end
       if params["fname"].length > 1
-        event.send_message ":warning: Url '<#{input_url}>' had an invalid image, multiple fname found, please advise <@139342974776639489>"
+        self.log ":warning: Url '<#{input_url}>' had an invalid image, multiple fname found: `#{img.attribute('src')}`", event.bot
         next
       end
       fname = params["fname"][0]
