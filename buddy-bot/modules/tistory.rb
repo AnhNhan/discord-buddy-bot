@@ -201,7 +201,7 @@ module BuddyBot::Modules::Tistory
       self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
     end
 
-    self.log "Done replicating <#{orig_input}>", event.bot
+    self.log ":ballot_box_with_check: Done replicating <#{orig_input}>", event.bot
     return true
   end
 
