@@ -108,7 +108,17 @@ module BuddyBot::Modules::Tistory
           break
         end
 
+        count_done = count_done + 1
+
         url = "http://#{page_name}.tistory.com/m/#{page_number}"
+
+        if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number].include?("expected") && @@pages_downloaded[page_name][page_number]["files"].keys.length == @@pages_downloaded[page_name][page_number]["expected"]
+          # Already replicated
+          self.log ":ballot_box_with_check: Already replicated `#{url}`", event.bot
+          # TODO: reset count_first_404 ?
+          next
+        end
+
         result = self.process_page(url, url, event)
 
         if result.is_a?(Integer)
@@ -125,8 +135,6 @@ module BuddyBot::Modules::Tistory
         elsif result == true
           count_first_404 = 0
         end
-
-        count_done = count_done + 1
       end
     end
   end
