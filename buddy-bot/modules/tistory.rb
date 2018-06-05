@@ -108,6 +108,7 @@ module BuddyBot::Modules::Tistory
       range = 1..threshold_really_max
       range.each do |page_number|
         if page_number > threshold_404 && count_first_404 > threshold_404
+          self.log ":information_desk_person: Finished with `#{page_name}`'s page!", event.bot
           break
         end
 
@@ -157,12 +158,12 @@ module BuddyBot::Modules::Tistory
     doc = Nokogiri::HTML(response.body)
     urls = self.parse_page(doc, orig_input, event)
 
-    parts = url.scan(/\/\/(.*?)\.tistory\.com\/m\/(\d+)$/)[0]
+    parts = url.scan(/\/\/(.*?)\.tistory\.com(\/m)?\/(\d+)$/)[0]
     page_name = parts[0]
-    page_number = parts[1]
+    page_number = parts[2]
     page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
 
-    if !urls.length
+    if urls.length == 0
       event.send_message ":warning: No images found on the site, aborting!" if verbose
       self.log ":warning: Page `#{page_title}` <#{orig_input}> had no images!", event.bot
       return nil
@@ -193,10 +194,10 @@ module BuddyBot::Modules::Tistory
       }
     end
 
-    if @@pages_downloaded[page_name][page_number]["expected"] != 0 && @@pages_downloaded[page_name][page_number]["expected"] != urls.length
+    orig_expected = @@pages_downloaded[page_name][page_number]["expected"]
+    if orig_expected != 0 && orig_expected != urls.length
       self.log ":warning: Page `#{orig_input}` had `#{urls.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
     end
-    orig_expected = @@pages_downloaded[page_name][page_number]["expected"]
     @@pages_downloaded[page_name][page_number]["expected"] = [ urls.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
     download_results.keys.each do |id|
       @@pages_downloaded[page_name][page_number]["files"][id] = download_results[id]
