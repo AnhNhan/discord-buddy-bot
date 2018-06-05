@@ -271,11 +271,11 @@ module BuddyBot::Modules::Tistory
     begin
       Tempfile.create('tmpf') do |tempfile|
         tempfile.write response.body
-        tempfile.rewind
+        tempfile.seek(0)
         time_split = Time.now # .to_f
         file_size = tempfile.size
         image_w, image_h = ImageSize.path(tempfile.path).size
-        result = object.upload_file(tempfile.path)
+        result = object.upload_file(tempfile)
         if !result
           puts "hi"
           raise 'Upload not successful!'
