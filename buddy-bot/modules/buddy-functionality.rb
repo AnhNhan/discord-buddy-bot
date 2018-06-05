@@ -215,7 +215,10 @@ module BuddyBot::Modules::BuddyFunctionality
       member = event.user.on(server)
       member.roles = roles
       self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
-      event.server.general_channel.send_message "#{event.user.mention} joined! Welcome to the GFriend Discord server! Please make sure to read the rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>."
+      event.server.general_channel.send_message "#{event.user.mention} joined! " +
+        "Welcome to the GFriend Discord server! Please make sure to read the " +
+        "rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>. " +
+        "_Do note new members are blocked from posting pictures and embeds for a limited amount of time._"
     rescue
     end
   end
