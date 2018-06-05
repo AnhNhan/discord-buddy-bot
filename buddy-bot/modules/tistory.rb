@@ -175,7 +175,7 @@ module BuddyBot::Modules::Tistory
 
     self.log ":information_desk_person: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
     download_results = {}
-    process_results = Parallel.map(urls, in_processes: 10) do |url|
+    process_results = Parallel.map(urls, in_processes: 20) do |url|
       self.upload_tistory_file(url, page_name, page_number, page_title, event)
     end
     process_results.each do |result|
