@@ -280,7 +280,10 @@ module BuddyBot::Modules::Tistory
       return nil
     end
     time_end = Time.now # .to_f
-    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` (#{(file_size.to_f / 2 ** 20).round(2)} MB, #{time_split - time_start}s download + write, #{time_end - time_split}s upload S3): <#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
+    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` " +
+      "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{time_split - time_start}s " +
+      "download + write, #{time_end - time_split}s upload S3): " +
+      "#{object.presigned_url(:get, expires_in: 604800)}", event.bot
     result = { "id" => file_id, "path" => s3_filename }
     return result
   end
