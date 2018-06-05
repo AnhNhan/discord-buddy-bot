@@ -101,6 +101,7 @@ module BuddyBot::Modules::Tistory
     @@pages.each do |page_name|
       self.log ":information_desk_person: Going through `#{page_name}`'s page!", event.bot
       count_done = 0 # all done, successful, failed and 404
+      count_replicated = 0
       count_404 = 0 # count of only 404
       count_first_404 = 0 # index of first 404 in 404 range, reset with every success
       threshold_404 = 100
@@ -109,7 +110,7 @@ module BuddyBot::Modules::Tistory
       range = 1..threshold_really_max
       range.each do |page_number|
         if page_number > threshold_404 && (count_done - count_first_404) > threshold_404
-          self.log ":information_desk_person: Finished with `#{page_name}`'s page!", event.bot
+          self.log ":information_desk_person: Finished with `#{page_name}`'s page, highest page was #**#{count_first_404 - 1}** and already replicated #{count_replicated}x pages!", event.bot
           break
         end
 
@@ -122,6 +123,7 @@ module BuddyBot::Modules::Tistory
           @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
           # Already replicated
           # TODO: reset count_first_404 ?
+          count_replicated = count_replicated + 1
           next
         end
 
