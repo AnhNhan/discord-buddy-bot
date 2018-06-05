@@ -6,6 +6,7 @@ require 'aws-sdk'
 require 'nokogiri'
 require 'httparty'
 require 'image_size'
+require 'parallel'
 
 require 'discordrb'
 require 'yaml'
@@ -174,8 +175,10 @@ module BuddyBot::Modules::Tistory
 
     self.log ":information_desk_person: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
     download_results = {}
-    urls.each do |url|
-      result = self.upload_tistory_file(url, page_name, page_number, page_title, event)
+    process_results = Parallel.map(urls, in_processes: 10) do |url|
+      self.upload_tistory_file(url, page_name, page_number, page_title, event)
+    end
+    process_results.each do |result|
       next if result.nil?
       download_results[result["id"]] = result["path"]
     end
