@@ -133,8 +133,10 @@ module BuddyBot::Modules::Tistory
             if count_first_404 == 0
               count_first_404 = page_number
             end
+            if count_404 % 20 == 0
+              self.log ":information_desk_person: Had #{count_404} 404s already, #{count_done - count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
           else
-            self.log ":warning: :warning: `#{url}` received a `#{result}`"
+            self.log ":warning: :warning: `#{url}` received a `#{result}`", event.bot
           end
         elsif result.nil?
           # uh...
@@ -162,7 +164,7 @@ module BuddyBot::Modules::Tistory
     page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
 
     if urls.length == 0
-      event.send_message ":warning: No images found on the site, aborting!" if verbose
+      event.send_message ":warning: No images found on the site!" if verbose
       self.log ":warning: Page `#{page_title}` <#{orig_input}> had no images!", event.bot
       return nil
     end
