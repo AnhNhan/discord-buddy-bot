@@ -113,16 +113,11 @@ module BuddyBot::Modules::Tistory
 
         url = "http://#{page_name}.tistory.com/m/#{page_number}"
 
-        self.log ":information_desk_person: Debug: `#{url}`:\n```\n" +
-          "#{@@pages_downloaded.include?(page_name)}\n" +
-          "#{if @@pages_downloaded[page_name] then @@pages_downloaded[page_name].include?(page_number.to_s) else '-' end}\n" +
-          "#{if @@pages_downloaded[page_name] && @@pages_downloaded[page_name][page_number.to_s] then @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"] else '-' end}\n```", event.bot
-
         if @@pages_downloaded.include?(page_name) &&
           @@pages_downloaded[page_name].include?(page_number.to_s) &&
           @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
           # Already replicated
-          self.log ":ballot_box_with_check: Already replicated `#{url}`", event.bot
+          # self.log ":ballot_box_with_check: Already replicated `#{url}`", event.bot
           # TODO: reset count_first_404 ?
           next
         end
