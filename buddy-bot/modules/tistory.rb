@@ -179,12 +179,19 @@ module BuddyBot::Modules::Tistory
 
     self.log ":information_desk_person: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
     download_results = {}
+    download_error_count = 0
+    download_skip_count = 0
     process_results = Parallel.map(urls, in_processes: 20) do |url|
       self.upload_tistory_file(url, page_name, page_number, page_title, event)
     end
     process_results.each do |result|
-      next if result.nil?
-      download_results[result["id"]] = result["path"]
+      if result["result"].eql? "ok"
+        download_results[result["id"]] = result["path"]
+      elsif result["result"].eql? "error"
+        download_error_count = download_error_count + 1
+      elsif result["result"].eql? "skipped"
+        download_skip_count = download_skip_count + 1
+      end
     end
 
     page_number = page_number.to_s
@@ -213,7 +220,7 @@ module BuddyBot::Modules::Tistory
       self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
     end
 
-    self.log ":ballot_box_with_check: Done replicating <#{orig_input}>", event.bot
+    self.log ":ballot_box_with_check: Done replicating <#{orig_input}>, uploading #{download_results.keys.length}x files with #{download_error_count}x errors and skipping #{download_skip_count}x", event.bot
     return true
   end
 
@@ -247,8 +254,7 @@ module BuddyBot::Modules::Tistory
 
     if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number]["files"].include?(file_id)
       # Already replicated
-      self.log ":ballot_box_with_check: Already replicated `#{url}` @ `#{@@pages_downloaded[page_name][page_number]["files"][file_id]}`", event.bot
-      return nil
+      return { "result" => "skipped", "id" => file_id, "path" => @@pages_downloaded[page_name][page_number]["files"][file_id] }
     end
 
     time_start = Time.now # .to_f
@@ -257,13 +263,13 @@ module BuddyBot::Modules::Tistory
 
     if response.code != 200
       self.log ":warning: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```", event.bot
-      return
+      return { "result" => "error", "error" => "#{response.code} #{response.message}" }
     end
 
     params = CGI.parse(response.headers["content-disposition"])
     if !params || !params[" filename"] || params[" filename"].length > 1
       self.log ":warning: Url <#{url}> had malicious content-disposition!\n```\n#{response.headers.inspect}\n```", event.bot
-      return nil
+      return { "result" => "error", "error" => "content-disposition" }
     end
     file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '') # filename is wrapped in quotes
     file_name = File.basename(file_full_name, ".*")
@@ -292,14 +298,14 @@ module BuddyBot::Modules::Tistory
       end
     rescue Exception => e
       self.log ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
-      return nil
+      return { "result" => "error", "error" => e }
     end
     time_end = Time.now # .to_f
     self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` " +
       "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{image_w}x#{image_h}, #{(time_split - time_start).round(1)}s " +
       "download + write, #{(time_end - time_split).round(1)}s upload S3): " +
       "<#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
-    result = { "id" => file_id, "path" => s3_filename }
+    result = { "result" => "ok", "id" => file_id, "path" => s3_filename }
     return result
   end
 
