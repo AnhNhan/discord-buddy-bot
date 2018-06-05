@@ -187,6 +187,8 @@ module BuddyBot::Modules::Tistory
       download_results[result["id"]] = result["path"]
     end
 
+    page_number = page_number.to_s
+
     if !@@pages_downloaded.include? page_name
       @@pages_downloaded[page_name] = {}
     end
