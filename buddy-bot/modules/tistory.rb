@@ -98,6 +98,7 @@ module BuddyBot::Modules::Tistory
     self.log ":information_desk_person: Starting to process the page queue! :sujipraise:", event.bot
 
     @@pages.each do |page_name|
+      self.log ":information_desk_person: Going through `#{page_name}`'s page!", event.bot
       count_done = 0 # all done, successful, failed and 404
       count_404 = 0 # count of only 404
       count_first_404 = 0 # index of first 404 in 404 range, reset with every success
@@ -118,7 +119,6 @@ module BuddyBot::Modules::Tistory
           @@pages_downloaded[page_name].include?(page_number.to_s) &&
           @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
           # Already replicated
-          # self.log ":ballot_box_with_check: Already replicated `#{url}`", event.bot
           # TODO: reset count_first_404 ?
           next
         end
