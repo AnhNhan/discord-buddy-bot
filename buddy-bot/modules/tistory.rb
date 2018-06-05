@@ -116,7 +116,7 @@ module BuddyBot::Modules::Tistory
         self.log ":information_desk_person: Debug: `#{url}`:\n```\n" +
           "#{@@pages_downloaded.include?(page_name)}\n" +
           "#{if @@pages_downloaded[page_name] then @@pages_downloaded[page_name].include?(page_number) else '-' end}\n" +
-          "#{if @@pages_downloaded[page_name] && @@pages_downloaded[page_name][page_number] then @@pages_downloaded[page_name][page_number]["files"].keys.length == @@pages_downloaded[page_name][page_number]["expected"] else '-' end}\n```"
+          "#{if @@pages_downloaded[page_name] && @@pages_downloaded[page_name][page_number] then @@pages_downloaded[page_name][page_number]["files"].keys.length == @@pages_downloaded[page_name][page_number]["expected"] else '-' end}\n```", event.bot
 
         if @@pages_downloaded.include?(page_name) &&
           @@pages_downloaded[page_name].include?(page_number) &&
