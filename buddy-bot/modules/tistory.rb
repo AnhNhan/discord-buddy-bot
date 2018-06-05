@@ -71,8 +71,9 @@ module BuddyBot::Modules::Tistory
       parts = url.scan(/\/\/(.*?)\.tistory\.com\/(\d+)$/)[0]
       url = "http://#{parts[0]}.tistory.com/m/#{parts[1]}"
     end
+    page_name, page_number = url.scan(/\/\/(.*?)\.tistory\.com\/m\/(\d+)$/)[0]
 
-    self.process_page(url, orig_input, event, true)
+    self.process_page(url, orig_input, page_name, page_number, event, true)
   end
 
   pm(start_with: /!tistory-queue-page\s/i) do |event|
@@ -124,7 +125,7 @@ module BuddyBot::Modules::Tistory
           next
         end
 
-        result = self.process_page(url, url, event)
+        result = self.process_page(url, url, page_name, page_number, event)
 
         if result.is_a?(Integer)
           if result == 404
@@ -144,7 +145,7 @@ module BuddyBot::Modules::Tistory
     end
   end
 
-  def self.process_page(url, orig_input, event, verbose = nil)
+  def self.process_page(url, orig_input, page_name, page_number, event, verbose = nil)
     response = HTTParty.get(url)
 
     if response.code != 200
@@ -158,9 +159,6 @@ module BuddyBot::Modules::Tistory
     doc = Nokogiri::HTML(response.body)
     urls = self.parse_page(doc, orig_input, event)
 
-    parts = url.scan(/\/\/(.*?)\.tistory\.com(\/m)?\/(\d+)$/)[0]
-    page_name = parts[0]
-    page_number = parts[2]
     page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
 
     if urls.length == 0
