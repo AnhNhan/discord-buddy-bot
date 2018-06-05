@@ -108,7 +108,7 @@ module BuddyBot::Modules::Tistory
 
       range = 1..threshold_really_max
       range.each do |page_number|
-        if page_number > threshold_404 && count_first_404 > threshold_404
+        if page_number > threshold_404 && (count_done - count_first_404) > threshold_404
           self.log ":information_desk_person: Finished with `#{page_name}`'s page!", event.bot
           break
         end
@@ -134,7 +134,7 @@ module BuddyBot::Modules::Tistory
               count_first_404 = page_number
             end
             if count_404 % 20 == 0
-              self.log ":information_desk_person: Had #{count_404} 404s already, #{count_done - count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
+              self.log ":information_desk_person: Had #{count_404} 404s already, #{count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
             end
           else
             self.log ":warning: :warning: `#{url}` received a `#{result}`", event.bot
