@@ -5,6 +5,7 @@ require 'tempfile'
 require 'aws-sdk'
 require 'nokogiri'
 require 'httparty'
+require 'image_size'
 
 require 'discordrb'
 require 'yaml'
@@ -269,6 +270,8 @@ module BuddyBot::Modules::Tistory
     object = @@s3_bucket.object(s3_filename)
 
     file_size = 0
+    image_w = 0
+    image_h = 0
 
     begin
       Tempfile.create('tmpf') do |tempfile|
@@ -276,6 +279,7 @@ module BuddyBot::Modules::Tistory
         tempfile.rewind
         time_split = Time.now # .to_f
         file_size = tempfile.size
+        image_w, image_h = ImageSize.path(tempfile.path).size
         result = object.upload_file(tempfile.path)
         if !result
           puts "hi"
@@ -288,7 +292,7 @@ module BuddyBot::Modules::Tistory
     end
     time_end = Time.now # .to_f
     self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` " +
-      "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{time_split - time_start}s " +
+      "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{image_w}x#{image_h}, #{time_split - time_start}s " +
       "download + write, #{time_end - time_split}s upload S3): " +
       "#{object.presigned_url(:get, expires_in: 604800)}", event.bot
     result = { "id" => file_id, "path" => s3_filename }
