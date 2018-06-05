@@ -294,7 +294,7 @@ module BuddyBot::Modules::Tistory
     self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` " +
       "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{image_w}x#{image_h}, #{(time_split - time_start).round(1)}s " +
       "download + write, #{(time_end - time_split).round(1)}s upload S3): " +
-      "#{object.presigned_url(:get, expires_in: 604800)}", event.bot
+      "<#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
     result = { "id" => file_id, "path" => s3_filename }
     return result
   end
