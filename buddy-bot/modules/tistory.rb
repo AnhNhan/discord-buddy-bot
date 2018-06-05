@@ -239,6 +239,8 @@ module BuddyBot::Modules::Tistory
       return nil
     end
 
+    time_start = Time.now # .to_f
+    time_split = 0
     response = HTTParty.get(url)
 
     if response.code != 200
@@ -265,6 +267,7 @@ module BuddyBot::Modules::Tistory
       Tempfile.create('tmpf') do |tempfile|
         tempfile.write response.body
         tempfile.rewind
+        time_split = Time.now # .to_f
         file_size = tempfile.size
         result = object.upload_file(tempfile.path)
         if !result
@@ -276,7 +279,8 @@ module BuddyBot::Modules::Tistory
       self.log ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return nil
     end
-    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` (#{(file_size.to_f / 2 ** 20).round(2)} MB): <#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
+    time_end = Time.now # .to_f
+    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` (#{(file_size.to_f / 2 ** 20).round(2)} MB, #{time_split - time_start}s download + write, #{time_end - time_split}s upload S3): <#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
     result = { "id" => file_id, "path" => s3_filename }
     return result
   end
