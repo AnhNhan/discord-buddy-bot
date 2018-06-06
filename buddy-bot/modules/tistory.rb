@@ -109,7 +109,7 @@ module BuddyBot::Modules::Tistory
 
       range = 1..threshold_really_max
       range.each do |page_number|
-        if page_number > threshold_404 && (count_done - count_first_404) > threshold_404
+        if page_number > threshold_404 && count_404 > threshold_404 && (page_number - count_first_404) > threshold_404
           self.log ":information_desk_person: Finished with `#{page_name}`'s page, skipped #{count_replicated}x already replicated pages!", event.bot
           break
         end
