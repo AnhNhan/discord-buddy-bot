@@ -136,7 +136,7 @@ module BuddyBot::Modules::Tistory
               count_first_404 = page_number
             end
             if count_404 % 20 == 0
-              self.log ":information_desk_person: Had #{count_404} 404s already, #{count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
+              self.log ":information_desk_person: Had #{count_404}x 404s already, currently at ##{page_number}, ##{count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
             end
           else
             self.log ":warning: :warning: `#{url}` received a `#{result}`", event.bot
