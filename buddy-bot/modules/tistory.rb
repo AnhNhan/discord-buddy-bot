@@ -122,8 +122,8 @@ module BuddyBot::Modules::Tistory
           @@pages_downloaded[page_name].include?(page_number.to_s) &&
           @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
           # Already replicated
-          # TODO: reset count_first_404 ?
           count_replicated = count_replicated + 1
+          count_first_404 = 0
           next
         end
 
