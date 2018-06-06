@@ -181,6 +181,7 @@ module BuddyBot::Modules::Tistory
 
     self.log ":information_desk_person: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
     download_results = {}
+    raw_download_results = []
     download_error_count = 0
     download_skip_count = 0
     process_results = Parallel.map(urls, in_processes: @@number_of_processes) do |url|
@@ -196,6 +197,7 @@ module BuddyBot::Modules::Tistory
         download_error_count = download_error_count + 1
       elsif result["result"].eql? "ok"
         download_results[result["id"]] = result["path"]
+        raw_download_results << result
       elsif result["result"].eql? "skipped"
         download_skip_count = download_skip_count + 1
       end
@@ -226,6 +228,12 @@ module BuddyBot::Modules::Tistory
     if orig_expected != 0 && orig_expected != @@pages_downloaded[page_name][page_number]["files"].keys.length
       self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
     end
+
+    raw_download_results.map do |result|
+      ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` " +
+        "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{image_w}x#{image_h}, #{(time_split - time_start).round(1)}s " +
+        "download + write, #{(time_end - time_split).round(1)}s upload S3)\n"
+    end.each_slice(8) { |chunk| self.log(chunk.join, event.bot) }
 
     self.log ":ballot_box_with_check: Done replicating <#{orig_input}>, uploading #{download_results.keys.length}x files with #{download_error_count}x errors and skipping #{download_skip_count}x", event.bot
     return true
@@ -308,11 +316,22 @@ module BuddyBot::Modules::Tistory
       return { "result" => "error", "error" => e }
     end
     time_end = Time.now # .to_f
-    self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` " +
-      "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{image_w}x#{image_h}, #{(time_split - time_start).round(1)}s " +
-      "download + write, #{(time_end - time_split).round(1)}s upload S3): " +
-      "<#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
-    result = { "result" => "ok", "id" => file_id, "path" => s3_filename }
+    # self.log ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` " +
+    #   "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{image_w}x#{image_h}, #{(time_split - time_start).round(1)}s " +
+    #   "download + write, #{(time_end - time_split).round(1)}s upload S3): " +
+    #   "<#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
+    result = {
+      "result" => "ok",
+      "id" => file_id,
+      "path" => s3_filename,
+      "url" => url,
+      "size" => file_size.to_f / 2 ** 20).round(2),
+      "w" => image_w,
+      "h" => image_h,
+      "time_download" => (time_split - time_start).round(1),
+      "time_upload" => (time_end - time_split).round(1),
+      "presigned_url" => object.presigned_url(:get, expires_in: 604800),
+    }
     return result
   end
 
