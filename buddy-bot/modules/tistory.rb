@@ -26,6 +26,8 @@ module BuddyBot::Modules::Tistory
 
   @@initialized = false
 
+  @@number_of_processes = 20
+
   def self.scan_bot_files()
     pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml"))
     pages_downloaded = YAML.load_file(BuddyBot.path("content/tistory-pages-downloaded.yml"))
@@ -181,7 +183,7 @@ module BuddyBot::Modules::Tistory
     download_results = {}
     download_error_count = 0
     download_skip_count = 0
-    process_results = Parallel.map(urls, in_processes: 7) do |url|
+    process_results = Parallel.map(urls, in_processes: @@number_of_processes) do |url|
       begin
         self.upload_tistory_file(url, page_name, page_number, page_title, event)
       rescue Exception => e
