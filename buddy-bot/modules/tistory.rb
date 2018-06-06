@@ -181,7 +181,7 @@ module BuddyBot::Modules::Tistory
     download_results = {}
     download_error_count = 0
     download_skip_count = 0
-    process_results = Parallel.map(urls, in_processes: 20) do |url|
+    process_results = Parallel.map(urls, in_processes: 7) do |url|
       begin
         self.upload_tistory_file(url, page_name, page_number, page_title, event)
       rescue Exception => e
