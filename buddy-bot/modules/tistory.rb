@@ -182,13 +182,18 @@ module BuddyBot::Modules::Tistory
     download_error_count = 0
     download_skip_count = 0
     process_results = Parallel.map(urls, in_processes: 20) do |url|
-      self.upload_tistory_file(url, page_name, page_number, page_title, event)
+      begin
+        self.upload_tistory_file(url, page_name, page_number, page_title, event)
+      rescue Exception => e
+        self.log ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`", event.bot
+        return { "result" => "error", "error" => e }
+      end
     end
     process_results.each do |result|
-      if result["result"].eql? "ok"
-        download_results[result["id"]] = result["path"]
-      elsif result["result"].eql? "error"
+      if result.nil? || result["result"].eql?("error")
         download_error_count = download_error_count + 1
+      elsif result["result"].eql? "ok"
+        download_results[result["id"]] = result["path"]
       elsif result["result"].eql? "skipped"
         download_skip_count = download_skip_count + 1
       end
