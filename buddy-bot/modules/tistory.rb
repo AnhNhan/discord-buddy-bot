@@ -325,7 +325,7 @@ module BuddyBot::Modules::Tistory
       "id" => file_id,
       "path" => s3_filename,
       "url" => url,
-      "size" => file_size.to_f / 2 ** 20).round(2),
+      "size" => (file_size.to_f / 2 ** 20).round(2),
       "w" => image_w,
       "h" => image_h,
       "time_download" => (time_split - time_start).round(1),
