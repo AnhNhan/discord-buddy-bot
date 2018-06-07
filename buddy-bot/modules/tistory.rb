@@ -260,7 +260,7 @@ module BuddyBot::Modules::Tistory
       total_count = total_count + 1
       total_size = total_size + result["size"]
       total_time_download = total_time_download + result["time_download"]
-      total_time_upload = result["time_upload"]
+      total_time_upload = total_time_download + result["time_upload"]
     end
 
     time_end = Time.now
