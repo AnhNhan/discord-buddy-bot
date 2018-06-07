@@ -230,9 +230,9 @@ module BuddyBot::Modules::Tistory
     end
 
     raw_download_results.map do |result|
-      ":ballot_box_with_check: Uploaded <#{url}> / `#{s3_filename}` " +
-        "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{image_w}x#{image_h}, #{(time_split - time_start).round(1)}s " +
-        "download + write, #{(time_end - time_split).round(1)}s upload S3)\n"
+      ":ballot_box_with_check: Uploaded <#{result["url"]}> / `#{result["path"]}` " +
+        "(#{result["size"]} MB, #{result["w"]}x#{result["h"]}, #{result["time_download"]}s " +
+        "download + write, #{result["time_upload"]}s upload S3)\n"
     end.each_slice(8) { |chunk| self.log(chunk.join, event.bot) }
 
     self.log ":ballot_box_with_check: Done replicating <#{orig_input}>, uploading #{download_results.keys.length}x files with #{download_error_count}x errors and skipping #{download_skip_count}x", event.bot
