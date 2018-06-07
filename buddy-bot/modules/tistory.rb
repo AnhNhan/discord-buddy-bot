@@ -251,14 +251,23 @@ module BuddyBot::Modules::Tistory
       self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
     end
 
-    raw_download_results.map do |result|
-      ":ballot_box_with_check: Uploaded <#{result["url"]}> / `#{result["path"]}` " +
-        "(#{result["size"]} MB, #{result["w"]}x#{result["h"]}, #{result["time_download"]}s " +
-        "download + write, #{result["time_upload"]}s upload S3)\n"
-    end.each_slice(7) { |chunk| self.log(chunk.join, event.bot) }
+    total_count = 0
+    total_size = 0
+    total_time_upload = 0
+    total_time_download = 0
+
+    raw_download_results.each do |result|
+      total_count = total_count + 1
+      total_size = total_size + result["size"]
+      total_time_download = total_time_download + result["time_download"]
+      total_time_upload = result["time_upload"]
+    end
 
     time_end = Time.now
-    self.log ":ballot_box_with_check: Done replicating <#{orig_input}>, uploading #{download_results.keys.length}x files with #{download_error_count}x errors and skipping #{download_skip_count}x, took me #{(time_end - time_start).round(1)}s", event.bot
+    self.log ":ballot_box_with_check: Done replicating <#{orig_input}> to `#{self.format_folder(page_name, page_number, page_title)}`, " +
+      "uploading #{download_results.keys.length}x files (total #{total_size}MB) with #{download_error_count}x errors and " +
+      "skipping #{download_skip_count}x, took me #{(time_end - time_start).round(1)}s, " +
+      "avg download #{(total_time_download / total_count).round(1)}s and avg upload #{(total_time_upload / total_count).round(1)}", event.bot
     return true
   end
 
@@ -362,6 +371,10 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.format_object_name(page_name, page_number, page_title, file_name, file_id, file_extension)
-    "tistory/#{page_name}/#{page_number} - #{page_title}/#{file_name}-#{file_id}.#{file_extension}"
+    self.format_folder(page_name, page_number, page_title) + "#{file_name}-#{file_id}.#{file_extension}"
+  end
+
+  def self.format_folder(page_name, page_number, page_title)
+    "tistory/#{page_name}/#{page_number} - #{page_title}/"
   end
 end
