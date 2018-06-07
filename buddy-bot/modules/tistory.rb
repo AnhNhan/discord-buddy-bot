@@ -233,7 +233,7 @@ module BuddyBot::Modules::Tistory
       ":ballot_box_with_check: Uploaded <#{result["url"]}> / `#{result["path"]}` " +
         "(#{result["size"]} MB, #{result["w"]}x#{result["h"]}, #{result["time_download"]}s " +
         "download + write, #{result["time_upload"]}s upload S3)\n"
-    end.each_slice(8) { |chunk| self.log(chunk.join, event.bot) }
+    end.each_slice(7) { |chunk| self.log(chunk.join, event.bot) }
 
     self.log ":ballot_box_with_check: Done replicating <#{orig_input}>, uploading #{download_results.keys.length}x files with #{download_error_count}x errors and skipping #{download_skip_count}x", event.bot
     return true
