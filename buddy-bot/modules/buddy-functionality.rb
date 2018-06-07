@@ -665,7 +665,7 @@ module BuddyBot::Modules::BuddyFunctionality
           # explicitly only add buddy role, not all new roles
           member.add_role 166339124129693696
 
-          self.log "Fix roles: Added roles '#{roles.map(&:name).join(', ')}' to '#{member.username} - \##{member.id}'", event.bot, event.server
+          self.log "Fix roles: Added roles '#{server.role(166339124129693696).name}' to '#{member.username} - \##{member.id}'", event.bot, event.server
 
           # No belated greeting per server mods
         end
