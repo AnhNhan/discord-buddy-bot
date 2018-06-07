@@ -28,6 +28,8 @@ module BuddyBot::Modules::Tistory
 
   @@number_of_processes = 50
 
+  @@abort_in_progress = false
+
   def self.scan_bot_files()
     pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml"))
     pages_downloaded = YAML.load_file(BuddyBot.path("content/tistory-pages-downloaded.yml"))
@@ -95,12 +97,22 @@ module BuddyBot::Modules::Tistory
     event.send_message ":information_desk_person: Added '#{url}' :sowonsalute:"
   end
 
+  pm(start_with: /!tistory-queue-abort/i) do |event|
+    next unless event.user.id == 139342974776639489
+    @@abort_in_progress = true
+  end
+
   pm(start_with: /!tistory-queue-run/i) do |event|
     next unless event.user.id == 139342974776639489
 
     self.log ":information_desk_person: Starting to process the page queue! :sujipraise:", event.bot
 
     @@pages.each do |page_name|
+      if @@abort_in_progress
+        @@abort_in_progress = false
+        self.log ":information_desk_person: Aborted!", event.bot
+        break
+      end
       self.log ":information_desk_person: Going through `#{page_name}`'s page!", event.bot
       count_done = 0 # all done, successful, failed and 404
       count_replicated = 0
@@ -130,6 +142,9 @@ module BuddyBot::Modules::Tistory
         end
 
         result = self.process_mobile_page(url, url, page_name, page_number, event)
+        if @@abort_in_progress
+          break
+        end
 
         if result.is_a?(Integer)
           if result == 404
@@ -153,6 +168,9 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.process_mobile_page(url, orig_input, page_name, page_number, event, verbose = nil)
+    if @@abort_in_progress
+      return "abort"
+    end
     response = HTTParty.get(url)
 
     if response.code != 200
@@ -191,6 +209,9 @@ module BuddyBot::Modules::Tistory
         self.log ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`", event.bot
         return { "result" => "error", "error" => e }
       end
+    end
+    if @@abort_in_progress
+      return "abort"
     end
     process_results.each do |result|
       if result.nil? || result["result"].eql?("error")
@@ -265,6 +286,9 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.upload_tistory_file(url, page_name, page_number, page_title, event)
+    if @@abort_in_progress
+      return { "result" => "error", "error" => "Aborting..." }
+    end
     file_id = url.scan(/\/original\/(\w+)$/)[0][0]
 
     if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number]["files"].include?(file_id)
