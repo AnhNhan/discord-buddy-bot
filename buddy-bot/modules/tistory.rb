@@ -26,7 +26,7 @@ module BuddyBot::Modules::Tistory
 
   @@initialized = false
 
-  @@number_of_processes = 20
+  @@number_of_processes = 50
 
   def self.scan_bot_files()
     pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml"))
