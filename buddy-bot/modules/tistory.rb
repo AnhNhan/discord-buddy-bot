@@ -171,6 +171,7 @@ module BuddyBot::Modules::Tistory
     if @@abort_in_progress
       return "abort"
     end
+    time_start = Time.now
     response = HTTParty.get(url)
 
     if response.code != 200
@@ -256,7 +257,8 @@ module BuddyBot::Modules::Tistory
         "download + write, #{result["time_upload"]}s upload S3)\n"
     end.each_slice(7) { |chunk| self.log(chunk.join, event.bot) }
 
-    self.log ":ballot_box_with_check: Done replicating <#{orig_input}>, uploading #{download_results.keys.length}x files with #{download_error_count}x errors and skipping #{download_skip_count}x", event.bot
+    time_end = Time.now
+    self.log ":ballot_box_with_check: Done replicating <#{orig_input}>, uploading #{download_results.keys.length}x files with #{download_error_count}x errors and skipping #{download_skip_count}x, took me #{(time_end - time_start).round(1)}s", event.bot
     return true
   end
 
