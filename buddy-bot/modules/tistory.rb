@@ -263,11 +263,20 @@ module BuddyBot::Modules::Tistory
       total_time_upload = total_time_download + result["time_upload"]
     end
 
+    avg_download = 0
+    avg_upload = 0
+    avg_size = 0
+    if total_count > 0
+      avg_download = (total_time_download / total_count).round(1)
+      avg_upload = (total_time_upload / total_count).round(1)
+      avg_size = (total_size / total_count).round(1)
+    end
+
     time_end = Time.now
     self.log ":ballot_box_with_check: Done replicating <#{orig_input}> to `#{self.format_folder(page_name, page_number, page_title)}`, " +
-      "uploading #{download_results.keys.length}x files (total #{total_size.round(1)}MB, avg #{(total_size / total_count).round(1)}MB) with #{download_error_count}x errors and " +
+      "uploading #{download_results.keys.length}x files (total #{total_size.round(1)}MB, avg #{avg_size}MB) with #{download_error_count}x errors and " +
       "skipping #{download_skip_count}x, took me #{(time_end - time_start).round(1)}s, " +
-      "avg download #{(total_time_download / total_count).round(1)}s and avg upload #{(total_time_upload / total_count).round(1)}", event.bot
+      "avg download #{avg_download}s and avg upload #{avg_upload}", event.bot
     return true
   end
 
