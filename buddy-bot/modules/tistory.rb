@@ -302,6 +302,19 @@ module BuddyBot::Modules::Tistory
       orig_url = fname.sub!("tistory.com/image/", "tistory.com/original/")
       urls << orig_url
     end
+    doc.css('.blogview_content img').each do |img|
+      uri = img.attribute('src')
+      if uri.nil?
+        next
+      end
+      if uri !~ /^http:\/\/cfile\d+\.uf\.tistory\.com\/(original|image)\/\w+/i
+        self.log ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
+      end
+      if uri =~ /\/image\//
+        orig_url = fname.sub!("/image/", "/original/")
+      end
+      urls << orig_url
+    end
     return urls
   end
 
