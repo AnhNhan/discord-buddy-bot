@@ -207,7 +207,7 @@ module BuddyBot::Modules::Tistory
       begin
         self.upload_tistory_file(url, page_name, page_number, page_title, event)
       rescue Exception => e
-        self.log ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`", event.bot
+        self.log ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`\n```\n#{e.backtrace.join("\n")}\n```", event.bot
         return { "result" => "error", "error" => e }
       end
     end
@@ -337,6 +337,13 @@ module BuddyBot::Modules::Tistory
     count = 0
     count = doc.css('iframe, embed').length
     return count
+  end
+
+  def self.extract_media(doc, input_url, event)
+    media = []
+    doc.css('embed') do |embed|
+    end
+    return media
   end
 
   def self.upload_tistory_file(url, page_name, page_number, page_title, event)
