@@ -380,6 +380,8 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.format_object_name(page_name, page_number, page_title, file_name, file_id, file_extension)
+    file_name = file_name.gsub! "/", "\/"
+    page_title = file_name.gsub! "/", "\/"
     self.format_folder(page_name, page_number, page_title) + "#{file_name}-#{file_id}.#{file_extension}"
   end
 
