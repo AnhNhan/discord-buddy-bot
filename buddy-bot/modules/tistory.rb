@@ -141,7 +141,7 @@ module BuddyBot::Modules::Tistory
         #   next
         # end
 
-        result = self.process_mobile_page(url, url, page_name, page_number, event)
+        result = self.process_mobile_page(url, url, page_name, page_number.to_s, event)
         if @@abort_in_progress
           break
         end
