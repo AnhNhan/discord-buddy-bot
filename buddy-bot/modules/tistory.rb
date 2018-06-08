@@ -289,6 +289,9 @@ module BuddyBot::Modules::Tistory
       "uploading #{download_results.keys.length}x files (total #{total_size.round(1)}MB, avg #{avg_size}MB) with #{download_error_count}x errors and " +
       "skipping #{download_skip_count}x, took me #{(time_end - time_start).round(1)}s, " +
       "avg download #{avg_download}s and avg upload #{avg_upload}", event.bot
+    if @@pages_downloaded[page_name][page_number]["expected_media"] > 0
+      self.log ":ballot_box_with_check: Found #{@@pages_downloaded[page_name][page_number]["expected_media"]} media files!", event.bot
+    end
     return true
   end
 
