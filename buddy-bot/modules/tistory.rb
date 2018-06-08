@@ -66,7 +66,7 @@ module BuddyBot::Modules::Tistory
 
     orig_input = url = data[0].downcase
 
-    if url  /http:\/\/cfile\d+\.uf/i /https?:\/\/.*?\.tistory\.com(\/m)?\/\d+$/
+    if url !~ /https?:\/\/.*?\.tistory\.com(\/m)?\/\d+$/
       event.send_message ":warning: URL is not a specific page, try e.g. <http://gfriendcom.tistory.com/163>"
       next
     end
@@ -319,7 +319,7 @@ module BuddyBot::Modules::Tistory
       if uri.nil?
         next
       end
-      if uri !~ /^http\:\/\/cfile\d+\.uf\.tistory\.com\/(original|image)\/\w+/i
+      if uri !~ /^http:\/\/cfile\d+\.uf\.tistory\.com\/(original|image)\/\w+/i
         self.log ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
       end
       if uri =~ /\/image\//
