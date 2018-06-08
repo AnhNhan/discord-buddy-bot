@@ -323,9 +323,9 @@ module BuddyBot::Modules::Tistory
         self.log ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
       end
       if uri =~ /\/image\//
-        orig_url = fname.sub!("/image/", "/original/")
+        uri = uri.sub!("/image/", "/original/")
       end
-      urls << orig_url
+      urls << uri
     end
     return urls
   end
