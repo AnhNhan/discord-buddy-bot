@@ -309,6 +309,9 @@ module BuddyBot::Modules::Tistory
     if @@abort_in_progress
       return { "result" => "error", "error" => "Aborting..." }
     end
+    if url.nil?
+      return { "result" => "error", "error" => "Empty url..." }
+    end
     file_id = url.scan(/\/original\/(\w+)$/)[0][0]
 
     if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number]["files"].include?(file_id)
