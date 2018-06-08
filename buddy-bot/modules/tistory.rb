@@ -314,7 +314,7 @@ module BuddyBot::Modules::Tistory
       orig_url = fname.sub!("tistory.com/image/", "tistory.com/original/")
       urls << orig_url
     end
-    doc.css('.blogview_content img').each do |img|
+    doc.css('.blogview_content img:not(.img_thumb)').each do |img|
       uri = img.attribute('src')
       if uri.nil?
         next
