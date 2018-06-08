@@ -66,7 +66,7 @@ module BuddyBot::Modules::Tistory
 
     orig_input = url = data[0].downcase
 
-    if url !~ /https?:\/\/.*?\.tistory\.com(\/m)?\/\d+$/
+    if url  /http:\/\/cfile\d+\.uf/i /https?:\/\/.*?\.tistory\.com(\/m)?\/\d+$/
       event.send_message ":warning: URL is not a specific page, try e.g. <http://gfriendcom.tistory.com/163>"
       next
     end
@@ -233,9 +233,21 @@ module BuddyBot::Modules::Tistory
     if !@@pages_downloaded[page_name].include? page_number
       @@pages_downloaded[page_name][page_number] = {
         "expected" => 0,
+        "expected_media" => 0,
         "files" => {},
+        "media_files" => {},
       }
     end
+
+    # migration
+    if !@@pages_downloaded[page_name][page_number].include? "media_files"
+      @@pages_downloaded[page_name][page_number]["media_files"] = {}
+    end
+
+    count_media = self.gib_media_count(doc, orig_input, event)
+    orig_expected_media = @@pages_downloaded[page_name][page_number]["expected_media"] || 0
+
+    @@pages_downloaded[page_name][page_number]["expected_media"] = [ @@pages_downloaded[page_name][page_number]["expected_media"], count_media ].max
 
     orig_expected = @@pages_downloaded[page_name][page_number]["expected"]
     if orig_expected != 0 && orig_expected != urls.length
@@ -316,6 +328,12 @@ module BuddyBot::Modules::Tistory
       urls << orig_url
     end
     return urls
+  end
+
+  def self.gib_media_count(doc, input_url, event)
+    count = 0
+    count = doc.css('iframe, embed').length
+    return count
   end
 
   def self.upload_tistory_file(url, page_name, page_number, page_title, event)
