@@ -189,6 +189,10 @@ module BuddyBot::Modules::Tistory
     end
 
     doc = Nokogiri::HTML(response.body)
+    if doc.css('.blog_protected').length > 0
+      self.log ":closed_lock_with_key: Page `#{page_title}` <#{orig_input}> is protected!", event.bot
+      return nil
+    end
     urls = self.extract_image_uris(doc, orig_input, event)
 
     page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
