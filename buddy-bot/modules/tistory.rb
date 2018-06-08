@@ -355,7 +355,10 @@ module BuddyBot::Modules::Tistory
     end
     file_id = url.scan(/\/original\/(\w+)$/)[0][0]
 
-    if @@pages_downloaded.include?(page_name) && @@pages_downloaded[page_name].include?(page_number) && @@pages_downloaded[page_name][page_number].include?("files") && @@pages_downloaded[page_name][page_number]["files"].include?(file_id)
+    if @@pages_downloaded.include?(page_name) &&
+      @@pages_downloaded[page_name].include?(page_number) &&
+      @@pages_downloaded[page_name][page_number].include?("files") &&
+      @@pages_downloaded[page_name][page_number]["files"].include?(file_id)
       # Already replicated
       return { "result" => "skipped", "id" => file_id, "path" => @@pages_downloaded[page_name][page_number]["files"][file_id] }
     end
