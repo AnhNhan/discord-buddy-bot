@@ -132,14 +132,14 @@ module BuddyBot::Modules::Tistory
 
         url = "http://#{page_name}.tistory.com/m/#{page_number}"
 
-        if @@pages_downloaded.include?(page_name) &&
-          @@pages_downloaded[page_name].include?(page_number.to_s) &&
-          @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
-          # Already replicated
-          count_replicated = count_replicated + 1
-          count_first_404 = 0
-          next
-        end
+        # if @@pages_downloaded.include?(page_name) &&
+        #   @@pages_downloaded[page_name].include?(page_number.to_s) &&
+        #   @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
+        #   # Already replicated
+        #   count_replicated = count_replicated + 1
+        #   count_first_404 = 0
+        #   next
+        # end
 
         result = self.process_mobile_page(url, url, page_name, page_number, event)
         if @@abort_in_progress
