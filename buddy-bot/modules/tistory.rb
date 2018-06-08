@@ -57,7 +57,7 @@ module BuddyBot::Modules::Tistory
   end
 
   # invoke this command if you want to e.g. add new audio clips or memes, but don't want to restart the bot. for now, you also have to invoke e.g. #audio-load manually afterwards.
-  pm(content: "!tistory-git-sync") do |event|
+  message(content: "!tistory-git-sync") do |event|
     next unless event.user.id == 139342974776639489
     event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull && git add content/tistory-list.yml && git commit -m "tistory: update pages" && git push`}"
   end
@@ -103,12 +103,12 @@ module BuddyBot::Modules::Tistory
     event.send_message ":information_desk_person: Added '#{url}' :sowonsalute:"
   end
 
-  pm(start_with: /!tistory-queue-abort/i) do |event|
+  message(start_with: /!tistory-queue-abort/i) do |event|
     next unless event.user.id == 139342974776639489
     @@abort_in_progress = true
   end
 
-  pm(start_with: /!tistory-queue-run/i) do |event|
+  message(start_with: /!tistory-queue-run/i) do |event|
     next unless event.user.id == 139342974776639489
 
     self.log ":information_desk_person: Starting to process the page queue! :sujipraise:", event.bot
