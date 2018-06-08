@@ -247,7 +247,7 @@ module BuddyBot::Modules::Tistory
     count_media = self.gib_media_count(doc, orig_input, event)
     orig_expected_media = @@pages_downloaded[page_name][page_number]["expected_media"] || 0
 
-    @@pages_downloaded[page_name][page_number]["expected_media"] = [ @@pages_downloaded[page_name][page_number]["expected_media"], count_media ].max
+    @@pages_downloaded[page_name][page_number]["expected_media"] = [ orig_expected_media, count_media ].max
 
     orig_expected = @@pages_downloaded[page_name][page_number]["expected"]
     if orig_expected != 0 && orig_expected != urls.length
