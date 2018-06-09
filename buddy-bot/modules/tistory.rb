@@ -387,6 +387,7 @@ module BuddyBot::Modules::Tistory
     uri_tistory_flashplayers = [
       "http://goo.gl/HEJkR",
       "http://goo.gl/bGi64",
+      "http://smarturl.it/sspl",
     ]
     uri_part_kakao_flashplayer = "tv.kakao.com/embed/player/cliplink"
     uri_weird_gdrive_flash_player = "https://www.googledrive.com/host/0B-9MTMyoDRgrWTc4bFN6NVNxQmc"
