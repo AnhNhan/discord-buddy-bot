@@ -106,7 +106,9 @@ module BuddyBot::Modules::BuddyFunctionality
   def self.log(msg, bot, server = nil)
     msg.scan(/.{1,2000}/m).map do |chunk|
       # buddy bot log on anh-test
-      bot.send_message (if server && @@server_log_channels[server.id] then @@server_log_channels[server.id] else 189800756403109889 end), chunk
+      begin
+        bot.send_message (if server && @@server_log_channels[server.id] then @@server_log_channels[server.id] else 189800756403109889 end), chunk
+      end
     end
   end
 
