@@ -400,7 +400,7 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "tistory_parts_list", "uri" => uri_parts_list }
       elsif uri.include? uri_part_kakao_flashplayer
         media << { "type" => "kakao_player", "uri" => uri }
-      elsif url.eql? uri_weird_gdrive_flash_player
+      elsif uri.eql? uri_weird_gdrive_flash_player
         parsed_vars = CGI.parse(flashvars)
         gdrive_file_id = parsed_vars["file"][0].scan(/host\/(.*?)(&|$)/)[0][0]
         media << { "type" => "weird-gdrive-file", "id" => gdrive_file_id }
