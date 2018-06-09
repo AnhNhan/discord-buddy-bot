@@ -49,7 +49,7 @@ module BuddyBot::Modules::Tistory
     end
     puts "Ready to upload to '#{@@s3_bucket_name}'"
 
-    self.process_mobile_page("http://studio-g.tistory.com/m/430", "http://studio-g.tistory.com/m/430", "studio-g", "430", event, true)
+    # self.process_mobile_page("http://studio-g.tistory.com/m/430", "http://studio-g.tistory.com/m/430", "studio-g", "430", event, true)
   end
 
   def self.set_s3_bucket_name(name)
@@ -245,7 +245,7 @@ module BuddyBot::Modules::Tistory
         return { "result" => "error", "error" => e }
       end
     end
-    self.log ":information_desk_person: Media result: #{process_results_media}", event.bot
+    # self.log ":information_desk_person: Media result: #{process_results_media}", event.bot
     if @@abort_in_progress
       return "abort"
     end
@@ -291,6 +291,12 @@ module BuddyBot::Modules::Tistory
     @@pages_downloaded[page_name][page_number]["expected"] = [ urls_images.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
     download_image_results.keys.each do |id|
       @@pages_downloaded[page_name][page_number]["files"][id] = download_image_results[id]
+    end
+    process_results_media.each do |result|
+      if result.nil? || result["result"] != "ok"
+        next
+      end
+      @@pages_downloaded[page_name][page_number]["media_files"][result["id"]] = result["path_sample"]
     end
     File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
 
@@ -483,6 +489,8 @@ module BuddyBot::Modules::Tistory
       time_end = 0
       files_count = 0
 
+      uploaded_file_names = []
+
       begin
         output_file_list.each do |file|
           files_count = files_count + 1
@@ -491,6 +499,7 @@ module BuddyBot::Modules::Tistory
           file_name, file_extension = file.scan(/^(.*?)-[A-z0-9\-_]{11}\.(.*?)$/)[0]
 
           s3_filename = self.format_object_name(page_name, page_number, page_title, file_name, file_id, file_extension)
+          uploaded_file_names << s3_filename
           object = @@s3_bucket.object(s3_filename)
           result = object.upload_file(dir + "/" + file)
           if !result
@@ -505,6 +514,7 @@ module BuddyBot::Modules::Tistory
       return {
         "result" => "ok",
         "id" => file_id,
+        "path_sample" => uploaded_file_names[0],
         "file_name_sample" => output_file_list[0],
         "file_list" => output_file_list,
         "total_size" => files_size,
