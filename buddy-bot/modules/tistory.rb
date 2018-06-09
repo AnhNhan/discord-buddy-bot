@@ -189,13 +189,14 @@ module BuddyBot::Modules::Tistory
     end
 
     doc = Nokogiri::HTML(response.body)
+
+    page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
+
     if doc.css('.blog_protected').length > 0
       self.log ":closed_lock_with_key: Page `#{page_title}` <#{orig_input}> is protected!", event.bot
       return nil
     end
     urls = self.extract_image_uris(doc, orig_input, event)
-
-    page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
 
     if urls.length == 0
       event.send_message ":warning: No images found on the site!" if verbose
@@ -352,6 +353,8 @@ module BuddyBot::Modules::Tistory
   def self.extract_media(doc, input_url, event)
     media = []
     doc.css('embed') do |embed|
+    end
+    doc.css('iframe') do |iframe|
     end
     return media
   end
