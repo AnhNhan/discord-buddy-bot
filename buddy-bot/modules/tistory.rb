@@ -404,6 +404,8 @@ module BuddyBot::Modules::Tistory
         parsed_vars = CGI.parse(flashvars)
         gdrive_file_id = parsed_vars["file"][0].scan(/host\/(.*?)(&|$)/)[0][0]
         media << { "type" => "weird-gdrive-file", "id" => gdrive_file_id }
+      elsif uri.include? "youtu.be"
+        media << { "type" => "youtube", "uri" => uri }
       else
         media << { "type" => "unknown", "sub-type" => "embed", "uri" => uri, "flashvars" => flashvars }
       end
