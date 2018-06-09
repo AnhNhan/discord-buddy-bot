@@ -196,25 +196,26 @@ module BuddyBot::Modules::Tistory
       self.log ":closed_lock_with_key: Page `#{page_title}` <#{orig_input}> is protected!", event.bot
       return nil
     end
-    urls = self.extract_image_uris(doc, orig_input, event)
+    urls_images = self.extract_image_uris(doc, orig_input, event)
+    media = self.extract_media(doc, orig_input, event)
 
-    if urls.length == 0
-      event.send_message ":warning: No images found on the site!" if verbose
+    if urls_images.length == 0 && media.length == 0
+      event.send_message ":warning: No images / media found on the site!" if verbose
       self.log ":warning: Page `#{page_title}` <#{orig_input}> had no images!", event.bot
       return nil
     end
 
     if verbose
-      event.send_message "**#{page_title}** (#{urls.length} images) - <#{orig_input}>\n#{urls.join("\n")}"
+      event.send_message "**#{page_title}** (#{urls_images.length} images) - <#{orig_input}>\n#{urls_images.join("\n")}"
       event.message.delete() unless event.channel.pm?
     end
 
-    self.log ":information_desk_person: Downloading #{urls.length} images from `#{page_title}` <#{orig_input}>", event.bot
+    self.log ":information_desk_person: Downloading #{urls_images.length} images from `#{page_title}` <#{orig_input}>", event.bot
     download_results = {}
     raw_download_results = []
     download_error_count = 0
     download_skip_count = 0
-    process_results = Parallel.map(urls, in_processes: @@number_of_processes) do |url|
+    process_results_images = Parallel.map(urls_images, in_processes: @@number_of_processes) do |url|
       begin
         self.upload_tistory_file(url, page_name, page_number, page_title, event)
       rescue Exception => e
@@ -225,7 +226,7 @@ module BuddyBot::Modules::Tistory
     if @@abort_in_progress
       return "abort"
     end
-    process_results.each do |result|
+    process_results_images.each do |result|
       if result.nil? || result["result"].eql?("error")
         download_error_count = download_error_count + 1
       elsif result["result"].eql? "ok"
@@ -261,10 +262,10 @@ module BuddyBot::Modules::Tistory
     @@pages_downloaded[page_name][page_number]["expected_media"] = [ orig_expected_media, count_media ].max
 
     orig_expected = @@pages_downloaded[page_name][page_number]["expected"]
-    if orig_expected != 0 && orig_expected != urls.length
-      self.log ":warning: Page `#{orig_input}` had `#{urls.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
+    if orig_expected != 0 && orig_expected != urls_images.length
+      self.log ":warning: Page `#{orig_input}` had `#{urls_images.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
     end
-    @@pages_downloaded[page_name][page_number]["expected"] = [ urls.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
+    @@pages_downloaded[page_name][page_number]["expected"] = [ urls_images.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
     download_results.keys.each do |id|
       @@pages_downloaded[page_name][page_number]["files"][id] = download_results[id]
     end
@@ -352,9 +353,29 @@ module BuddyBot::Modules::Tistory
 
   def self.extract_media(doc, input_url, event)
     media = []
+    uri_tistory_flashplayer = "http://goo.gl/HEJkR"
+    uri_part_kakao_flashplayer = "tv.kakao.com/embed/player/cliplink"
     doc.css('embed') do |embed|
+      uri = embed.attribute('src')
+      flashvars = embed.attribute('flashvars')
+
+      if uri.eql? uri_tistory_flashplayer
+        parsed_vars = URI.parse(flashvars)
+        uri_parts_list = parsed_vars["xml"][0]
+        media << { "type" => "tistory_parts_list", "uri" => uri_parts_list }
+      elsif uri.include? uri_part_kakao_flashplayer
+        media << { "type" => "kakao_player", "uri" => uri }
+      else
+        media << { "type" => "unknown", "sub-type" => "embed", "uri" => uri, "flashvars" => flashvars }
+      end
     end
     doc.css('iframe') do |iframe|
+      uri = iframe.attribute('src')
+      if uri.include? "youtube.com"
+        media << { "type" => "youtube", "uri" => uri }
+      else
+        media << { "type" => "unknown", "sub-type" => "iframe", "uri" => uri }
+      end
     end
     return media
   end
