@@ -392,7 +392,7 @@ module BuddyBot::Modules::Tistory
     uri_weird_gdrive_flash_player = "https://www.googledrive.com/host/0B-9MTMyoDRgrWTc4bFN6NVNxQmc"
     doc.css('embed').each do |embed|
       uri = embed.attribute('src').to_s
-      flashvars = embed.attribute('flashvars').to_s
+      flashvars = (embed.attribute('flashvars') || "").to_s
 
       if uri_tistory_flashplayers.include? uri
         parsed_vars = CGI.parse(flashvars)
