@@ -436,7 +436,7 @@ module BuddyBot::Modules::Tistory
   def self.upload_youtube_video(url, page_name, page_number, page_title, event)
     file_id = url.scan(/([A-z0-9\-_]{11})/)[0][0]
     self.generic_multi_upload(url, page_name, page_number, page_title, event) do |dir|
-      output = `cd #{dir} && youtube-dl --write-sub --all-subs #{file_id}`
+      output = `cd #{dir} && youtube-dl --write-sub --all-subs https://youtu.be/#{file_id}`
       output_filename = "<not downloaded yet>"
       output_file_list = []
       files_support_count = 0
