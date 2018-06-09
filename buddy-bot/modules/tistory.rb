@@ -412,6 +412,8 @@ module BuddyBot::Modules::Tistory
       uri = iframe.attribute('src').to_s
       if uri.include? "youtube.com"
         media << { "type" => "youtube", "uri" => uri }
+      elsif uri.include? uri_part_kakao_flashplayer
+        media << { "type" => "kakao_player", "uri" => uri }
       else
         media << { "type" => "unknown", "sub-type" => "iframe", "uri" => uri }
       end
