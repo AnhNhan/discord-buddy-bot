@@ -237,6 +237,8 @@ module BuddyBot::Modules::Tistory
           self.upload_kakao_player_video(info["uri"], page_name, page_number, page_title, event)
         when "tistory_parts_list"
           self.upload_tistory_parts_video(info["uri"], page_name, page_number, page_title, event)
+        when "weird-gdrive-file"
+          self.upload_gdrive_file_video(info["id"], page_name, page_number, page_title, event)
         else
           self.log ":warning: No idea how to process #{info}!", event.bot
         end
@@ -421,6 +423,9 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.upload_tistory_parts_video(url, page_name, page_number, page_title, event)
+  end
+
+  def self.upload_gdrive_file_video(id, page_name, page_number, page_title, event)
   end
 
   def self.upload_youtube_video(url, page_name, page_number, page_title, event)
