@@ -49,7 +49,7 @@ module BuddyBot::Modules::Tistory
     end
     puts "Ready to upload to '#{@@s3_bucket_name}'"
 
-    self.process_mobile_page("http://studio-g.tistory.com/m/430", "http://studio-g.tistory.com/m/430", "studio-g", "430", event, true)
+    # self.process_mobile_page("http://studio-g.tistory.com/m/430", "http://studio-g.tistory.com/m/430", "studio-g", "430", event, true)
   end
 
   def self.set_s3_bucket_name(name)
