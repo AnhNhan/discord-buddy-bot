@@ -22,6 +22,7 @@ module BuddyBot::Modules::Tistory
   @@s3_bucket_name = nil
 
   @@pages = []
+  @@pages_special = []
   @@pages_downloaded = {}
 
   @@initialized = false
@@ -31,11 +32,9 @@ module BuddyBot::Modules::Tistory
   @@abort_in_progress = false
 
   def self.scan_bot_files()
-    pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml"))
-    pages_downloaded = YAML.load_file(BuddyBot.path("content/tistory-pages-downloaded.yml"))
-
-    @@pages = pages || []
-    @@pages_downloaded = pages_downloaded || {}
+    @@pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml")) || []
+    @@pages_special = YAML.load_file(BuddyBot.path("content/tistory-special-list.yml")) || []
+    @@pages_downloaded = YAML.load_file(BuddyBot.path("content/tistory-pages-downloaded.yml")) || {}
   end
 
   def self.log(message, bot)
@@ -114,63 +113,72 @@ module BuddyBot::Modules::Tistory
     next unless event.user.id == 139342974776639489
 
     self.log ":information_desk_person: Starting to process the page queue! :sujipraise:", event.bot
-
+    @@pages_special.each do |page_name|
+      self.process_pages(page_name, event) { |page_name, page_number| "http://#{page_name}/m/#{page_number}" }
+    end
     @@pages.each do |page_name|
-      if @@abort_in_progress
-        @@abort_in_progress = false
-        self.log ":information_desk_person: Aborted!", event.bot
+      self.process_pages(page_name, event) { |page_name, page_number| "http://#{page_name}.tistory.com/m/#{page_number}" }
+    end
+
+    if @@abort_in_progress
+      @@abort_in_progress = false
+      self.log ":information_desk_person: Aborted!", event.bot
+    end
+  end
+
+  def self.process_pages(page_name, event, &build_url)
+    if @@abort_in_progress
+      return
+    end
+    self.log ":information_desk_person: Going through `#{page_name}`'s page!", event.bot
+    count_done = 0 # all done, successful, failed and 404
+    count_replicated = 0
+    count_404 = 0 # count of only 404
+    count_first_404 = 0 # index of first 404 in 404 range, reset with every success
+    threshold_404 = 100
+    threshold_really_max = 100000
+
+    range = 1..threshold_really_max
+    range.each do |page_number|
+      if page_number > threshold_404 && count_404 > threshold_404 && (page_number - count_first_404) > threshold_404
+        self.log ":information_desk_person: Finished with `#{page_name}`'s page, skipped #{count_replicated}x already replicated pages, last checked was ##{page_number - 1}!", event.bot
         break
       end
-      self.log ":information_desk_person: Going through `#{page_name}`'s page!", event.bot
-      count_done = 0 # all done, successful, failed and 404
-      count_replicated = 0
-      count_404 = 0 # count of only 404
-      count_first_404 = 0 # index of first 404 in 404 range, reset with every success
-      threshold_404 = 100
-      threshold_really_max = 100000
 
-      range = 1..threshold_really_max
-      range.each do |page_number|
-        if page_number > threshold_404 && count_404 > threshold_404 && (page_number - count_first_404) > threshold_404
-          self.log ":information_desk_person: Finished with `#{page_name}`'s page, skipped #{count_replicated}x already replicated pages, last checked was ##{page_number - 1}!", event.bot
-          break
-        end
+      count_done = count_done + 1
 
-        count_done = count_done + 1
+      url = build_url.call page_name, page_number
 
-        url = "http://#{page_name}.tistory.com/m/#{page_number}"
+      # if @@pages_downloaded.include?(page_name) &&
+      #   @@pages_downloaded[page_name].include?(page_number.to_s) &&
+      #   @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
+      #   # Already replicated
+      #   count_replicated = count_replicated + 1
+      #   count_first_404 = 0
+      #   next
+      # end
 
-        # if @@pages_downloaded.include?(page_name) &&
-        #   @@pages_downloaded[page_name].include?(page_number.to_s) &&
-        #   @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
-        #   # Already replicated
-        #   count_replicated = count_replicated + 1
-        #   count_first_404 = 0
-        #   next
-        # end
+      result = self.process_mobile_page(url, url, page_name, page_number.to_s, event)
+      if @@abort_in_progress
+        break
+      end
 
-        result = self.process_mobile_page(url, url, page_name, page_number.to_s, event)
-        if @@abort_in_progress
-          break
-        end
-
-        if result.is_a?(Integer)
-          if result == 404
-            count_404 = count_404 + 1
-            if count_first_404 == 0
-              count_first_404 = page_number
-            end
-            if count_404 % 20 == 0
-              self.log ":information_desk_person: Had #{count_404}x 404s already, currently at ##{page_number}, ##{count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
-            end
-          else
-            self.log ":warning: :warning: `#{url}` received a `#{result}`", event.bot
+      if result.is_a?(Integer)
+        if result == 404
+          count_404 = count_404 + 1
+          if count_first_404 == 0
+            count_first_404 = page_number
           end
-        elsif result.nil?
-          # uh...
-        elsif result == true
-          count_first_404 = 0
+          if count_404 % 20 == 0
+            self.log ":information_desk_person: Had #{count_404}x 404s already, currently at ##{page_number}, ##{count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
+          end
+        else
+          self.log ":warning: :warning: `#{url}` received a `#{result}`", event.bot
         end
+      elsif result.nil?
+        # uh...
+      elsif result == true
+        count_first_404 = 0
       end
     end
   end
