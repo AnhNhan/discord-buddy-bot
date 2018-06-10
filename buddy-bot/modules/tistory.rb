@@ -49,7 +49,7 @@ module BuddyBot::Modules::Tistory
     end
     puts "Ready to upload to '#{@@s3_bucket_name}'"
 
-    # self.process_mobile_page("http://studio-g.tistory.com/m/430", "http://studio-g.tistory.com/m/430", "studio-g", "430", event, true)
+    self.process_mobile_page("http://studio-g.tistory.com/m/430", "http://studio-g.tistory.com/m/430", "studio-g", "430", event, true)
   end
 
   def self.set_s3_bucket_name(name)
@@ -228,17 +228,23 @@ module BuddyBot::Modules::Tistory
         return { "result" => "error", "error" => e }
       end
     end
+    download_media_success = []
+    download_media_error_count = 0
+    download_media_skip_count = 0
     process_results_media = Parallel.map(media_info, in_processes: @@number_of_processes) do |info|
       begin
         case info["type"]
         when "youtube"
-          self.upload_youtube_video(info["uri"], page_name, page_number, page_title, event)
+          file_id = info["uri"].scan(/([A-z0-9\-_]{11})/)[0][0]
+          self.upload_youtube_video(file_id, info["uri"], page_name, page_number, page_title, event)
         when "kakao_player"
-          self.upload_kakao_player_video(info["uri"], page_name, page_number, page_title, event)
+          file_id = info["uri"].scan(/cliplink\/([A-z0-9\-_]+)@/)[0][0]
+          self.upload_kakao_player_video(file_id, info["uri"], page_name, page_number, page_title, event)
         when "tistory_parts_list"
-          self.upload_tistory_parts_video(info["uri"], page_name, page_number, page_title, event)
+          file_id = info["uri"].scan(/\/(\d{5,})\//)[0][0]
+          self.upload_tistory_parts_video(file_id, info["uri"], page_name, page_number, page_title, event)
         when "weird-gdrive-file"
-          self.upload_gdrive_file_video(info["id"], page_name, page_number, page_title, event)
+          self.upload_gdrive_file_video(info["id"], info["id"], page_name, page_number, page_title, event)
         else
           self.log ":warning: No idea how to process #{info}!", event.bot
         end
@@ -259,6 +265,15 @@ module BuddyBot::Modules::Tistory
         raw_image_download_results << result
       elsif result["result"].eql? "skipped"
         download_image_skip_count = download_image_skip_count + 1
+      end
+    end
+    process_results_media.each do |result|
+      if result["result"] == "ok"
+        download_media_success << result
+      elsif result["result"] == "skipped"
+        download_media_skip_count = download_media_skip_count + 1
+      else
+        download_media_error_count = download_media_error_count + 1
       end
     end
 
@@ -303,7 +318,10 @@ module BuddyBot::Modules::Tistory
     File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
 
     if orig_expected != 0 && orig_expected != @@pages_downloaded[page_name][page_number]["files"].keys.length
-      self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded file count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
+      self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :frame_photo: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
+    end
+    if orig_expected_media != 0 && orig_expected_media != @@pages_downloaded[page_name][page_number]["media_files"].keys.length
+      self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :movie_camera: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected_media"]}** but only **#{@@pages_downloaded[page_name][page_number]["media_files"].keys.length}** exist, **#{download_media_success.length}** from just now", event.bot
     end
 
     total_image_count = 0
@@ -318,22 +336,46 @@ module BuddyBot::Modules::Tistory
       total_image_time_upload = total_image_time_download + result["time_upload"]
     end
 
-    avg_download = 0
-    avg_upload = 0
-    avg_size = 0
+    avg_image_download = 0
+    avg_image_upload = 0
+    avg_image_size = 0
     if total_image_count > 0
-      avg_download = (total_image_time_download / total_image_count).round(1)
-      avg_upload = (total_image_time_upload / total_image_count).round(1)
-      avg_size = (total_image_size / total_image_count).round(1)
+      avg_image_download = (total_image_time_download / total_image_count).round(1)
+      avg_image_upload = (total_image_time_upload / total_image_count).round(1)
+      avg_image_size = (total_image_size / total_image_count).round(1)
+    end
+
+    total_media_count = 0
+    total_media_size = 0
+    total_media_time_upload = 0
+    total_media_time_download = 0
+
+    download_media_success.each do |result|
+      total_media_count = total_media_count + result["total_count"] - result["total_support_count"]
+      total_media_size = total_media_size + result["total_size"]
+      total_media_time_download = total_media_time_download + result["time_download"]
+      total_media_time_upload = total_media_time_download + result["time_upload"]
+    end
+
+    avg_media_download = 0
+    avg_media_upload = 0
+    avg_media_size = 0
+    if total_media_count > 0
+      avg_media_download = (total_media_time_download / total_media_count).round(1)
+      avg_media_upload = (total_media_time_upload / total_media_count).round(1)
+      avg_media_size = (total_media_size / total_media_count).round(1)
     end
 
     time_end = Time.now
     self.log ":ballot_box_with_check: Done replicating <#{orig_input}> to `#{self.format_folder(page_name, page_number, page_title)}`, " +
-      "uploading #{download_image_results.keys.length}x files (total #{total_image_size.round(1)}MB, avg #{avg_size}MB) with #{download_image_error_count}x errors and " +
-      "skipping #{download_image_skip_count}x, took me #{(time_end - time_start).round(1)}s, " +
-      "avg download #{avg_download}s and avg upload #{avg_upload}", event.bot
+      "uploading #{total_image_count}x files (total #{total_image_size.round(1)}MB, avg #{avg_image_size}MB) with #{download_image_error_count}x errors and " +
+      "skipping #{download_image_skip_count}x, took me #{(time_end - time_start).round(1)}s (images and media), " +
+      "avg download #{avg_image_download}s and avg upload #{avg_image_upload}", event.bot
     if @@pages_downloaded[page_name][page_number]["expected_media"] > 0
-      self.log ":ballot_box_with_check: Found #{@@pages_downloaded[page_name][page_number]["expected_media"]} media files!", event.bot
+      self.log ":ballot_box_with_check: Found #{@@pages_downloaded[page_name][page_number]["expected_media"]} media files, " +
+      "uploading #{total_media_count}x files (total #{total_media_size.round(1)}MB, avg #{avg_media_size}MB) with #{download_media_error_count}x errors and " +
+      "skipping #{download_media_skip_count}x, " +
+      "avg download #{avg_media_download}s and avg upload #{avg_media_upload}", event.bot
     end
     return true
   end
@@ -438,18 +480,62 @@ module BuddyBot::Modules::Tistory
     return media
   end
 
-  def self.upload_kakao_player_video(url, page_name, page_number, page_title, event)
+  def self.upload_kakao_player_video(file_id, url, page_name, page_number, page_title, event)
+    player_page = HTTParty.get(url)
+    if player_page.code != 200
+      return { "result" => "error", "request" => player_page }
+    end
+
+    player_page_result = Nokogiri::XML(player_page.body)
   end
 
-  def self.upload_tistory_parts_video(url, page_name, page_number, page_title, event)
+  def self.upload_tistory_parts_video(file_id, url, page_name, page_number, page_title, event)
+    self.generic_multi_upload(file_id, url, page_name, page_number, page_title, event) do |dir|
+      player_data = HTTParty.get(url)
+      if player_data.code != 200
+        return { "result" => "error", "request" => player_data }
+      end
+
+      temp_file = nil
+      output_file_list = []
+
+      xml = Nokogiri::XML(player_data.body)
+      xml_tracks = xml.css("track").sort_by { |k| k.at_css("title").content.to_i }.map{ |track| track.at_css("location").content }.each do |part_url|
+        part_download = HTTParty.get(part_url)
+        if part_download.code != 200
+          self.log ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.headers.inspect}\n```", event.bot
+          return { "result" => "error", "http" => part_download }
+        end
+        if temp_file.nil?
+          part_download
+          params = CGI.parse(part_download.headers["content-disposition"])
+          if !params || !params[" filename"] || params[" filename"].length > 1
+            self.log ":warning: Url <#{url}> had malicious content-disposition!\n```\n#{part_download.headers.inspect}\n```", event.bot
+            return { "result" => "error", "error" => "content-disposition" }
+          end
+          file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '').sub("/", "\/") # filename is wrapped in quotes
+          file_full_name = File.basename file_full_name, ".*" # remove .001
+          file_name = File.basename(file_full_name, ".*")
+          file_extension = File.extname(file_full_name)
+          file_extension[0] = "" # still has leading '.'
+          output_file_list = [ { "full" => file_full_name, "name" => file_name, "ext" => file_extension } ]
+          temp_file = File.open(dir + "/" + file_full_name, "wb")
+        end
+        written = temp_file.write part_download.body
+      end
+
+      {
+        "result" => "ok",
+        "output_file_list" => output_file_list,
+      }
+    end
   end
 
-  def self.upload_gdrive_file_video(id, page_name, page_number, page_title, event)
+  def self.upload_gdrive_file_video(file_id, _, page_name, page_number, page_title, event)
   end
 
-  def self.upload_youtube_video(url, page_name, page_number, page_title, event)
-    file_id = url.scan(/([A-z0-9\-_]{11})/)[0][0]
-    self.generic_multi_upload(url, page_name, page_number, page_title, event) do |dir|
+  def self.upload_youtube_video(file_id, url, page_name, page_number, page_title, event)
+    self.generic_multi_upload(file_id, url, page_name, page_number, page_title, event) do |dir|
       output = `cd #{dir} && youtube-dl --write-sub --all-subs https://youtu.be/#{file_id}`
       output_filename = "<not downloaded yet>"
       output_file_list = []
@@ -467,11 +553,16 @@ module BuddyBot::Modules::Tistory
         self.log ":warning: could not infer file name\n```\n#{output}\n```", event.bot
         return { "result" => "error" }
       end
-      output_file_list << output_filename
+      file_name, file_extension = output_filename.scan(/^(.*?)-[A-z0-9\-_]{11}\.(.*?)$/)[0]
+      output_file_list << { "full" => output_filename, "name" => file_name, "ext" => file_extension }
 
       if output.include? "Writing video subtitles to:"
         files_sub = output.scan(/Writing video subtitles to: (.*?)\n/).flatten
-        output_file_list = output_file_list + files_sub
+        output_file_list = output_file_list + files_sub.map do |full|
+          file_name, file_extension = full.scan(/^(.*?)-[A-z0-9\-_]{11}\.(.*?)$/)[0]
+          { "full" => full, "name" => file_name, "ext" => file_extension }
+        end
+
         files_support_count = files_sub
       end
 
@@ -483,14 +574,22 @@ module BuddyBot::Modules::Tistory
     end
   end
 
-  def self.generic_multi_upload(url, page_name, page_number, page_title, event, &cb)
+  def self.generic_multi_upload(file_id, url, page_name, page_number, page_title, event, &cb)
     if @@abort_in_progress
       return { "result" => "error", "error" => "Aborting..." }
     end
     if url.nil?
       return { "result" => "error", "error" => "Empty url..." }
     end
-    file_id = "<no id>"
+
+    # if @@pages_downloaded.include?(page_name) &&
+    #   @@pages_downloaded[page_name].include?(page_number) &&
+    #   @@pages_downloaded[page_name][page_number].include?("media_files") &&
+    #   @@pages_downloaded[page_name][page_number]["media_files"].include?(file_id)
+    #   # Already replicated
+    #   return { "result" => "skipped", "id" => file_id, "path" => @@pages_downloaded[page_name][page_number]["media_files"][file_id] }
+    # end
+
     output_file_list = []
 
     time_start = Time.now
@@ -502,8 +601,7 @@ module BuddyBot::Modules::Tistory
     Dir.mktmpdir do |dir|
       result = cb.call(dir)
       if result["result"] = "ok"
-        file_id = result["file_id"]
-        files_support_count = result["files_support_count"]
+        files_support_count = result["files_support_count"] || 0
         output_file_list = result["output_file_list"]
       else
         return result
@@ -516,11 +614,12 @@ module BuddyBot::Modules::Tistory
       uploaded_file_names = []
 
       begin
-        output_file_list.each do |file|
+        output_file_list.each do |file_meta|
+          file = file_meta["full"]
+          file_name = file_meta["name"]
+          file_extension = file_meta["ext"]
           files_count = files_count + 1
-          files_size = files_size + File.size(dir + "/" + file)
-
-          file_name, file_extension = file.scan(/^(.*?)-[A-z0-9\-_]{11}\.(.*?)$/)[0]
+          files_size = files_size + File.size(dir + "/" + file).to_f / 2**10
 
           s3_filename = self.format_object_name(page_name, page_number, page_title, file_name, file_id, file_extension)
           uploaded_file_names << s3_filename
@@ -535,6 +634,7 @@ module BuddyBot::Modules::Tistory
         return { "result" => "error", "error" => e }
       end
       time_end = Time.now
+      self.log ":ballot_box_with_check: Successfully uploaded media `#{file_id}` => `#{uploaded_file_names[0]}`, #{files_size.round(1)} MB, #{(time_end - time_start).round(1)}s total", event.bot
       return {
         "result" => "ok",
         "id" => file_id,
