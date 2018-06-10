@@ -10,6 +10,7 @@ require 'parallel'
 
 require 'discordrb'
 require 'yaml'
+require 'json'
 
 require 'modules/buddy-functionality'
 
@@ -48,7 +49,7 @@ module BuddyBot::Modules::Tistory
     end
     puts "Ready to upload to '#{@@s3_bucket_name}'"
 
-    # self.process_mobile_page("http://studio-g.tistory.com/m/430", "http://studio-g.tistory.com/m/430", "studio-g", "430", event, true)
+    # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
   end
 
   def self.set_s3_bucket_name(name)
@@ -246,8 +247,7 @@ module BuddyBot::Modules::Tistory
           file_id = info["uri"].scan(/([A-z0-9\-_]{11})/)[0][0]
           self.upload_youtube_video(file_id, info["uri"], page_name, page_number, page_title, event)
         when "kakao_player"
-          file_id = info["uri"].scan(/cliplink\/([A-z0-9\-_]+)@/)[0][0]
-          self.upload_kakao_player_video(file_id, info["uri"], page_name, page_number, page_title, event)
+          self.upload_kakao_player_video(info["uri"], page_name, page_number, page_title, event)
         when "tistory_parts_list"
           file_id = info["uri"].scan(/\/(\d{5,})\//)[0][0]
           self.upload_tistory_parts_video(file_id, info["uri"], page_name, page_number, page_title, event)
@@ -376,12 +376,12 @@ module BuddyBot::Modules::Tistory
 
     time_end = Time.now
     self.log ":ballot_box_with_check: Done replicating <#{orig_input}> to `#{self.format_folder(page_name, page_number, page_title)}`, " +
-      "uploading #{total_image_count}x files (total #{total_image_size.round(1)}MB, avg #{avg_image_size}MB) with #{download_image_error_count}x errors and " +
+      "uploading #{total_image_count}x images (total #{total_image_size.round(1)}MB, avg #{avg_image_size}MB) with #{download_image_error_count}x errors and " +
       "skipping #{download_image_skip_count}x, took me #{(time_end - time_start).round(1)}s (images and media), " +
       "avg download #{avg_image_download}s and avg upload #{avg_image_upload}", event.bot
     if @@pages_downloaded[page_name][page_number]["expected_media"] > 0
       self.log ":ballot_box_with_check: Found #{@@pages_downloaded[page_name][page_number]["expected_media"]} media files, " +
-      "uploading #{total_media_count}x files (total #{total_media_size.round(1)}MB, avg #{avg_media_size}MB) with #{download_media_error_count}x errors and " +
+      "uploading #{total_media_count}x media files (total #{total_media_size.round(1)}MB, avg #{avg_media_size}MB) with #{download_media_error_count}x errors and " +
       "skipping #{download_media_skip_count}x, " +
       "avg download #{avg_media_download}s and avg upload #{avg_media_upload}", event.bot
     end
@@ -488,13 +488,62 @@ module BuddyBot::Modules::Tistory
     return media
   end
 
-  def self.upload_kakao_player_video(file_id, url, page_name, page_number, page_title, event)
+  def self.upload_kakao_player_video(url, page_name, page_number, page_title, event)
+    if url.start_with? "//"
+      url = "https:" + url
+    end
+    puts url
     player_page = HTTParty.get(url)
     if player_page.code != 200
       return { "result" => "error", "request" => player_page }
     end
 
-    player_page_result = Nokogiri::XML(player_page.body)
+    file_id = player_page.body.scan(/ENV\.clipLinkId = '(\d+)';/)[0][0]
+    selected_profile = player_page.body.scan(/ENV.profile = '(\w+)';/)[0][0]
+    # impress data contains general video data, and most importantly, provides us with uuid and tid values
+    impress = HTTParty.get("http://tv.kakao.com/api/v2/ft/cliplinks/#{file_id}/impress?player=monet_html5&referer=&service=daum_tistory&section=daum_tistory&withConad=true&dteType=PC&fields=clipLink,clip,channel,hasPlusFriend,user,userSkinData,-service,-tagList")
+    if impress.code != 200
+      return { "result" => "error", "request" => impress }
+    end
+    impress = JSON.parse(impress.body)
+    # raw data contains the video link
+    clip_data = HTTParty.get("https://tv.kakao.com/api/v2/ft/cliplinks/#{file_id}/raw" +
+      "?player=monet_html5&uuid=#{impress["uuid"]}&service=daum_tistory&section=daum_tistory&tid=#{impress["tid"]}&profile=#{selected_profile}&dteType=PC&continuousPlay=false")
+    if clip_data.code != 200
+      return { "result" => "error", "request" => clip_data }
+    end
+    clip_data = JSON.parse(clip_data.body)
+
+    file_name = impress["clipLink"]["clip"]["title"]
+    profile_name = clip_data["videoLocation"]["profile"]
+    video_uri = clip_data["videoLocation"]["url"]
+    file_full_name = File.basename(video_uri)
+    filtered_file_full_name = file_full_name.split("?")[0]
+    file_extension = File.extname(filtered_file_full_name)
+    file_extension[0] = "" # still has leading '.'
+
+    acknowledged_profiles = [
+      "LOW",
+      "BASE",
+      "MAIN",
+      "HIGH",
+    ]
+    found_profiles = {}
+    clip_data["outputList"].each{ |profile| found_profiles[profile["profile"]] = profile["label"] }
+    unknown_profiles = found_profiles.keys.map{ |profile| if !acknowledged_profiles.include?(profile) then profile + ": " + found_profiles[profile] end }.compact
+    if unknown_profiles.length > 0
+      self.log ":warning: Video on `#{url}` had unknown profile(s): `#{unknown_profiles}`", event.bot
+    end
+
+    self.generic_multi_upload(profile_name + "-" + file_id, url, page_name, page_number, page_title, event) do |dir|
+      `cd #{dir} && wget '#{video_uri}'`
+
+      output_file_list = [ { "full" => file_full_name, "name" => file_name, "ext" => file_extension } ]
+      {
+        "result" => "ok",
+        "output_file_list" => output_file_list,
+      }
+    end
   end
 
   def self.upload_tistory_parts_video(file_id, url, page_name, page_number, page_title, event)
@@ -608,7 +657,7 @@ module BuddyBot::Modules::Tistory
 
     Dir.mktmpdir do |dir|
       result = cb.call(dir)
-      if result["result"] = "ok"
+      if result && result["result"] = "ok"
         files_support_count = result["files_support_count"] || 0
         output_file_list = result["output_file_list"]
       else
@@ -627,7 +676,7 @@ module BuddyBot::Modules::Tistory
           file_name = file_meta["name"]
           file_extension = file_meta["ext"]
           files_count = files_count + 1
-          files_size = files_size + File.size(dir + "/" + file).to_f / 2**10
+          files_size = files_size + File.size(dir + "/" + file)
 
           s3_filename = self.format_object_name(page_name, page_number, page_title, file_name, file_id, file_extension)
           uploaded_file_names << s3_filename
@@ -642,6 +691,7 @@ module BuddyBot::Modules::Tistory
         return { "result" => "error", "error" => e }
       end
       time_end = Time.now
+      files_size = files_size.to_f / (2 ** 20)
       self.log ":ballot_box_with_check: Successfully uploaded media `#{file_id}` => `#{uploaded_file_names[0]}`, #{files_size.round(1)} MB, #{(time_end - time_start).round(1)}s total", event.bot
       return {
         "result" => "ok",
