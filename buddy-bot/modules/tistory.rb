@@ -378,7 +378,14 @@ module BuddyBot::Modules::Tistory
 
   def self.gib_media_count(doc, input_url, event)
     count = 0
-    count = doc.css('iframe, embed').length
+    count = doc.css("iframe, embed").length
+    doc.css(".blogview_content p").each do |p|
+      content = p.content.strip
+      next unless content =~ /^#{URI::regexp}$/
+      if content.include? "youtu"
+        count = count + 1
+      end
+    end
     return count
   end
 
@@ -419,6 +426,13 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "kakao_player", "uri" => uri }
       else
         media << { "type" => "unknown", "sub-type" => "iframe", "uri" => uri }
+      end
+    end
+    doc.css(".blogview_content p").each do |p|
+      content = p.content.strip
+      next unless content =~ /^#{URI::regexp}$/
+      if content.include? "youtu"
+        media << { "type" => "youtube", "uri" => content }
       end
     end
     return media
