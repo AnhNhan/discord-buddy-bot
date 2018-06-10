@@ -42,6 +42,10 @@ module BuddyBot::Modules::Tistory
     BuddyBot::Modules::BuddyFunctionality.log message, bot, Struct.new(:id).new(123456)
   end
 
+  def self.log_warning(message, bot)
+    BuddyBot::Modules::BuddyFunctionality.log message, bot, Struct.new(:id).new(12345678)
+  end
+
   ready do |event|
     if !@@initialized
       self.scan_bot_files()
@@ -174,7 +178,7 @@ module BuddyBot::Modules::Tistory
             self.log ":information_desk_person: Had #{count_404}x 404s already, currently at ##{page_number}, ##{count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
           end
         else
-          self.log ":warning: :warning: `#{url}` received a `#{result}`", event.bot
+          self.log_warning ":warning: :warning: `#{url}` received a `#{result}`", event.bot
         end
       elsif result.nil?
         # uh...
@@ -193,7 +197,7 @@ module BuddyBot::Modules::Tistory
 
     if response.code != 200
       if verbose
-        self.log ":warning: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```\n#{response.body}", event.bot
+        self.log_warning ":warning: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```\n#{response.body}", event.bot
         event.send_message ":warning: Encountered an error while loading the page! `#{response.code} #{response.message}`"
       end
       return response.code
@@ -204,7 +208,8 @@ module BuddyBot::Modules::Tistory
     page_title = doc.css('h2.tit_blogview').map{|h2| h2.content}.first
 
     if doc.css('.blog_protected').length > 0
-      self.log ":closed_lock_with_key: Page `#{page_title}` <#{orig_input}> is protected!", event.bot
+      self.log_warning ":closed_lock_with_key: Page `#{page_title}` <#{orig_input}> is protected!", event.bot
+      event.send_message ":closed_lock_with_key: Page `#{page_title}` <#{orig_input}> is protected!" if verbose
       return nil
     end
     urls_images = self.extract_image_uris(doc, orig_input, event)
@@ -212,7 +217,7 @@ module BuddyBot::Modules::Tistory
 
     if urls_images.length == 0 && media_info.length == 0
       event.send_message ":warning: No images / media found on the site!" if verbose
-      self.log ":warning: Page `#{page_title}` <#{orig_input}> had no images / media!", event.bot
+      self.log_warning ":warning: Page `#{page_title}` <#{orig_input}> had no images / media!", event.bot
       return nil
     end
 
@@ -233,7 +238,7 @@ module BuddyBot::Modules::Tistory
       begin
         self.upload_tistory_image_file(url, page_name, page_number, page_title, event)
       rescue Exception => e
-        self.log ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`\n```\n#{e.backtrace.join("\n")}\n```", event.bot
+        self.log_warning ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`\n```\n#{e.backtrace.join("\n")}\n```", event.bot
         return { "result" => "error", "error" => e }
       end
     end
@@ -254,10 +259,10 @@ module BuddyBot::Modules::Tistory
         when "weird-gdrive-file"
           self.upload_gdrive_file_video(info["id"], info["id"], page_name, page_number, page_title, event)
         else
-          self.log ":warning: No idea how to process #{info}!", event.bot
+          self.log_warning ":warning: No idea how to process #{info}!", event.bot
         end
       rescue Exception => e
-        self.log ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`\n```\n#{e.backtrace.join("\n")}\n```", event.bot
+        self.log_warning ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`\n```\n#{e.backtrace.join("\n")}\n```", event.bot
         return { "result" => "error", "error" => e }
       end
     end
@@ -311,7 +316,7 @@ module BuddyBot::Modules::Tistory
 
     orig_expected = @@pages_downloaded[page_name][page_number]["expected"]
     if orig_expected != 0 && orig_expected != urls_images.length
-      self.log ":warning: Page `#{orig_input}` had `#{urls_images.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
+      self.log_warning ":warning: Page `#{orig_input}` had `#{urls_images.length}` instead of expected #{@@pages_downloaded[page_name][page_number]["expected"]} images, looks like it got updated", event.bot
     end
     @@pages_downloaded[page_name][page_number]["expected"] = [ urls_images.length, @@pages_downloaded[page_name][page_number]["expected"] ].max
     download_image_results.keys.each do |id|
@@ -326,10 +331,10 @@ module BuddyBot::Modules::Tistory
     File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
 
     if orig_expected != 0 && orig_expected != @@pages_downloaded[page_name][page_number]["files"].keys.length
-      self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :frame_photo: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
+      self.log_warning ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :frame_photo: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
     end
     if orig_expected_media != 0 && orig_expected_media != @@pages_downloaded[page_name][page_number]["media_files"].keys.length
-      self.log ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :movie_camera: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected_media"]}** but only **#{@@pages_downloaded[page_name][page_number]["media_files"].keys.length}** exist, **#{download_media_success.length}** from just now", event.bot
+      self.log_warning ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :movie_camera: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected_media"]}** but only **#{@@pages_downloaded[page_name][page_number]["media_files"].keys.length}** exist, **#{download_media_success.length}** from just now", event.bot
     end
 
     total_image_count = 0
@@ -394,16 +399,16 @@ module BuddyBot::Modules::Tistory
     doc.css('.imageblock > .img_thumb').each do |img|
       uri = URI.parse(img.attribute('src'))
       if !uri.query
-        self.log ":warning: Url '<#{input_url}>' had an invalid image, no query found: `#{img.attribute('src')}`", event.bot
+        self.log_warning ":warning: Url '<#{input_url}>' had an invalid image, no query found: `#{img.attribute('src')}`", event.bot
         next
       end
       params = CGI.parse(uri.query)
       if !params["fname"]
-        self.log ":warning: Url '<#{input_url}>' had an invalid image, no fname found: `#{img.attribute('src')}`", event.bot
+        self.log_warning ":warning: Url '<#{input_url}>' had an invalid image, no fname found: `#{img.attribute('src')}`", event.bot
         next
       end
       if params["fname"].length > 1
-        self.log ":warning: Url '<#{input_url}>' had an invalid image, multiple fname found: `#{img.attribute('src')}`", event.bot
+        self.log_warning ":warning: Url '<#{input_url}>' had an invalid image, multiple fname found: `#{img.attribute('src')}`", event.bot
         next
       end
       fname = params["fname"][0]
@@ -416,7 +421,7 @@ module BuddyBot::Modules::Tistory
         next
       end
       if uri !~ /^http:\/\/cfile\d+\.uf\.tistory\.com\/(original|image)\/\w+/i
-        self.log ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
+        self.log_warning ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
       end
       if uri =~ /\/image\//
         uri = uri.sub!("/image/", "/original/")
@@ -532,7 +537,7 @@ module BuddyBot::Modules::Tistory
     clip_data["outputList"].each{ |profile| found_profiles[profile["profile"]] = profile["label"] }
     unknown_profiles = found_profiles.keys.map{ |profile| if !acknowledged_profiles.include?(profile) then profile + ": " + found_profiles[profile] end }.compact
     if unknown_profiles.length > 0
-      self.log ":warning: Video on `#{url}` had unknown profile(s): `#{unknown_profiles}`", event.bot
+      self.log_warning ":warning: Video on `#{url}` had unknown profile(s): `#{unknown_profiles}`", event.bot
     end
 
     self.generic_multi_upload(profile_name + "-" + file_id, url, page_name, page_number, page_title, event) do |dir|
@@ -560,14 +565,14 @@ module BuddyBot::Modules::Tistory
       xml_tracks = xml.css("track").sort_by { |k| k.at_css("title").content.to_i }.map{ |track| track.at_css("location").content }.each do |part_url|
         part_download = HTTParty.get(part_url)
         if part_download.code != 200
-          self.log ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.headers.inspect}\n```", event.bot
+          self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.headers.inspect}\n```", event.bot
           return { "result" => "error", "http" => part_download }
         end
         if temp_file.nil?
           part_download
           params = CGI.parse(part_download.headers["content-disposition"])
           if !params || !params[" filename"] || params[" filename"].length > 1
-            self.log ":warning: Url <#{url}> had malicious content-disposition!\n```\n#{part_download.headers.inspect}\n```", event.bot
+            self.log_warning ":warning: Url <#{url}> had malicious content-disposition!\n```\n#{part_download.headers.inspect}\n```", event.bot
             return { "result" => "error", "error" => "content-disposition" }
           end
           file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '').sub("/", "\/") # filename is wrapped in quotes
@@ -602,12 +607,12 @@ module BuddyBot::Modules::Tistory
       elsif output.include? "[download] Destination: "
         scan = output.scan(/\[download\] Destination: (.*?)$/)
         if scan.length > 1
-          self.log ":warning: Had multiple output files for #{file_id}", event.bot
+          self.log_warning ":warning: Had multiple output files for #{file_id}", event.bot
           return { "result" => "error" }
         end
         output_filename = scan[0][0]
       else
-        self.log ":warning: could not infer file name\n```\n#{output}\n```", event.bot
+        self.log_warning ":warning: could not infer file name\n```\n#{output}\n```", event.bot
         return { "result" => "error" }
       end
       file_name, file_extension = output_filename.scan(/^(.*?)-[A-z0-9\-_]{11}\.(.*?)$/)[0]
@@ -687,7 +692,7 @@ module BuddyBot::Modules::Tistory
           end
         end
       rescue Exception => e
-        self.log ":warning: One of `#{output_file_list}` had upload error to S3! #{e}\n```\n#{e.backtrace.join("\n")}\n```", event.bot
+        self.log_warning ":warning: One of `#{output_file_list}` had upload error to S3! #{e}\n```\n#{e.backtrace.join("\n")}\n```", event.bot
         return { "result" => "error", "error" => e }
       end
       time_end = Time.now
@@ -730,13 +735,13 @@ module BuddyBot::Modules::Tistory
     response = HTTParty.get(url)
 
     if response.code != 200
-      self.log ":warning: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```", event.bot
+      self.log_warning ":warning: Got #{response.code} #{response.message}, headers\n```\n#{response.headers.inspect}\n```", event.bot
       return { "result" => "error", "error" => "#{response.code} #{response.message}" }
     end
 
     params = CGI.parse(response.headers["content-disposition"])
     if !params || !params[" filename"] || params[" filename"].length > 1
-      self.log ":warning: Url <#{url}> had malicious content-disposition!\n```\n#{response.headers.inspect}\n```", event.bot
+      self.log_warning ":warning: Url <#{url}> had malicious content-disposition!\n```\n#{response.headers.inspect}\n```", event.bot
       return { "result" => "error", "error" => "content-disposition" }
     end
     file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '') # filename is wrapped in quotes
@@ -764,7 +769,7 @@ module BuddyBot::Modules::Tistory
         end
       end
     rescue Exception => e
-      self.log ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
+      self.log_warning ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return { "result" => "error", "error" => e }
     end
     time_end = Time.now # .to_f
