@@ -108,6 +108,8 @@ module BuddyBot::Modules::BuddyFunctionality
       # buddy bot log on anh-test
       begin
         bot.send_message (if server && @@server_log_channels[server.id] then @@server_log_channels[server.id] else 189800756403109889 end), chunk
+      rescue
+        # do nothing
       end
     end
   end
