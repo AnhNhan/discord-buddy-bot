@@ -553,6 +553,7 @@ module BuddyBot::Modules::Tistory
 
   def self.upload_tistory_parts_video(file_id, url, page_name, page_number, page_title, event)
     self.generic_multi_upload(file_id, url, page_name, page_number, page_title, event) do |dir|
+      url = url.strip # some idiots put newlines into their urls...
       player_data = HTTParty.get(url)
       if player_data.code != 200
         return { "result" => "error", "request" => player_data }
