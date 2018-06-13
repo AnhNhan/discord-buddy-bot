@@ -843,6 +843,7 @@ module BuddyBot::Modules::Tistory
     file_uri = key_info["weblink"]
     puts file_uri
 
+    file_size_expected = key_info["file_size"]
     file_size = 0
     s3_filename = ""
     Dir.mktmpdir do |dir|
@@ -851,6 +852,10 @@ module BuddyBot::Modules::Tistory
         sleep(6)
         `cd #{dir} && curl -v '#{file_uri}' > '#{local_file_name}'`
         file_size = File.size(dir + "/" + local_file_name)
+        if file_size != file_size_expected
+          self.log_warning ":warning: SendAnywhere `#{id}` had unexpected file size: #{file_size} but expected #{file_size_expected}", event.bot
+          return { "result" => "error" }
+        end
 
         time_split = Time.now
 
