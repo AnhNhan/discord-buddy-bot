@@ -25,6 +25,7 @@ module BuddyBot::Modules::Tistory
   @@pages = []
   @@pages_special = []
   @@pages_downloaded = {}
+  @@sendanywhere_downloaded = {}
 
   @@initialized = false
 
@@ -36,6 +37,7 @@ module BuddyBot::Modules::Tistory
     @@pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml")) || []
     @@pages_special = YAML.load_file(BuddyBot.path("content/tistory-special-list.yml")) || []
     @@pages_downloaded = YAML.load_file(BuddyBot.path("content/tistory-pages-downloaded.yml")) || {}
+    @@sendanywhere_downloaded = YAML.load_file(BuddyBot.path("content/downloaded-sendanywhere.yml")) || {}
   end
 
   def self.log(message, bot)
@@ -801,5 +803,79 @@ module BuddyBot::Modules::Tistory
 
   def self.format_folder(page_name, page_number, page_title)
     "tistory/#{page_name}/#{page_number} - #{page_title}/"
+  end
+
+  def self.replicate_sendanywhere_file(id, event)
+    if @@sendanywhere_downloaded.include? id
+        return { "result": "skipped", "path": @@sendanywhere_downloaded[id] }
+    end
+
+    time_start = Time.now
+    time_split = nil
+
+    device_info = HTTParty.post("https://send-anywhere.com/web/device", {
+      body: '{"os_type":"web","manufacturer":"Windows","model_number":"Chrome","app_version":"2.0.0","os_version":"67","device_language":"en-US","profile_name":"Aries"}',
+      headers: { "Content-Type" => "application/json" }
+    })
+    device_info = JSON.parse(device_info.body)
+    device_key = device_info["device_key"]
+    inquiry_info = HTTParty.get("https://send-anywhere.com/web/key/inquiry/" + id, { headers: { "Cookie": "device_key=" + device_key } })
+    inquiry_info = JSON.parse(inquiry_info.body)
+    server_uri = inquiry_info["server"]
+
+    # only interesting info here is number of files
+    # keyinfo = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=keyinfo")
+
+    # file names and list
+    filelist = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=list&start_pos=0&end_pos=30")
+    filelist = JSON.parse(filelist.body)
+
+    if filelist["file"].length > 1
+      self.log_warning ":warning: SendAnywhere #{id} had multiple files!", event.bot
+    end
+
+    file_full_name = filelist["file"][0]
+
+    file_uri = "#{server_uri}webfile/#{id}?device_key=#{device_key}&timezone=2"
+    puts file_uri
+    files_size = 0
+    s3_filename = ""
+    Dir.mktmpdir do |dir|
+      begin
+        `cd #{dir} && wget '#{file_uri}'`
+        local_file_name = File.basename(file_uri)
+        files_size = File.size(dir + "/" + local_file_name)
+
+        time_split = Time.now
+
+        s3_filename = "sendanywhere/#{id} - title/filename"
+        object = @@s3_bucket.object(s3_filename)
+        result = object.upload_file(dir + "/" + local_file_name)
+        if !result
+          raise 'Upload not successful!'
+        end
+      rescue Exception => e
+        self.log_warning ":warning: SendAnywhere `#{id}` had download/upload error to S3! #{e}\n```\n#{e.backtrace.join("\n")}\n```", event.bot
+        return { "result" => "error", "error" => e }
+      end
+    end
+
+    time_end = Time.now
+
+    @@sendanywhere_downloaded[id] = s3_filename
+    File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
+    self.log ":ballot_box_with_check: Successfully replicated SendAnywhere `#{id}` to `#{s3_filename}` (#{(file_size / 2**20).round(1)}MB), downloading in #{(time_split - time_start).round(1)}s and uploading in #{(time_end - time_split).round(1)}!", event.bot
+    return { "result" => "success", "path" => s3_filename }
+  end
+
+  pm(start_with: /!sendanywhere\s/i) do |event|
+    data = event.content.scan(/^!sendanywhere\s+([\w-]+)\s*$/i)[0]
+    if !data
+      event.send_message ":warning: You need to specify a trivia list name..."
+      next
+    end
+
+    id = data[0]
+    self.replicate_sendanywhere_file(id, event)
   end
 end
