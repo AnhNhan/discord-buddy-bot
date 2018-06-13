@@ -108,7 +108,7 @@ module BuddyBot::Modules::Tistory
     end
     @@pages << url
     File.open(BuddyBot.path("content/tistory-list.yml"), "w") { |file| file.write(YAML.dump(@@pages)) }
-    event.send_message ":information_desk_person: Added '#{url}' :sowonsalute:"
+    event.send_message ":information_desk_person: Added '#{url}' :SowonSalute:"
   end
 
   message(start_with: /!tistory-queue-abort/i) do |event|
