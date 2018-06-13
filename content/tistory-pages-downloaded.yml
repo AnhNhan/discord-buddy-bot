@@ -2534,10 +2534,7 @@ formyqueen.net:
       99EFA5335A0F9EB7042102: tistory/formyqueen.net/37 - 160629 청춘문답/160629 청춘문답
         은하-5-99EFA5335A0F9EB7042102.jpg
       9911DD335A0F9F1E40601D: tistory/formyqueen.net/37 - 160629 청춘문답/Untitled-30-9911DD335A0F9F1E40601D.gif
-    media_files:
-      Fi9cs1RIiCo: tistory/formyqueen.net/37 - 160629 청춘문답/160629 청춘문답 사랑별 은하 직캠-Fi9cs1RIiCo.mp4
-      _p5TEnwRS2s: tistory/formyqueen.net/37 - 160629 청춘문답/160629 청춘문답 오늘부터 우리는 은하
-        직캠-_p5TEnwRS2s.mp4
+    media_files: {}
   '38':
     expected: 6
     expected_media: 0
@@ -5197,9 +5194,7 @@ formyqueen.net:
     files:
       99CF21335989BF5507500A: tistory/980701.net/47 - 170527 U클린콘서트 PRISTIN - WE (4K
         60FPS)/Thumb-99CF21335989BF5507500A.jpg
-    media_files:
-      OWX4Hjjrv2A: tistory/980701.net/47 - 170527 U클린콘서트 PRISTIN - WE (4K 60FPS)/170527
-        U클린콘서트 PRISTIN - WE 은우 직캠 (4K)-OWX4Hjjrv2A.mp4
+    media_files: {}
   '48':
     expected: 3
     expected_media: 0
@@ -7051,28 +7046,22 @@ gfriendcom:
     expected: 0
     expected_media: 2
     files: {}
-    media_files:
-      3xZOuWtF2fY: tistory/gfriendcom/146 - 180106 단독 콘서트 U-Go-Girl 예린/180106 단독 콘서트
-        U Go Girl 예린 직캠-3xZOuWtF2fY.mp4
+    media_files: {}
   '147':
     expected: 0
     expected_media: 1
     files: {}
-    media_files:
-      q5TCWhR6rRo: tistory/gfriendcom/147 - 180106 단독 콘서트 LOL 예린 직캠/180106 단독 콘서트
-        LOL 예린 직캠-q5TCWhR6rRo.mp4
+    media_files: {}
   '148':
     expected: 0
     expected_media: 1
     files: {}
-    media_files:
-      BJwxXqWYHuE: tistory/gfriendcom/148 - 180115 아육대 양궁 예린/180115 아육대 예린 양궁-BJwxXqWYHuE.mp4
+    media_files: {}
   '149':
     expected: 0
     expected_media: 1
     files: {}
-    media_files:
-      InTFSHQPhlY: tistory/gfriendcom/149 - 180115 아육대 양궁 은하/180115 아육대 은하 양궁-InTFSHQPhlY.mp4
+    media_files: {}
   '150':
     expected: 4
     expected_media: 0
@@ -12015,13 +12004,7 @@ studio-g:
     files:
       2656AF4751C724C31B1BEA: tistory/studio-g/59 - [CAM] 13.06.16 에프터스쿨 인기가요 팬미팅
         by Purple.D/DSC08794-l-2656AF4751C724C31B1BEA.jpg
-    media_files:
-      NNw3-Sh5fJE: tistory/studio-g/59 - [CAM] 13.06.16 에프터스쿨 인기가요 팬미팅 by Purple.D/130616
-        가양 엡스팬미01-NNw3-Sh5fJE.mp4
-      voQOcplgqV8: tistory/studio-g/59 - [CAM] 13.06.16 에프터스쿨 인기가요 팬미팅 by Purple.D/130616
-        가양 엡스팬미02-voQOcplgqV8.mp4
-      D_6tC4-Jg5s: tistory/studio-g/59 - [CAM] 13.06.16 에프터스쿨 인기가요 팬미팅 by Purple.D/130616
-        가양 엡스팬미03-D_6tC4-Jg5s.mp4
+    media_files: {}
   '60':
     expected: 29
     expected_media: 0
@@ -12899,9 +12882,7 @@ studio-g:
     files:
       032F223751DBB90537DD42: tistory/studio-g/70 - [CAM] 13.05.05 헬로비너스 미니팬미팅 by
         Purple.D/Minifanmeeting-67-032F223751DBB90537DD42.jpg
-    media_files:
-      LXdF6socU-w: tistory/studio-g/70 - [CAM] 13.05.05 헬로비너스 미니팬미팅 by Purple.D/130505
-        hellovenus mini fanmeeting-LXdF6socU-w.mp4
+    media_files: {}
   '71':
     expected: 50
     expected_media: 0
@@ -13284,22 +13265,14 @@ studio-g:
     files:
       2426C54D51DC45DB283CB1: tistory/studio-g/75 - [CAM] 13.03.22  투엑스 여의도 팬싸인회 by
         Purpld.D/DSC02102-2426C54D51DC45DB283CB1.jpg
-    media_files:
-      dYqFOLPvu3Y: tistory/studio-g/75 - [CAM] 13.03.22  투엑스 여의도 팬싸인회 by Purpld.D/130322
-        IFC TwoX  팬싸인회-dYqFOLPvu3Y.mp4
+    media_files: {}
   '76':
     expected: 1
     expected_media: 3
     files:
       21363D4B51DC4A04105D4C: tistory/studio-g/76 - [CAM] 13.07.03 걸스데이 주안 게릴라콘서트
         by Purple.D/DSC0287-L-21363D4B51DC4A04105D4C.jpg
-    media_files:
-      odRLu8DIkDw: tistory/studio-g/76 - [CAM] 13.07.03 걸스데이 주안 게릴라콘서트 by Purple.D/130703
-        Girls Day 게릴라콘서트 01-odRLu8DIkDw.mp4
-      e2EcVXov-Fs: tistory/studio-g/76 - [CAM] 13.07.03 걸스데이 주안 게릴라콘서트 by Purple.D/130703
-        Girls Day 게릴라콘서트 02-e2EcVXov-Fs.mp4
-      jk1ICvJqaF4: tistory/studio-g/76 - [CAM] 13.07.03 걸스데이 주안 게릴라콘서트 by Purple.D/130703
-        Girls Day 게릴라콘서트 03-jk1ICvJqaF4.mp4
+    media_files: {}
   '77':
     expected: 132
     expected_media: 0
@@ -13575,15 +13548,7 @@ studio-g:
     files:
       27083E3B51DF9398101D1E: tistory/studio-g/79 - [CAM] 13.05.08 나인뮤지스 WILD Showcase
         by Purple.D/00010.MTS_20130712_004842.999-27083E3B51DF9398101D1E.jpg
-    media_files:
-      sqF1STiTSJA: tistory/studio-g/79 - [CAM] 13.05.08 나인뮤지스 WILD Showcase by Purple.D/130508
-        나인뮤지스 Showcase 01-sqF1STiTSJA.mp4
-      lACsr6erEoY: tistory/studio-g/79 - [CAM] 13.05.08 나인뮤지스 WILD Showcase by Purple.D/130508
-        나인뮤지스 Showcase 02-lACsr6erEoY.mp4
-      oA4PYc7I0Zo: tistory/studio-g/79 - [CAM] 13.05.08 나인뮤지스 WILD Showcase by Purple.D/130508  나인뮤지스
-        Showcase 03-oA4PYc7I0Zo.mp4
-      "-yVZDN7OhIQ": tistory/studio-g/79 - [CAM] 13.05.08 나인뮤지스 WILD Showcase by Purple.D/130508  나인뮤지스
-        Showcase 04--yVZDN7OhIQ.mp4
+    media_files: {}
   '80':
     expected: 2
     expected_media: 0
@@ -13623,8 +13588,7 @@ studio-g:
     expected_media: 1
     files:
       2108814651E10DB516C72E: tistory/studio-g/82 - [CAM] 130406 코엑스 POI 수지 by Purple.D/DSC04037-L-2108814651E10DB516C72E.jpg
-    media_files:
-      USNVJL8vq-0: tistory/studio-g/82 - [CAM] 130406 코엑스 POI 수지 by Purple.D/POI SUZI-USNVJL8vq-0.mp4
+    media_files: {}
   '83':
     expected: 109
     expected_media: 0
@@ -14080,11 +14044,7 @@ studio-g:
     files:
       211E343B51E2DC6D0149ED: tistory/studio-g/87 - [CAM] 13.07.14 헬로비너스 킨텍스 라이브야구체험
         by Purple.D/IMG_1510-211E343B51E2DC6D0149ED.jpg
-    media_files:
-      IvYA8U8kbcc: tistory/studio-g/87 - [CAM] 13.07.14 헬로비너스 킨텍스 라이브야구체험 by Purple.D/130714
-        헬로비너스 킨텍스 야구 라이브체험  01-IvYA8U8kbcc.mp4
-      8ZiVpcuFw48: tistory/studio-g/87 - [CAM] 13.07.14 헬로비너스 킨텍스 라이브야구체험 by Purple.D/130714
-        헬로비너스 킨텍스 라이브야구 체험전 02-8ZiVpcuFw48.mp4
+    media_files: {}
   '88':
     expected: 27
     expected_media: 0
@@ -14158,11 +14118,7 @@ studio-g:
     files:
       '02785A3C51E4E4222FAD06': tistory/studio-g/90 - [CAM] 13.06.29  에프터스쿨 합정  팬싸인회
         by Purple.D/_DSC9664-02785A3C51E4E4222FAD06.jpg
-    media_files:
-      "-Kt0HhRRUQo": tistory/studio-g/90 - [CAM] 13.06.29  에프터스쿨 합정  팬싸인회 by Purple.D/130629
-        AfterSchool 합정 팬싸인회 01--Kt0HhRRUQo.mp4
-      bjF6bFg6ga4: tistory/studio-g/90 - [CAM] 13.06.29  에프터스쿨 합정  팬싸인회 by Purple.D/130629
-        AfterSchool  합정 팬싸인회 02-bjF6bFg6ga4.mp4
+    media_files: {}
   '91':
     expected: 63
     expected_media: 0
@@ -14775,9 +14731,7 @@ studio-g:
     files:
       213F3F3F51F637DE0338BC: tistory/studio-g/108 - [CAM] 13.07.18 비비드 홍대 롤링스톤즈 팬미팅
         by. MINe./Studio-G2013-07-18-004-213F3F3F51F637DE0338BC.jpg
-    media_files:
-      am9a7_Crzwc: tistory/studio-g/108 - [CAM] 13.07.18 비비드 홍대 롤링스톤즈 팬미팅 by. MINe./130718
-        비비드 팬미팅 올라잇-am9a7_Crzwc.mp4
+    media_files: {}
   '109':
     expected: 22
     expected_media: 0
@@ -14833,11 +14787,7 @@ studio-g:
     files:
       224CBB4751F7B71B08429C: tistory/studio-g/110 - [CAM] 13.07.18 비비드 홍대 롤링스톤즈 팬미팅
         By. PurpleD./130718 vivid fanmeeting 02 (04)-224CBB4751F7B71B08429C.jpg
-    media_files:
-      hCdSVtJIVLE: tistory/studio-g/110 - [CAM] 13.07.18 비비드 홍대 롤링스톤즈 팬미팅 By. PurpleD./130718
-        비비드 홍대 팬미팅 01-hCdSVtJIVLE.mp4
-      32uAv35gydU: tistory/studio-g/110 - [CAM] 13.07.18 비비드 홍대 롤링스톤즈 팬미팅 By. PurpleD./130718
-        비비드 홍대 팬미팅 02-32uAv35gydU.mp4
+    media_files: {}
   '111':
     expected: 95
     expected_media: 0
@@ -15661,11 +15611,7 @@ studio-g:
     files:
       215FB74D52035CB421A78E: tistory/studio-g/124 - [CAM]  13.07.31 카라 박규리 한승연 CGV
         왕십리 에픽 시사회 레드카펫 무대인사 by. MINe./130731KR-31-215FB74D52035CB421A78E.jpg
-    media_files:
-      S7rDVKYUq6E: tistory/studio-g/124 - [CAM]  13.07.31 카라 박규리 한승연 CGV 왕십리 에픽 시사회
-        레드카펫 무대인사 by. MINe./130731 epic redcapet-S7rDVKYUq6E.mp4
-      CHK49fGuWJE: tistory/studio-g/124 - [CAM]  13.07.31 카라 박규리 한승연 CGV 왕십리 에픽 시사회
-        레드카펫 무대인사 by. MINe./130731 에픽 한승연 무대인사-CHK49fGuWJE.mp4
+    media_files: {}
   '125':
     expected: 61
     expected_media: 0
@@ -16712,9 +16658,7 @@ studio-g:
     files:
       211B5B50520B4E9A0CEBC3: tistory/studio-g/154 - [CAM] 13.08.12 에일리 속초 대한민국 음악대향연
         by. Hamding/에3570~1-211B5B50520B4E9A0CEBC3.jpg
-    media_files:
-      fhdwYR-HGiw: tistory/studio-g/154 - [CAM] 13.08.12 에일리 속초 대한민국 음악대향연 by. Hamding/130812
-        속초  대한민국음악대향연 쇼챔 에일리-fhdwYR-HGiw.mp4
+    media_files: {}
   '155':
     expected: 1
     expected_media: 3
@@ -16723,19 +16667,13 @@ studio-g:
         by. Hamding/홍진영-231B1037520B7EE7325C7E.jpg
     media_files:
       '991574': tistory/studio-g/155 - [CAM] 13.08.11 홍진영 속초 대한민국 음악대향연 by. Hamding/130812_홍진영_부기맨_001-991574.
-      FMJWL6m4-gQ: tistory/studio-g/155 - [CAM] 13.08.11 홍진영 속초 대한민국 음악대향연 by. Hamding/130812
-        속초 대한민국 음악 대향연 홍진영 부기맨-FMJWL6m4-gQ.mp4
-      9e-BVM68_3U: tistory/studio-g/155 - [CAM] 13.08.11 홍진영 속초 대한민국 음악대향연 by. Hamding/130812
-        속초 대한민국 음악 대향연  홍진영 사랑의 배터리-9e-BVM68_3U.mp4
   '156':
     expected: 1
     expected_media: 1
     files:
       27200A4A520BACF902C099: tistory/studio-g/156 - [CAM] 13.08.11 윙크 속초 대한민국 음악대향연
         by. Hamding/MVI_5798-27200A4A520BACF902C099.jpg
-    media_files:
-      xUh-X1hzeRw: tistory/studio-g/156 - [CAM] 13.08.11 윙크 속초 대한민국 음악대향연 by. Hamding/130812
-        속초 윙크-xUh-X1hzeRw.mp4
+    media_files: {}
   '157':
     expected: 16
     expected_media: 0
@@ -16900,9 +16838,7 @@ studio-g:
     files:
       210F783C520E067D2D7F29: tistory/studio-g/161 - [CAM] 13.08.11 박남정 속초 대한민국 음악대향연
         by. Hamding/남정-210F783C520E067D2D7F29.jpg
-    media_files:
-      p1OGyOj6qRE: tistory/studio-g/161 - [CAM] 13.08.11 박남정 속초 대한민국 음악대향연 by. Hamding/130812
-        속초 박남정-p1OGyOj6qRE.mp4
+    media_files: {}
   '162':
     expected: 26
     expected_media: 0
@@ -18055,18 +17991,6 @@ studio-g:
     media_files:
       '1536180': tistory/studio-g/189 - [CAM] 13.08.20 레인보우 올레스퀘어 팬미팅 by Purple.D
         (유튭버젼 추가)/130820_rainbowfanme_ending-1536180.flv
-      GNSWIONLwcI: tistory/studio-g/189 - [CAM] 13.08.20 레인보우 올레스퀘어 팬미팅 by Purple.D
-        (유튭버젼 추가)/130820 rainbow 팬미팅 오프닝-GNSWIONLwcI.mp4
-      X-B09Lm_3tg: tistory/studio-g/189 - [CAM] 13.08.20 레인보우 올레스퀘어 팬미팅 by Purple.D
-        (유튭버젼 추가)/130820 rainbowfanme muzi-X-B09Lm_3tg.mp4
-      49pRVKL8CdU: tistory/studio-g/189 - [CAM] 13.08.20 레인보우 올레스퀘어 팬미팅 by Purple.D
-        (유튭버젼 추가)/130820 rainbow 팬미팅 곰세마리-49pRVKL8CdU.webm
-      pD-RL9R0IrU: tistory/studio-g/189 - [CAM] 13.08.20 레인보우 올레스퀘어 팬미팅 by Purple.D
-        (유튭버젼 추가)/130820 rainbow 팬미팅 멘트-pD-RL9R0IrU.mp4
-      j1oZ4cLxZ-k: tistory/studio-g/189 - [CAM] 13.08.20 레인보우 올레스퀘어 팬미팅 by Purple.D
-        (유튭버젼 추가)/130820 rainbow 팬미팅 텔미텔미 마하-j1oZ4cLxZ-k.mp4
-      8XKkLLXFmQE: tistory/studio-g/189 - [CAM] 13.08.20 레인보우 올레스퀘어 팬미팅 by Purple.D
-        (유튭버젼 추가)/130820 rainbow 팬미팅 엔딩-8XKkLLXFmQE.mp4
   '190':
     expected: 1
     expected_media: 4
@@ -18074,10 +17998,6 @@ studio-g:
       2768874E5218DC3924BBC1: tistory/studio-g/190 - [CAM] 13.08.24 걸스데이 평택 락페스티벌/9L9A0434-2768874E5218DC3924BBC1.jpg
     media_files:
       '991574': tistory/studio-g/190 - [CAM] 13.08.24 걸스데이 평택 락페스티벌/130824_gd_expect-991574.flv
-      VOmvs0P0Z70: tistory/studio-g/190 - [CAM] 13.08.24 걸스데이 평택 락페스티벌/130824 걸스데이
-        평택 록페스티벌_여자대통령(민아)-VOmvs0P0Z70.webm
-      ir_banulVeA: tistory/studio-g/190 - [CAM] 13.08.24 걸스데이 평택 락페스티벌/130824 걸스데이
-        평택 록페스티벌_기대해(유라)-ir_banulVeA.webm
   '191':
     expected: 19
     expected_media: 0
@@ -18129,8 +18049,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/192 - [CAM]13.08.24 타히티 평택 락페스티벌/130824 타히티 평택 록페스티벌_Love
         Sick(아리)-991574.flv
-      jb_Xmq26ozU: tistory/studio-g/192 - [CAM]13.08.24 타히티 평택 락페스티벌/130824 타히티(TAHITI)
-        아리 평택 록페스티벌 직캠(Fancam) Love Sick-jb_Xmq26ozU.webm
   '193':
     expected: 35
     expected_media: 0
@@ -18325,10 +18243,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/195 - [CAM] 13.08.24 마이네임 평택 락페스티벌/130824 마이네임 평택
         록페스티벌_Baby I`m Sorry(건우)-991574.flv
-      0gtaW3c-0TY: tistory/studio-g/195 - [CAM] 13.08.24 마이네임 평택 락페스티벌/130824 마이네임
-        평택 록페스티벌_메시지(건우)-0gtaW3c-0TY.webm
-      "-2trVcSh1v0": tistory/studio-g/195 - [CAM] 13.08.24 마이네임 평택 락페스티벌/130824 마이네임
-        평택 록페스티벌_Baby I`m Sorry(건우)--2trVcSh1v0.webm
   '196':
     expected: 1
     expected_media: 4
@@ -18337,10 +18251,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/196 - [CAM] 13.08.24 에이젝스 평택 락페스티벌/130824 에이젝스 평택
         록페스티벌_미쳐가(승진)-991574.flv
-      GaTiQFt_u_I: tistory/studio-g/196 - [CAM] 13.08.24 에이젝스 평택 락페스티벌/130824 에이젝스
-        평택 록페스티벌_2MYX(승엽)-GaTiQFt_u_I.webm
-      jsClk7OjByE: tistory/studio-g/196 - [CAM] 13.08.24 에이젝스 평택 락페스티벌/130824 에이젝스
-        평택 록페스티벌_미쳐가(승진)-jsClk7OjByE.webm
   '197':
     expected: 1
     expected_media: 6
@@ -18349,12 +18259,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/197 - [CAM] 13.08.24 크레용팝 평택 락페스티벌/130824 크레용팝 평택
         록페스티벌_Saturday Night(소율)-991574.flv
-      JQlIQHv0bpw: tistory/studio-g/197 - [CAM] 13.08.24 크레용팝 평택 락페스티벌/130824 크레용팝
-        평택 록페스티벌_빠빠빠(초아)-JQlIQHv0bpw.webm
-      XlQZAz8BdUo: tistory/studio-g/197 - [CAM] 13.08.24 크레용팝 평택 락페스티벌/130824 크레용팝
-        평택 록페스티벌_Dancing Queen(엘린)-XlQZAz8BdUo.webm
-      L948dzo9WKU: tistory/studio-g/197 - [CAM] 13.08.24 크레용팝 평택 락페스티벌/130824 크레용팝
-        평택 록페스티벌_Saturday Night(소율)-L948dzo9WKU.webm
   '198':
     expected: 4
     expected_media: 0
@@ -18439,10 +18343,6 @@ studio-g:
         팬싸인회 by Purple.D/130519_4MINUTE-05-212CD033521B7B6926E78B.jpg
     media_files:
       '1536180': tistory/studio-g/202 - [CAM] 13.05.18 포미닛 인천 사운드웨이브 팬싸인회 by Purple.D/130518_4min_fansign01-1536180.flv
-      yOHV8MdPlFk: tistory/studio-g/202 - [CAM] 13.05.18 포미닛 인천 사운드웨이브 팬싸인회 by Purple.D/130518
-        포미닛 인천 사운드웨이브 팬싸인회 01-yOHV8MdPlFk.mp4
-      4eTvl_U83Qc: tistory/studio-g/202 - [CAM] 13.05.18 포미닛 인천 사운드웨이브 팬싸인회 by Purple.D/130518
-        포미닛 인천 사운드웨이브  팬싸인회 02-4eTvl_U83Qc.mp4
   '203':
     expected: 1
     expected_media: 2
@@ -18451,8 +18351,6 @@ studio-g:
         자연휴양림 by Purple.D/130728Vivid-09-226F8435521B7D9A2EB688.jpg
     media_files:
       '1536180': tistory/studio-g/203 - [CAM] 13.07.28 비비드 라이브파워뮤직 고산 자연휴양림 by Purple.D/130728_vivid-1536180.flv
-      GF5lg7VAihU: tistory/studio-g/203 - [CAM] 13.07.28 비비드 라이브파워뮤직 고산 자연휴양림 by Purple.D/130728
-        vivid 고산 라이브파워뮤직-GF5lg7VAihU.mp4
   '204':
     expected: 21
     expected_media: 0
@@ -18508,8 +18406,6 @@ studio-g:
         by Purple.D/130728_2eyes-13-246E6635521B8D4919B0C0.jpg
     media_files:
       '1536180': tistory/studio-g/205 - [CAM] 13.07.28 투아이즈 라이브파워뮤직 고산자연휴양림 by Purple.D/130728_twoeyes-1536180.flv
-      a3zlMSTPkgU: tistory/studio-g/205 - [CAM] 13.07.28 투아이즈 라이브파워뮤직 고산자연휴양림 by Purple.D/130728
-        투아이즈 고산 라이브 파워뮤직-a3zlMSTPkgU.mp4
   '206':
     expected: 4
     expected_media: 0
@@ -19051,8 +18947,6 @@ studio-g:
         by Purple.D/130824RB-29-25722247521F7A0F0441F5.jpg
     media_files:
       '1536180': tistory/studio-g/212 - [CAM] 13.08.24 레인보우 라이브파워뮤직 가든파이브 by Purple.D/130824_garden5-rainbow-1536180.flv
-      0mDeOVvlol0: tistory/studio-g/212 - [CAM] 13.08.24 레인보우 라이브파워뮤직 가든파이브 by Purple.D/130824
-        라파뮤 가든파이브 레인보우-0mDeOVvlol0.mp4
   '213':
     expected: 18
     expected_media: 0
@@ -19143,12 +19037,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/216 - [CAM] 13.08.31 헬로비너스 롯데피트인 댄스경연대회 by. 철우/130831
         헬로비너스 롯데피트인_차마실래(윤조)-991574.flv
-      UbPPyiABxPM: tistory/studio-g/216 - [CAM] 13.08.31 헬로비너스 롯데피트인 댄스경연대회 by. 철우/130831
-        헬로비너스 롯데피트인_VENUS(윤조) by 철우-UbPPyiABxPM.webm
-      UU9f_TQJMNw: tistory/studio-g/216 - [CAM] 13.08.31 헬로비너스 롯데피트인 댄스경연대회 by. 철우/130831
-        헬로비너스 롯데피트인_오늘뭐해(윤조) by 철우-UU9f_TQJMNw.webm
-      Q5LROa1UTU4: tistory/studio-g/216 - [CAM] 13.08.31 헬로비너스 롯데피트인 댄스경연대회 by. 철우/130831
-        헬로비너스 롯데피트인_차마실래(윤조) by 철우-Q5LROa1UTU4.webm
   '217':
     expected: 18
     expected_media: 0
@@ -19899,12 +19787,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/230 - [CAM] 13.09.05 헬로비너스 포천 한마음 위문공연 by. 철우/130905
         헬로비너스 포천 한마음 위문공연_차마실래(윤조)-991574.flv
-      4y1TB7n1twQ: tistory/studio-g/230 - [CAM] 13.09.05 헬로비너스 포천 한마음 위문공연 by. 철우/130905
-        헬로비너스 포천 한마음 위문공연_VENUS(윤조) by 철우-4y1TB7n1twQ.webm
-      wGFx5-ND_kM: tistory/studio-g/230 - [CAM] 13.09.05 헬로비너스 포천 한마음 위문공연 by. 철우/130905
-        헬로비너스 포천 한마음 위문공연_멘트애교 by 철우-wGFx5-ND_kM.webm
-      aZx0IPOZlMk: tistory/studio-g/230 - [CAM] 13.09.05 헬로비너스 포천 한마음 위문공연 by. 철우/130905
-        헬로비너스 포천 한마음 위문공연_차마실래(윤조) by 철우-aZx0IPOZlMk.webm
   '231':
     expected: 69
     expected_media: 0
@@ -20544,14 +20426,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/239 - [CAM] 13.09.06 걸스데이 청주 읍성큰잔치 축하음악회/130906 걸스데이
         청주 읍성큰잔치 축하음악회_기대해(유라)-991574.flv
-      2Nnhm9_SW7Q: tistory/studio-g/239 - [CAM] 13.09.06 걸스데이 청주 읍성큰잔치 축하음악회/130906
-        걸스데이 청주 읍성큰잔치 축하음악회_여자 대통령(민아)-2Nnhm9_SW7Q.webm
-      RjE9oFyl_AI: tistory/studio-g/239 - [CAM] 13.09.06 걸스데이 청주 읍성큰잔치 축하음악회/130906
-        걸스데이 청주 읍성큰잔치 축하음악회_나를 잊지마요(유라)-RjE9oFyl_AI.webm
-      fc1ztTNmD54: tistory/studio-g/239 - [CAM] 13.09.06 걸스데이 청주 읍성큰잔치 축하음악회/130906
-        걸스데이 청주 읍성큰잔치 축하음악회_반짝반짝(민아)-fc1ztTNmD54.webm
-      dHKWGqKqZ4M: tistory/studio-g/239 - [CAM] 13.09.06 걸스데이 청주 읍성큰잔치 축하음악회/130906
-        걸스데이 청주 읍성큰잔치 축하음악회_기대해(유라)-dHKWGqKqZ4M.webm
   '240':
     expected: 1
     expected_media: 6
@@ -20560,12 +20434,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/240 - [CAM] 13.09.06 홍진영 청주 읍성큰잔치 축하음악회/130906 홍진영
         청주 읍성큰잔치 축하음악회_밤이면 밤마다-991574.flv
-      cVyOWIeywHE: tistory/studio-g/240 - [CAM] 13.09.06 홍진영 청주 읍성큰잔치 축하음악회/130906
-        홍진영 청주 읍성큰잔치 축하음악회_부기맨-cVyOWIeywHE.webm
-      jqcvVU0WfoM: tistory/studio-g/240 - [CAM] 13.09.06 홍진영 청주 읍성큰잔치 축하음악회/130906
-        홍진영 청주 읍성큰잔치 축하음악회_사랑의 배터리-jqcvVU0WfoM.webm
-      pZIoMi04fnQ: tistory/studio-g/240 - [CAM] 13.09.06 홍진영 청주 읍성큰잔치 축하음악회/130906
-        홍진영 청주 읍성큰잔치 축하음악회_밤이면 밤마다-pZIoMi04fnQ.webm
   '241':
     expected: 1
     expected_media: 4
@@ -20575,10 +20443,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/241 - [CAM] 13.09.06 써니데이즈 청주 읍성큰잔치 축하음악회/130906
         써니데이즈 청주 읍성큰잔치 축하음악회_Glory Korea-991574.flv
-      xJ_rIGf1qdY: tistory/studio-g/241 - [CAM] 13.09.06 써니데이즈 청주 읍성큰잔치 축하음악회/130906
-        써니데이즈 청주 읍성큰잔치 축하음악회_너랑 똑같은 여자 만나봐(서연)-xJ_rIGf1qdY.webm
-      YC99Ue1Zmsc: tistory/studio-g/241 - [CAM] 13.09.06 써니데이즈 청주 읍성큰잔치 축하음악회/130906
-        써니데이즈 청주 읍성큰잔치 축하음악회_Glory Korea(서연)-YC99Ue1Zmsc.webm
   '242':
     expected: 36
     expected_media: 0
@@ -20664,10 +20528,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/243 - [CAM] 13.09.05 베스티 포천 한마음 위문공연/130905 베스티 포천
         한마음 위문공연_Bubble Pop(혜연)-991574.flv
-      T_gPw4sSUYs: tistory/studio-g/243 - [CAM] 13.09.05 베스티 포천 한마음 위문공연/130905 베스티
-        포천 한마음 위문공연_두근두근(혜연)-T_gPw4sSUYs.webm
-      8w6HvZtyeek: tistory/studio-g/243 - [CAM] 13.09.05 베스티 포천 한마음 위문공연/130905 베스티(BESTie)
-        혜연 포천 한마음 위문공연 직캠(Fancam) Bubble Pop-8w6HvZtyeek.webm
   '244':
     expected: 1
     expected_media: 4
@@ -20676,10 +20536,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/244 - [CAM] 13.09.05 타히티 포천 한마음 위문공연/130905 타히티 포천
         한마음 위문공연_Love Sick(아리)-991574.flv
-      P4ndW1POtfo: tistory/studio-g/244 - [CAM] 13.09.05 타히티 포천 한마음 위문공연/130905 타히티
-        포천 한마음 위문공연_몰라몰라(아리)-P4ndW1POtfo.webm
-      kpkQ0gr_O3o: tistory/studio-g/244 - [CAM] 13.09.05 타히티 포천 한마음 위문공연/130905 타히티(TAHITI)
-        아리 포천 한마음 위문공연 직캠(Fancam) Love Sick-kpkQ0gr_O3o.webm
   '245':
     expected: 1
     expected_media: 2
@@ -20688,8 +20544,6 @@ studio-g:
         by. Purple.D/130824flash-2315CF43523171C02F566D.jpg
     media_files:
       '1536180': tistory/studio-g/245 - [CAM] 13.08.24 플래쉬 라이브파워뮤직 가든파이브 by. Purple.D/130824_garden5-flash-1536180.flv
-      NBbpZXh0kds: tistory/studio-g/245 - [CAM] 13.08.24 플래쉬 라이브파워뮤직 가든파이브 by. Purple.D/130824  라파뮤
-        가든파이브 플래쉬-NBbpZXh0kds.mp4
   '246':
     expected: 1
     expected_media: 2
@@ -20698,8 +20552,6 @@ studio-g:
         가든파이브 by. Purple.D/130824ZEA-25-2148C142523174C11C38BC.jpg
     media_files:
       '1536180': tistory/studio-g/246 - [CAM] 13.08.24 제국의 아이들 라이브파워뮤직 가든파이브 by. Purple.D/130824_garden5-jea-1536180.flv
-      Ne8GguHwaVE: tistory/studio-g/246 - [CAM] 13.08.24 제국의 아이들 라이브파워뮤직 가든파이브 by.
-        Purple.D/130824 라파뮤 가든파이브 제아-Ne8GguHwaVE.mp4
   '247':
     expected: 1
     expected_media: 2
@@ -20708,8 +20560,6 @@ studio-g:
         by. Purple.D/130824levhi-214D0744523175890ED5DA.jpg
     media_files:
       '1536180': tistory/studio-g/247 - [CAM] 13.08.24 리브하이 라이브파워뮤직 가든파이브 by. Purple.D/130824_garden5-levehi-1536180.flv
-      kKq0EhbH9Ys: tistory/studio-g/247 - [CAM] 13.08.24 리브하이 라이브파워뮤직 가든파이브 by. Purple.D/130824
-        라파뮤 가든파이브 리브하이-kKq0EhbH9Ys.mp4
   '248':
     expected: 1
     expected_media: 2
@@ -20718,8 +20568,6 @@ studio-g:
         by. Purple.D/130824stella-26378443523176403337CC.jpg
     media_files:
       '1536180': tistory/studio-g/248 - [CAM] 13.08.24 스텔라 라이브파워뮤직 가든파이브 by. Purple.D/130824_garden5-stella-1536180.flv
-      0hcBa0JixQk: tistory/studio-g/248 - [CAM] 13.08.24 스텔라 라이브파워뮤직 가든파이브 by. Purple.D/130824
-        라파뮤 스텔라-0hcBa0JixQk.mp4
   '249':
     expected: 1
     expected_media: 2
@@ -20728,8 +20576,6 @@ studio-g:
         by. Purple.D/130824Tahiti-14-2157543E523176CF29FFF3.jpg
     media_files:
       '1536180': tistory/studio-g/249 - [CAM] 13.08.24 타히티 라이브파워뮤직 가든파이브 by. Purple.D/130824_garden5-taiti-1536180.flv
-      HYgYSTyx9co: tistory/studio-g/249 - [CAM] 13.08.24 타히티 라이브파워뮤직 가든파이브 by. Purple.D/130824
-        라파뮤 가든파이브 타히티-HYgYSTyx9co.mp4
   '250':
     expected: 1
     expected_media: 2
@@ -20738,8 +20584,6 @@ studio-g:
         by. Purple.D/130824vesti-275C22445231778C0BD9AC.jpg
     media_files:
       '1536180': tistory/studio-g/250 - [CAM] 13.08.24 베스티 라이브파워뮤직  가든파이브 by. Purple.D/130824_garden5-vesti-1536180.flv
-      c5S4GEuzams: tistory/studio-g/250 - [CAM] 13.08.24 베스티 라이브파워뮤직  가든파이브 by. Purple.D/130824
-        라파뮤 가든파이브 베스티-c5S4GEuzams.mp4
   '251':
     expected: 1
     expected_media: 2
@@ -20748,8 +20592,6 @@ studio-g:
         Purple.D/130831KARA-01-2157A8455231782014A1C5.jpg
     media_files:
       '1536180': tistory/studio-g/251 - [CAM] 13.08.31 카라 퀴즈온코리아 by. Purple.D/130831kara-1536180.flv
-      a8xLOsXTRdg: tistory/studio-g/251 - [CAM] 13.08.31 카라 퀴즈온코리아 by. Purple.D/130831
-        퀴즈온 코리아  카라-a8xLOsXTRdg.mp4
   '252':
     expected: 18
     expected_media: 0
@@ -21134,12 +20976,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/261 - [CAM] 13.09.13 헬로비너스 가평 한마음위문공연 by. 철우/130913
         헬로비너스 가평 한마음위문공연_차마실래(윤조)-991574.flv
-      2sb8Oh1yjGg: tistory/studio-g/261 - [CAM] 13.09.13 헬로비너스 가평 한마음위문공연 by. 철우/130913
-        헬로비너스 가평 한마음위문공연_VENUS(윤조) by 철우-2sb8Oh1yjGg.webm
-      R9w3XASDZJE: tistory/studio-g/261 - [CAM] 13.09.13 헬로비너스 가평 한마음위문공연 by. 철우/130913
-        헬로비너스 가평 한마음위문공연_멘트_(윤조) by 철우-R9w3XASDZJE.webm
-      bhBYVY7oZkc: tistory/studio-g/261 - [CAM] 13.09.13 헬로비너스 가평 한마음위문공연 by. 철우/130913
-        헬로비너스 가평 한마음위문공연_차마실래(윤조) by 철우-bhBYVY7oZkc.webm
   '262':
     expected: 15
     expected_media: 0
@@ -21184,12 +21020,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/263 - [CAM] 13.09.14 헬로비너스 롯데월드 음악이있는저녁풍경 by. 철우/130914
         헬로비너스 롯데월드 음악이있는저녁풍경_차마실래(윤조)-991574.flv
-      fAlXwQwKDVI: tistory/studio-g/263 - [CAM] 13.09.14 헬로비너스 롯데월드 음악이있는저녁풍경 by.
-        철우/130914 헬로비너스 롯데월드 음악이있는저녁풍경_VENUS(윤조) by 철우-fAlXwQwKDVI.webm
-      mwLYMt3q4YA: tistory/studio-g/263 - [CAM] 13.09.14 헬로비너스 롯데월드 음악이있는저녁풍경 by.
-        철우/130914 헬로비너스 롯데월드 음악이있는저녁풍경_멘트(윤조) by 철우-mwLYMt3q4YA.webm
-      SmNKdCT4new: tistory/studio-g/263 - [CAM] 13.09.14 헬로비너스 롯데월드 음악이있는저녁풍경 by.
-        철우/130914 헬로비너스 롯데월드 음악이있는저녁풍경_차마실래(윤조) by 철우-SmNKdCT4new.webm
   '264':
     expected: 19
     expected_media: 0
@@ -21614,10 +21444,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/270 - [CAM] 13.09.05 나인뮤지스 포천 한마음 위문공연/130905 나인뮤지스
         포천 한마음 위문공연_Dolls(민하)-991574.flv
-      DrkRqgcs2zY: tistory/studio-g/270 - [CAM] 13.09.05 나인뮤지스 포천 한마음 위문공연/130905
-        나인뮤지스 포천 한마음 위문공연_Wild(민하)-DrkRqgcs2zY.webm
-      VdhGQRrls20: tistory/studio-g/270 - [CAM] 13.09.05 나인뮤지스 포천 한마음 위문공연/130905
-        나인뮤지스 포천 한마음 위문공연_Dolls(민하)-VdhGQRrls20.webm
   '271':
     expected: 15
     expected_media: 0
@@ -21801,10 +21627,6 @@ studio-g:
         by. Purple.D/00000-2628CF49523877C119177A.jpg
     media_files:
       '1536180': tistory/studio-g/274 - [CAM] 13.09.13 카라 대구 영풍문고 팬싸인회 by. Purple.D/130915kara_daegu_ending-1536180.flv
-      3l-kron5oo8: tistory/studio-g/274 - [CAM] 13.09.13 카라 대구 영풍문고 팬싸인회 by. Purple.D/130913
-        카라 대구 영풍문고 팬사인회-3l-kron5oo8.mp4
-      Vz3r6ofioQU: tistory/studio-g/274 - [CAM] 13.09.13 카라 대구 영풍문고 팬싸인회 by. Purple.D/130913
-        카라 대구 영풍문고 팬싸인회 엔딩-Vz3r6ofioQU.mp4
   '275':
     expected: 1
     expected_media: 4
@@ -21813,10 +21635,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/275 - [CAM] 13.09.05 스카프 포천 한마음 위문공연/130905 스카프 포천
         한마음 위문공연_My Love(하나)-991574.flv
-      4v9IduqN83Y: tistory/studio-g/275 - [CAM] 13.09.05 스카프 포천 한마음 위문공연/130905 스카프
-        포천 한마음 위문공연_러브 바이러스(주아)-4v9IduqN83Y.webm
-      Dxkp-SiQDGI: tistory/studio-g/275 - [CAM] 13.09.05 스카프 포천 한마음 위문공연/130905 스카프
-        포천 한마음 위문공연_My Love(하나)-Dxkp-SiQDGI.webm
   '276':
     expected: 1
     expected_media: 2
@@ -21825,8 +21643,6 @@ studio-g:
         by. Purple.D/_DSC8771-l-221DE43952398F6F176EBB.jpg
     media_files:
       '1536180': tistory/studio-g/276 - [CAM] 13.09.15 카라 합정 메세나폴리스 팬싸인회 by. Purple.D/130915kara_hapjung-1536180.flv
-      0SMpjicOhH4: tistory/studio-g/276 - [CAM] 13.09.15 카라 합정 메세나폴리스 팬싸인회 by. Purple.D/130915
-        카라 메세나폴리스 팬싸인회-0SMpjicOhH4.mp4
   '277':
     expected: 73
     expected_media: 0
@@ -22592,18 +22408,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/287 - [CAM] 13.09.24 헬로비너스 호서대 축제 by. 철우/130924 헬로비너스
         호서대 축제_차마실래(윤조)-991574.flv
-      hjIUv0nPgTE: tistory/studio-g/287 - [CAM] 13.09.24 헬로비너스 호서대 축제 by. 철우/130924
-        헬로비너스 호서대 축제_VENUS(윤조) by 철우-hjIUv0nPgTE.webm
-      1VxC8M_60BA: tistory/studio-g/287 - [CAM] 13.09.24 헬로비너스 호서대 축제 by. 철우/130924
-        헬로비너스 호서대 축제_멘트1(윤조) by 철우-1VxC8M_60BA.webm
-      Ev0J7kg1lPo: tistory/studio-g/287 - [CAM] 13.09.24 헬로비너스 호서대 축제 by. 철우/130924
-        헬로비너스 호서대 축제_파도처럼(윤조) by 철우-Ev0J7kg1lPo.webm
-      r1DtG5XjSL0: tistory/studio-g/287 - [CAM] 13.09.24 헬로비너스 호서대 축제 by. 철우/130924
-        헬로비너스 호서대 축제_오늘뭐해(윤조) by 철우-r1DtG5XjSL0.webm
-      Z3rsnckS8Hk: tistory/studio-g/287 - [CAM] 13.09.24 헬로비너스 호서대 축제 by. 철우/130924
-        헬로비너스 호서대 축제_멘트2(윤조) by 철우-Z3rsnckS8Hk.webm
-      r4IBFKzP9Ok: tistory/studio-g/287 - [CAM] 13.09.24 헬로비너스 호서대 축제 by. 철우/130924
-        헬로비너스 호서대 축제_차마실래(윤조) by 철우-r4IBFKzP9Ok.webm
   '288':
     expected: 8
     expected_media: 0
@@ -22634,12 +22438,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/289 - [CAM] 13.09.25 헬로비너스 예산 생명사랑콘서트 by. 철우/120925
         헬로비너스 예산 생명사랑콘서트_차마실래(윤조)-991574.flv
-      qwBkU7npacg: tistory/studio-g/289 - [CAM] 13.09.25 헬로비너스 예산 생명사랑콘서트 by. 철우/130925
-        헬로비너스 예산 생명사랑콘서트_VENUS(윤조) by 철우-qwBkU7npacg.webm
-      IfmTTEs0Esw: tistory/studio-g/289 - [CAM] 13.09.25 헬로비너스 예산 생명사랑콘서트 by. 철우/130925
-        헬로비너스 예산 생명사랑콘서트_멘트(윤조) by 철우-IfmTTEs0Esw.webm
-      IKG5CAUNpB4: tistory/studio-g/289 - [CAM] 13.09.25 헬로비너스 예산 생명사랑콘서트 by. 철우/130925
-        헬로비너스 예산 생명사랑콘서트_차마실래(윤조) by 철우-IKG5CAUNpB4.webm
   '290':
     expected: 10
     expected_media: 0
@@ -22852,14 +22650,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/293 - [CAM] 13.09.26 오렌지캬라멜 우송대 축제/130926 오렌지캬라멜
         우송대 축제_마법소녀(레이나)-991574.flv
-      bQZI5GUCvEc: tistory/studio-g/293 - [CAM] 13.09.26 오렌지캬라멜 우송대 축제/130926 오렌지캬라멜(Orange
-        Caramel) 레이나 우송대 축제 직캠(Fancam) 립스틱(LIPSTICK)-bQZI5GUCvEc.webm
-      L8o2VAzEycQ: tistory/studio-g/293 - [CAM] 13.09.26 오렌지캬라멜 우송대 축제/130926 오렌지캬라멜(Orange
-        Caramel) 레이나 우송대 축제 직캠(Fancam) 아잉-L8o2VAzEycQ.webm
-      '08IrtxuwAN8': tistory/studio-g/293 - [CAM] 13.09.26 오렌지캬라멜 우송대 축제/130926 오렌지캬라멜(Orange
-        Caramel) 레이나 우송대 축제 직캠(Fancam) 샹하이로맨스-08IrtxuwAN8.webm
-      CjqwGstbcKI: tistory/studio-g/293 - [CAM] 13.09.26 오렌지캬라멜 우송대 축제/130926 오렌지캬라멜
-        우송대 축제_마법소녀(레이나)-CjqwGstbcKI.webm
   '294':
     expected: 49
     expected_media: 0
@@ -24006,12 +23796,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/304 - [CAM] 13.09.30 헬로비너스 서울국제초단편영화제 by. 철우/130930
         헬로비너스 서울국제초단편영화제_차마실래(윤조)-991574.flv
-      kZWA8lvr4JY: tistory/studio-g/304 - [CAM] 13.09.30 헬로비너스 서울국제초단편영화제 by. 철우/130930
-        헬로비너스 서울국제초단편영화제_VENUS(윤조) by 철우-kZWA8lvr4JY.mp4
-      vClRwz9bWpw: tistory/studio-g/304 - [CAM] 13.09.30 헬로비너스 서울국제초단편영화제 by. 철우/130930
-        헬로비너스 서울국제초단편영화제_멘트(윤조) by 철우-vClRwz9bWpw.mp4
-      ttUROR252EM: tistory/studio-g/304 - [CAM] 13.09.30 헬로비너스 서울국제초단편영화제 by. 철우/130930
-        헬로비너스 서울국제초단편영화제_차마실래(윤조) by 철우-ttUROR252EM.mp4
   '305':
     expected: 43
     expected_media: 0
@@ -24112,10 +23896,6 @@ studio-g:
     media_files:
       '1536180': tistory/studio-g/306 - [CAM] 13.09.28 카라 원주 K-POP Festival in Gangwon
         By Purple.D/130928wonjukara02-1536180.flv
-      6vK5olOA_b8: tistory/studio-g/306 - [CAM] 13.09.28 카라 원주 K-POP Festival in Gangwon
-        By Purple.D/130928 원주 케이팝(K-POP) 페스티벌 카라(KARA) 숙녀가 못돼(Damaged Lady)-6vK5olOA_b8.mp4
-      WJkPE04jn0s: tistory/studio-g/306 - [CAM] 13.09.28 카라 원주 K-POP Festival in Gangwon
-        By Purple.D/130928 원주 케이팝(K-POP) 페스티벌 카라(KARA) 판도라( Pandora) 전체 직캠_fancam-WJkPE04jn0s.mkv
   '307':
     expected: 50
     expected_media: 0
@@ -24386,16 +24166,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/310 - [CAM] 13.09.28 헬로비너스 제천 한방바이오박람회 by. 철우/130928
         헬로비너스 제천 한방바이오박람회_차마실래(윤조)-991574.flv
-      I7k8mqM1NoI: tistory/studio-g/310 - [CAM] 13.09.28 헬로비너스 제천 한방바이오박람회 by. 철우/130928
-        헬로비너스 제천 한방바이오박람회_VENUS(윤조) by 철우-I7k8mqM1NoI.mp4
-      99daQPBld9k: tistory/studio-g/310 - [CAM] 13.09.28 헬로비너스 제천 한방바이오박람회 by. 철우/130928
-        헬로비너스 제천 한방바이오박람회_멘트(윤조) by 철우-99daQPBld9k.mp4
-      obp05DaKEI0: tistory/studio-g/310 - [CAM] 13.09.28 헬로비너스 제천 한방바이오박람회 by. 철우/130928
-        헬로비너스 제천 한방바이오박람회_똑같아(윤조) by 철우-obp05DaKEI0.mkv
-      Uv07LYCdyD0: tistory/studio-g/310 - [CAM] 13.09.28 헬로비너스 제천 한방바이오박람회 by. 철우/130928
-        헬로비너스 제천 한방바이오박람회_오늘뭐해(윤조) by 철우-Uv07LYCdyD0.mp4
-      xJOVL3aBEsw: tistory/studio-g/310 - [CAM] 13.09.28 헬로비너스 제천 한방바이오박람회 by. 철우/130928
-        헬로비너스 제천 한방바이오박람회_차마실래(윤조) by 철우-xJOVL3aBEsw.mp4
   '311':
     expected: 8
     expected_media: 0
@@ -24524,16 +24294,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/314 - [CAM] 13.09.28 헬로비너스 고려사이버대 축제 by. 철우/130928
         헬로비너스 고려사이버대 축제_차마실래(윤조)-991574.flv
-      im1qjMzBqf4: tistory/studio-g/314 - [CAM] 13.09.28 헬로비너스 고려사이버대 축제 by. 철우/130928
-        헬로비너스 고려사이버대 축제_HELLO(윤조) by 철우-im1qjMzBqf4.mp4
-      fV7Q7LCbIn4: tistory/studio-g/314 - [CAM] 13.09.28 헬로비너스 고려사이버대 축제 by. 철우/130928
-        헬로비너스 고려사이버대 축제_멘트(윤조) by 철우-fV7Q7LCbIn4.mp4
-      kAHxY4yTrAw: tistory/studio-g/314 - [CAM] 13.09.28 헬로비너스 고려사이버대 축제 by. 철우/130928
-        헬로비너스 고려사이버대 축제_VENUS(윤조) by 철우-kAHxY4yTrAw.mp4
-      u7gNk6djvfk: tistory/studio-g/314 - [CAM] 13.09.28 헬로비너스 고려사이버대 축제 by. 철우/130928
-        헬로비너스 고려사이버대 축제_오늘뭐해(윤조) by 철우-u7gNk6djvfk.mp4
-      dG__e154arw: tistory/studio-g/314 - [CAM] 13.09.28 헬로비너스 고려사이버대 축제 by. 철우/130928
-        헬로비너스 고려사이버대 축제_차마실래(윤조) by 철우-dG__e154arw.webm
   '315':
     expected: 62
     expected_media: 0
@@ -24813,14 +24573,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/318 - [CAM] 13.09.27 헬로비너스 경찰대 축제 by. 철우/130927 헬로비너스
         경찰대 축제_차마실래(윤조)-991574.flv
-      jsIOAkv70Cs: tistory/studio-g/318 - [CAM] 13.09.27 헬로비너스 경찰대 축제 by. 철우/130927
-        헬로비너스 경찰대 축제_HELLO(윤조) by 철우-jsIOAkv70Cs.mp4
-      GzseNBpfelE: tistory/studio-g/318 - [CAM] 13.09.27 헬로비너스 경찰대 축제 by. 철우/130927
-        헬로비너스 경찰대 축제_VENUS(윤조) by 철우-GzseNBpfelE.mp4
-      Z4clsWww4Zo: tistory/studio-g/318 - [CAM] 13.09.27 헬로비너스 경찰대 축제 by. 철우/130927
-        헬로비너스 경찰대 축제_오늘뭐해(윤조) by 철우-Z4clsWww4Zo.mp4
-      1ro8myiCdJQ: tistory/studio-g/318 - [CAM] 13.09.27 헬로비너스 경찰대 축제 by. 철우/130927
-        헬로비너스 경찰대 축제_차마실래(윤조) by 철우-1ro8myiCdJQ.mp4
   '319':
     expected: 16
     expected_media: 0
@@ -24956,8 +24708,6 @@ studio-g:
         by. Purple.D/K-POP-페스티벌-원주-ajax-22543333524EEE190A59C7.jpg
     media_files:
       '1536180': tistory/studio-g/323 - [CAM] 13.09.28 에이젝스 원주 케이팝 페스티벌 by. Purple.D/130928wonjuajax-1536180.flv
-      Nqis32odj2A: tistory/studio-g/323 - [CAM] 13.09.28 에이젝스 원주 케이팝 페스티벌 by. Purple.D/130928
-        원주 케이팝 페스티발 에이젝스-Nqis32odj2A.mp4
   '324':
     expected: 1
     expected_media: 2
@@ -24966,8 +24716,6 @@ studio-g:
         by. Purple.D/K-POP-페스티벌-dal-2727624B524EEFF302EF50.jpg
     media_files:
       '1536180': tistory/studio-g/324 - [CAM] 13.09.28 달샤벳 원주 케이팝 페스티벌 by. Purple.D/130928wonjudalshabet-1536180.flv
-      ed1GzClLibc: tistory/studio-g/324 - [CAM] 13.09.28 달샤벳 원주 케이팝 페스티벌 by. Purple.D/130928
-        원주 케이팝 페스티발 달샤벳-ed1GzClLibc.mkv
   '325':
     expected: 1
     expected_media: 2
@@ -24976,8 +24724,6 @@ studio-g:
         by. Purple.D/K-POP-페스티벌-원주-nuest-27337B40524EF13033583D.jpg
     media_files:
       '1536180': tistory/studio-g/325 - [CAM] 13.09.28 뉴이스트 원주 케이팝 페스티벌 by. Purple.D/130928wonjuneest-1536180.flv
-      cCpOHxh1470: tistory/studio-g/325 - [CAM] 13.09.28 뉴이스트 원주 케이팝 페스티벌 by. Purple.D/130928
-        원주 케이팝 페스티벌 뉴이스트-cCpOHxh1470.mp4
   '326':
     expected: 1
     expected_media: 2
@@ -24986,8 +24732,6 @@ studio-g:
         by. Purple.D/K-POP-페스티벌-원주-vix-223C3040524EF1BB029756.jpg
     media_files:
       '1536180': tistory/studio-g/326 - [CAM] 13.09.28 빅스 원주 케이팝 페스티벌 by. Purple.D/130928wonjuvix-1536180.flv
-      HUxkxECb_uQ: tistory/studio-g/326 - [CAM] 13.09.28 빅스 원주 케이팝 페스티벌 by. Purple.D/130928
-        원주 케이팝 페스티발 빅스-HUxkxECb_uQ.mp4
   '327':
     expected: 1
     expected_media: 2
@@ -24996,8 +24740,6 @@ studio-g:
         by. Purple.D/K-POP-페스티벌-원주-spica-22292A43524EF233091F9A.jpg
     media_files:
       '1536180': tistory/studio-g/327 - [CAM] 13.09.28 스피카 원주 케이팝 페스티벌 by. Purple.D/130928wonjuspica-1536180.flv
-      2O892fj4kiw: tistory/studio-g/327 - [CAM] 13.09.28 스피카 원주 케이팝 페스티벌 by. Purple.D/130928
-        원주 케이팝페스티발 스피카-2O892fj4kiw.mp4
   '328':
     expected: 40
     expected_media: 0
@@ -25092,16 +24834,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/329 - [CAM] 13.10.05 헬로비너스 횡성한우축제 by. 철우/131005 헬로비너스
         횡성한우축제_차마실래(윤조)-991574.flv
-      8fWUhl1-ixQ: tistory/studio-g/329 - [CAM] 13.10.05 헬로비너스 횡성한우축제 by. 철우/131005
-        헬로비너스 횡성한우축제_대기(윤조) by 철우-8fWUhl1-ixQ.mp4
-      8c5raxzV9mw: tistory/studio-g/329 - [CAM] 13.10.05 헬로비너스 횡성한우축제 by. 철우/131005
-        헬로비너스 횡성한우축제_VENUS(윤조) by 철우-8c5raxzV9mw.mp4
-      UVFJfeWQn1w: tistory/studio-g/329 - [CAM] 13.10.05 헬로비너스 횡성한우축제 by. 철우/131005
-        헬로비너스 횡성한우축제_멘트(윤조) by 철우-UVFJfeWQn1w.mp4
-      HjOQzvI72oM: tistory/studio-g/329 - [CAM] 13.10.05 헬로비너스 횡성한우축제 by. 철우/131005
-        헬로비너스 횡성한우축제_오늘뭐해(윤조) by 철우-HjOQzvI72oM.mp4
-      M6hts4XNWXY: tistory/studio-g/329 - [CAM] 13.10.05 헬로비너스 횡성한우축제 by. 철우/131005
-        헬로비너스 횡성한우축제_차마실래(윤조) by 철우-M6hts4XNWXY.mp4
   '330':
     expected: 66
     expected_media: 0
@@ -25354,14 +25086,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/333 - [CAM] 13.09.27 헬로비너스 수원 아줌마축제 by. 철우/130927
         헬로비너스 수원 아줌마축제_차마실래(윤조)-991574.flv
-      YUz74OoIa1o: tistory/studio-g/333 - [CAM] 13.09.27 헬로비너스 수원 아줌마축제 by. 철우/130927
-        헬로비너스 수원 아줌마축제_HELLO(윤조) by 철우-YUz74OoIa1o.mkv
-      WSMswvvlsP8: tistory/studio-g/333 - [CAM] 13.09.27 헬로비너스 수원 아줌마축제 by. 철우/130927
-        헬로비너스 수원 아줌마축제_VENUS(윤조) by 철우-WSMswvvlsP8.mp4
-      i8ZvIRSUZt4: tistory/studio-g/333 - [CAM] 13.09.27 헬로비너스 수원 아줌마축제 by. 철우/130927
-        헬로비너스 수원 아줌마축제_오늘뭐해(윤조) by 철우-i8ZvIRSUZt4.mp4
-      rxOH5H06VnI: tistory/studio-g/333 - [CAM] 13.09.27 헬로비너스 수원 아줌마축제 by. 철우/130927
-        헬로비너스 수원 아줌마축제_차마실래(윤조) by 철우-rxOH5H06VnI.mp4
   '334':
     expected: 1
     expected_media: 10
@@ -25371,16 +25095,6 @@ studio-g:
     media_files:
       '1536180': tistory/studio-g/334 - [CAM] 13.09.26 에이핑크 성남 가천대 We Higher 축제 by.
         MINe./130926apinkmymy-1536180.flv
-      BmUIgbMskJk: tistory/studio-g/334 - [CAM] 13.09.26 에이핑크 성남 가천대 We Higher 축제
-        by. MINe./130926 에이핑크(apink) 가천대 행사 남주  노노노(nonono) 직캠_fancam-BmUIgbMskJk.webm
-      OSHZmsvUhog: tistory/studio-g/334 - [CAM] 13.09.26 에이핑크 성남 가천대 We Higher 축제
-        by. MINe./130926 에이핑크(apink) 가천대행사 남주  러블리데이(lovely day) 직캠_fancam-OSHZmsvUhog.mp4
-      MgMv7vI4VwM: tistory/studio-g/334 - [CAM] 13.09.26 에이핑크 성남 가천대 We Higher 축제
-        by. MINe./130926 에이핑크 가천대 행사 꿈결처럼-MgMv7vI4VwM.mp4
-      h86HwMMVxx4: tistory/studio-g/334 - [CAM] 13.09.26 에이핑크 성남 가천대 We Higher 축제
-        by. MINe./130926 에이핑크(apink) 남주 가천대 행사 유유(u you) 직캠_fancam-h86HwMMVxx4.mp4
-      3YEL_p-bQHo: tistory/studio-g/334 - [CAM] 13.09.26 에이핑크 성남 가천대 We Higher 축제
-        by. MINe./130926 에이핑크 가천대 행사 마이마이-3YEL_p-bQHo.mp4
   '335':
     expected: 18
     expected_media: 0
@@ -26161,16 +25875,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/353 - [CAM] 13.10.09 헬로비너스 고한시장 셀럽마케팅 by. 철우/131009
         헬로비너스 고한시장 셀럽마케팅_차마실래(윤조)-991574.flv
-      h5gYrmYVPQw: tistory/studio-g/353 - [CAM] 13.10.09 헬로비너스 고한시장 셀럽마케팅 by. 철우/131009
-        헬로비너스 고한시장 셀럽마케팅_대기(윤조) by 철우-h5gYrmYVPQw.mp4
-      O52zfLQ58g0: tistory/studio-g/353 - [CAM] 13.10.09 헬로비너스 고한시장 셀럽마케팅 by. 철우/131009
-        헬로비너스 고한시장 셀럽마케팅_HELLO(윤조) by 철우-O52zfLQ58g0.mp4
-      97nxBG2pPFI: tistory/studio-g/353 - [CAM] 13.10.09 헬로비너스 고한시장 셀럽마케팅 by. 철우/131009
-        헬로비너스 고한시장 셀럽마케팅_VENUS(윤조) by 철우-97nxBG2pPFI.mp4
-      dqP_cS4sAOA: tistory/studio-g/353 - [CAM] 13.10.09 헬로비너스 고한시장 셀럽마케팅 by. 철우/131009
-        헬로비너스 고한시장 셀럽마케팅_오늘뭐해(윤조) by 철우-dqP_cS4sAOA.mkv
-      NjKLFJAzEKg: tistory/studio-g/353 - [CAM] 13.10.09 헬로비너스 고한시장 셀럽마케팅 by. 철우/131009
-        헬로비너스 고한시장 셀럽마케팅_차마실래(윤조) by 철우-NjKLFJAzEKg.mp4
   '354':
     expected: 11
     expected_media: 0
@@ -26392,12 +26096,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/362 - [CAM] 13.10.11 헬로비너스 구포나루 대축제 by. 철우/131011
         헬로비너스 구포나루 대축제_차마실래(윤조)-991574.flv
-      hvHLH5QySBo: tistory/studio-g/362 - [CAM] 13.10.11 헬로비너스 구포나루 대축제 by. 철우/131011
-        헬로비너스 구포나루 대축제_VENUS(윤조) by 철우-hvHLH5QySBo.mp4
-      4qsWpi1tuxc: tistory/studio-g/362 - [CAM] 13.10.11 헬로비너스 구포나루 대축제 by. 철우/131011
-        헬로비너스 구포나루 대축제_오늘뭐해(윤조) by 철우-4qsWpi1tuxc.mp4
-      cKKAVBFDjUc: tistory/studio-g/362 - [CAM] 13.10.11 헬로비너스 구포나루 대축제 by. 철우/131011
-        헬로비너스 구포나루 대축제_차마실래(윤조) by 철우-cKKAVBFDjUc.mp4
   '363':
     expected: 1
     expected_media: 10
@@ -26407,16 +26105,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/363 - [CAM] 13.10.11 헬로비너스 창신대 축제 by. 철우/131011 헬로비너스
         창신대 축제_차마실래(윤조)-991574.flv
-      PkKV054OLVQ: tistory/studio-g/363 - [CAM] 13.10.11 헬로비너스 창신대 축제 by. 철우/131011
-        헬로비너스 창신대 축제_HELLO(윤조) by 철우-PkKV054OLVQ.webm
-      nvahz00CvsA: tistory/studio-g/363 - [CAM] 13.10.11 헬로비너스 창신대 축제 by. 철우/131011
-        헬로비너스 창신대 축제_VENUS(윤조) by 철우-nvahz00CvsA.mp4
-      c26MyAK-ges: tistory/studio-g/363 - [CAM] 13.10.11 헬로비너스 창신대 축제 by. 철우/131011
-        헬로비너스 창신대 축제_멘트(윤조) by 철우-c26MyAK-ges.mp4
-      QGnr9eIVDME: tistory/studio-g/363 - [CAM] 13.10.11 헬로비너스 창신대 축제 by. 철우/131011
-        헬로비너스 창신대 축제_오늘뭐해(윤조) by 철우-QGnr9eIVDME.mp4
-      8DzfHcrJkEE: tistory/studio-g/363 - [CAM] 13.10.11 헬로비너스 창신대 축제 by. 철우/131011
-        헬로비너스 창신대 축제_차마실래(윤조) by 철우-8DzfHcrJkEE.mkv
   '364':
     expected: 14
     expected_media: 0
@@ -26972,8 +26660,6 @@ studio-g:
         더 쇼 by. Purple.D/The-Show_j_pd-235A3A35525AC100194B1C.jpg
     media_files:
       '1536180': tistory/studio-g/377 - [CAM] 13.10.01 시크릿 송지은 SBS MTV 더 쇼 by. Purple.D/131001_theshowjieun-1536180.flv
-      DDDrVAT1YgE: tistory/studio-g/377 - [CAM] 13.10.01 시크릿 송지은 SBS MTV 더 쇼 by. Purple.D/131001
-        송지은 더쇼 올어바웃 케팝-DDDrVAT1YgE.mp4
   '378':
     expected: 1
     expected_media: 2
@@ -26982,8 +26668,6 @@ studio-g:
         더 쇼 by. MINe./The-Show_j_min-2639EF35525AC18C35FC1C.jpg
     media_files:
       '1536180': tistory/studio-g/378 - [CAM] 13.10.01 시크릿 송지은 SBS MTV 더 쇼 by. MINe./131001theshowjieun-1536180.flv
-      jVrnw3KYWo4: tistory/studio-g/378 - [CAM] 13.10.01 시크릿 송지은 SBS MTV 더 쇼 by. MINe./131001
-        더쇼 올어바웃 케팝 송지은-jVrnw3KYWo4.mp4
   '379':
     expected: 1
     expected_media: 2
@@ -26992,8 +26676,6 @@ studio-g:
         by. MINe./The-Show_sun_min-25609D35525AC37E21C170.jpg
     media_files:
       '1536180': tistory/studio-g/379 - [CAM] 13.10.01 선미 SBS MTV 더 쇼 by. MINe./131001theshowsunmi-1536180.flv
-      gcpI750zwFg: tistory/studio-g/379 - [CAM] 13.10.01 선미 SBS MTV 더 쇼 by. MINe./131001
-        더 쇼 올어바웃 케팝 선미-gcpI750zwFg.mkv
   '380':
     expected: 28
     expected_media: 0
@@ -27063,10 +26745,6 @@ studio-g:
         더 쇼 by. MINe./The-Show_l_min-21714150525AC92C1AAC1A.jpg
     media_files:
       '1536180': tistory/studio-g/381 - [CAM] 13.10.01 레이디스코드 SBS MTV 더 쇼 by. MINe./131001theshowladysojung-1536180.flv
-      _wtEn80Zqf8: tistory/studio-g/381 - [CAM] 13.10.01 레이디스코드 SBS MTV 더 쇼 by. MINe./131001
-        더쇼 올어바웃케팝 은비-_wtEn80Zqf8.mkv
-      ZJ1y-km9T3A: tistory/studio-g/381 - [CAM] 13.10.01 레이디스코드 SBS MTV 더 쇼 by. MINe./131001
-        더쇼 올어바웃케팝 소정-ZJ1y-km9T3A.mkv
   '382':
     expected: 1
     expected_media: 2
@@ -27076,8 +26754,6 @@ studio-g:
     media_files:
       '1536180': tistory/studio-g/382 - [CAM] 13.10.01 카라 박규리 - 최고의사랑 SBS MTV 더 쇼
         by. Purple.D/131001_theshowgyulri-1536180.flv
-      LPFriaPC0eo: tistory/studio-g/382 - [CAM] 13.10.01 카라 박규리 - 최고의사랑 SBS MTV 더
-        쇼 by. Purple.D/131001 더쇼 올어바웃 케팝 규리-LPFriaPC0eo.mp4
   '383':
     expected: 1
     expected_media: 2
@@ -27087,8 +26763,6 @@ studio-g:
     media_files:
       '1536180': tistory/studio-g/383 - [CAM] 13.10.01 케이헌터 Feat 보미  SBS MTV 더 쇼 by.
         MINe./131001theshowbomi-1536180.flv
-      SSQfFplW00o: tistory/studio-g/383 - [CAM] 13.10.01 케이헌터 Feat 보미  SBS MTV 더 쇼
-        by. MINe./131001 보미 더쇼 올어바웃 케팝-SSQfFplW00o.mp4
   '384':
     expected: 1
     expected_media: 2
@@ -27098,8 +26772,6 @@ studio-g:
     media_files:
       '1536180': tistory/studio-g/384 - [CAM]13.10.01 카라 한승연 - RunTheWorld SBS MTV
         더 쇼 by. MINe./131001theshowseungyeon-1536180.flv
-      4YhldXkVnOE: tistory/studio-g/384 - [CAM]13.10.01 카라 한승연 - RunTheWorld SBS MTV
-        더 쇼 by. MINe./131001 승연 더쇼 올어바웃케이팝-4YhldXkVnOE.mp4
   '385':
     expected: 1
     expected_media: 2
@@ -27109,8 +26781,6 @@ studio-g:
     media_files:
       '1536180': tistory/studio-g/385 - [CAM] 13.10.01 카라 박규리 - 최고의사랑 SBS MTV 더 쇼
         by. MINe./131001theshowgyulri-1536180.flv
-      3_iiLN0OJo8: tistory/studio-g/385 - [CAM] 13.10.01 카라 박규리 - 최고의사랑 SBS MTV 더
-        쇼 by. MINe./131001 규리 더쇼 올어바웃 케이팝  최고의 사랑-3_iiLN0OJo8.mp4
   '386':
     expected: 66
     expected_media: 0
@@ -28087,14 +27757,6 @@ studio-g:
         MINe./130922vivid-2505E0395262A6FA19736B.jpg
     media_files:
       '1536180': tistory/studio-g/404 - [CAM] 13.09.22 비비드 수원생태교통행사 by MINe./130922vivid_mi-1536180.flv
-      tfp-Q_T5fpo: tistory/studio-g/404 - [CAM] 13.09.22 비비드 수원생태교통행사 by MINe./130922
-        비비드 수원 생태교통 행사 브레스리스-tfp-Q_T5fpo.mp4
-      MTfBvUwuf4o: tistory/studio-g/404 - [CAM] 13.09.22 비비드 수원생태교통행사 by MINe./130922
-        비비드 수원생태교통행사 멘트-MTfBvUwuf4o.mp4
-      Pd8vYM_NJPs: tistory/studio-g/404 - [CAM] 13.09.22 비비드 수원생태교통행사 by MINe./130922
-        비비드 수원새태교통 행사 세이브잇-Pd8vYM_NJPs.mp4
-      lOoeEadohcE: tistory/studio-g/404 - [CAM] 13.09.22 비비드 수원생태교통행사 by MINe./130922
-        비비드 수원생태교통행사 무대인사-lOoeEadohcE.mp4
   '405':
     expected: 21
     expected_media: 0
@@ -28305,14 +27967,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/409 - [CAM] 13.10.20 헬로비너스 화성 붐의영스트리트 by. 철우/131020
         헬로비너스 화성 붐의영스트리트_차마실래(윤조)-991574.flv
-      JDVMXvUIDHI: tistory/studio-g/409 - [CAM] 13.10.20 헬로비너스 화성 붐의영스트리트 by. 철우/131020
-        헬로비너스 화성 붐의영스트리트_대기(나라) by 철우-JDVMXvUIDHI.mp4
-      lp_A5pzYxew: tistory/studio-g/409 - [CAM] 13.10.20 헬로비너스 화성 붐의영스트리트 by. 철우/131020
-        헬로비너스 화성 붐의영스트리트_VENUS(윤조) by 철우-lp_A5pzYxew.mp4
-      sncI_oVxGqg: tistory/studio-g/409 - [CAM] 13.10.20 헬로비너스 화성 붐의영스트리트 by. 철우/131020
-        헬로비너스 화성 붐의영스트리트_멘트(윤조) by 철우-sncI_oVxGqg.mp4
-      gw2r28B6CVg: tistory/studio-g/409 - [CAM] 13.10.20 헬로비너스 화성 붐의영스트리트 by. 철우/131020
-        헬로비너스 화성 붐의영스트리트_차마실래(윤조) by 철우-gw2r28B6CVg.mp4
   '410':
     expected: 50
     expected_media: 0
@@ -28463,12 +28117,6 @@ studio-g:
         팬싸인회 by MINe./130712Apink-63-241A6437526517381D4C66.jpg
     media_files:
       '1536180': tistory/studio-g/412 - [CAM] 13.07.13 에이핑크 여의도 IFC몰 팬싸인회 by MINe./130713apinkfan_ed-1536180.flv
-      wZT0hDuBcIs: tistory/studio-g/412 - [CAM] 13.07.13 에이핑크 여의도 IFC몰 팬싸인회 by MINe./130713
-        에이핑크 여의도 팬싸인회 오프닝-wZT0hDuBcIs.mp4
-      bdyqB034Xz8: tistory/studio-g/412 - [CAM] 13.07.13 에이핑크 여의도 IFC몰 팬싸인회 by MINe./130713
-        에이핑크 여의도 팬싸인회-bdyqB034Xz8.mp4
-      IA4uFgGuLzs: tistory/studio-g/412 - [CAM] 13.07.13 에이핑크 여의도 IFC몰 팬싸인회 by MINe./130713
-        에이핑크 여의도팬싸인회 엔딩-IA4uFgGuLzs.mp4
   '413':
     expected: 24
     expected_media: 0
@@ -29272,16 +28920,12 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/429 - [CAM] 13.10.20 헬로비너스 화성 붐의영스트리트_멘트mix by. 철우/131020
         헬로비너스 화성 붐의영스트리트_멘트mix(윤조)-991574.flv
-      ltx9z0_huas: tistory/studio-g/429 - [CAM] 13.10.20 헬로비너스 화성 붐의영스트리트_멘트mix by.
-        철우/131020 헬로비너스 화성 붐의영스트리트_멘트mix(윤조) by 철우-ltx9z0_huas.mp4
   '430':
     expected: 0
     expected_media: 2
     files: {}
     media_files:
       '991574': tistory/studio-g/430 - [CAM] 차마실래 Mix by. 철우/헬로비너스_차마실래mix(윤조)-991574.flv
-      O4fdK5b8bGk: tistory/studio-g/430 - [CAM] 차마실래 Mix by. 철우/헬로비너스_차마실래mix(윤조)
-        by 철우-O4fdK5b8bGk.webm
   '431':
     expected: 19
     expected_media: 0
@@ -29646,8 +29290,6 @@ studio-g:
         팬싸인회 by. Purple.D/_DSC0075-l-23783D34526FEA5F3A2EB9.jpg
     media_files:
       '1536180': tistory/studio-g/437 - [CAM] 13.10.27 에이오에이(AOA) 김포공항 팬싸인회 by. Purple.D/131027aoa-1536180.flv
-      kvmLuyVZeMw: tistory/studio-g/437 - [CAM] 13.10.27 에이오에이(AOA) 김포공항 팬싸인회 by.
-        Purple.D/131027 아오아 AOA 에이스오브엔젤 김포공항 팬싸인회-kvmLuyVZeMw.mp4
   '438':
     expected: 20
     expected_media: 0
@@ -29732,8 +29374,6 @@ studio-g:
     media_files:
       '1536180': tistory/studio-g/440 - [CAM] 13.10.31 카라 구하라 명동 헌혈 홍보대사 위촉식 기념 팬싸인회
         by. Purple.D/131031hara-1536180.flv
-      x43c7lY18mI: tistory/studio-g/440 - [CAM] 13.10.31 카라 구하라 명동 헌혈 홍보대사 위촉식 기념
-        팬싸인회 by. Purple.D/131031 구하라 명동 헌혈 홍보대사 팬 싸인회-x43c7lY18mI.mp4
   '441':
     expected: 37
     expected_media: 0
@@ -30012,20 +29652,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/444 - [CAM] 13.11.05 헬로비너스 구미대학교 축제 by. 철우/131105
         헬로비너스 구미대학교 축제_차마실래(윤조)-991574.flv
-      prV9hO4G45Q: tistory/studio-g/444 - [CAM] 13.11.05 헬로비너스 구미대학교 축제 by. 철우/131105
-        헬로비너스 구미대학교 축제_HELLO(윤조) by 철우-prV9hO4G45Q.mkv
-      8fUNw6CF7MY: tistory/studio-g/444 - [CAM] 13.11.05 헬로비너스 구미대학교 축제 by. 철우/131105
-        헬로비너스 구미대학교 축제_MENT1(윤조) by 철우-8fUNw6CF7MY.mp4
-      asJbsu-ExOI: tistory/studio-g/444 - [CAM] 13.11.05 헬로비너스 구미대학교 축제 by. 철우/131105
-        헬로비너스 구미대학교 축제_VENUS(윤조) by 철우-asJbsu-ExOI.mkv
-      mU7M1-DHGWA: tistory/studio-g/444 - [CAM] 13.11.05 헬로비너스 구미대학교 축제 by. 철우/131105
-        헬로비너스 구미대학교 축제_MENT2(윤조) by 철우-mU7M1-DHGWA.mp4
-      52JKwIFH3_c: tistory/studio-g/444 - [CAM] 13.11.05 헬로비너스 구미대학교 축제 by. 철우/131105
-        헬로비너스 구미대학교 축제_오늘뭐해(윤조) by 철우-52JKwIFH3_c.webm
-      5zPOiESEZL0: tistory/studio-g/444 - [CAM] 13.11.05 헬로비너스 구미대학교 축제 by. 철우/131105
-        헬로비너스 구미대학교 축제_MENT3(윤조) by 철우-5zPOiESEZL0.mkv
-      PVcfj_E_ff4: tistory/studio-g/444 - [CAM] 13.11.05 헬로비너스 구미대학교 축제 by. 철우/131105
-        헬로비너스 구미대학교 축제_차마실래(윤조) by 철우-PVcfj_E_ff4.mp4
   '445':
     expected: 32
     expected_media: 0
@@ -30596,10 +30222,6 @@ studio-g:
         by Purple.D/_DSC0143-l-2551E44752824B8924B8C5.jpg
     media_files:
       '1536180': tistory/studio-g/451 - [CAM] 13.11.10  에이젝스 김포공항 팬싸인회 by Purple.D/131110ajax02-1536180.flv
-      TxeATuyhtGE: tistory/studio-g/451 - [CAM] 13.11.10  에이젝스 김포공항 팬싸인회 by Purple.D/131110
-        에이젝스 김포공항 팬싸인회 오프닝-TxeATuyhtGE.mp4
-      FAu395oNGyA: tistory/studio-g/451 - [CAM] 13.11.10  에이젝스 김포공항 팬싸인회 by Purple.D/131110
-        에이젝스 김포공항 팬사인회 엔딩-FAu395oNGyA.mp4
   '452':
     expected: 37
     expected_media: 0
@@ -30720,14 +30342,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/455 - [CAM] 13.11.14 헬로비너스 한밭대 K-청년벤처스타 by. 철우/131114
         헬로비너스 한밭대 K-청년벤처스타_차마실래(윤조)-991574.flv
-      zTAKA9bmVy4: tistory/studio-g/455 - [CAM] 13.11.14 헬로비너스 한밭대 K-청년벤처스타 by. 철우/131114
-        헬로비너스 한밭대 K-청년벤처스타_HELLO(윤조) by 철우-zTAKA9bmVy4.mp4
-      NkiEaVdsVj8: tistory/studio-g/455 - [CAM] 13.11.14 헬로비너스 한밭대 K-청년벤처스타 by. 철우/131114
-        헬로비너스 한밭대 K-청년벤처스타_VENUS(윤조) by 철우-NkiEaVdsVj8.mp4
-      P9Qmi8jphqY: tistory/studio-g/455 - [CAM] 13.11.14 헬로비너스 한밭대 K-청년벤처스타 by. 철우/131114
-        헬로비너스 한밭대 K-청년벤처스타_오늘뭐해(윤조) by 철우-P9Qmi8jphqY.mp4
-      UytaVozCYqo: tistory/studio-g/455 - [CAM] 13.11.14 헬로비너스 한밭대 K-청년벤처스타 by. 철우/131114
-        헬로비너스 한밭대 K-청년벤처스타_차마실래(윤조) by 철우-UytaVozCYqo.mp4
   '456':
     expected: 43
     expected_media: 0
@@ -30887,10 +30501,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/458 - [CAM] 13.11.15 헬로비너스 희망TV SBS by. 철우/131115
         헬로비너스 희망TV SBS_오늘뭐해(윤조)-991574.flv
-      gm3amGu-i4A: tistory/studio-g/458 - [CAM] 13.11.15 헬로비너스 희망TV SBS by. 철우/131115
-        헬로비너스 희망TV SBS_무대대기(윤조) by 철우-gm3amGu-i4A.mp4
-      n8j8EVf6pSs: tistory/studio-g/458 - [CAM] 13.11.15 헬로비너스 희망TV SBS by. 철우/131115
-        헬로비너스 희망TV SBS_오늘뭐해(윤조) by 철우-n8j8EVf6pSs.mkv
   '460':
     expected: 1
     expected_media: 2
@@ -30900,8 +30510,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/460 - [CAM] 13.11.15 헬로비너스 희망TV SBS_NoNoNo(아라) by.
         철우/131115 헬로비너스 희망TV SBS_NoNoNo(아라)-991574.flv
-      zhyCfDtxCKQ: tistory/studio-g/460 - [CAM] 13.11.15 헬로비너스 희망TV SBS_NoNoNo(아라)
-        by. 철우/131115 헬로비너스 희망TV SBS_NoNoNo(아라) by 철우-zhyCfDtxCKQ.webm
   '461':
     expected: 50
     expected_media: 0
@@ -31575,16 +31183,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/471 - [CAM] 13.12.03 헬로비너스 생명사랑을 위한 희망콘서트 by. 철우/131203
         헬로비너스 생명사랑을 위한 희망콘서트_차마실래(윤조)-991574.flv
-      xGnp9zSZosk: tistory/studio-g/471 - [CAM] 13.12.03 헬로비너스 생명사랑을 위한 희망콘서트 by.
-        철우/131203 헬로비너스 생명사랑을 위한 희망콘서트_VENUS(윤조) by 철우-xGnp9zSZosk.webm
-      Kftdji17MFY: tistory/studio-g/471 - [CAM] 13.12.03 헬로비너스 생명사랑을 위한 희망콘서트 by.
-        철우/131203 헬로비너스 생명사랑을 위한 희망콘서트_MENT1(윤조) by 철우-Kftdji17MFY.mp4
-      TCEl1dXKxXA: tistory/studio-g/471 - [CAM] 13.12.03 헬로비너스 생명사랑을 위한 희망콘서트 by.
-        철우/131203 헬로비너스 생명사랑을 위한 희망콘서트_오늘뭐해(윤조) by 철우-TCEl1dXKxXA.mp4
-      r3IHWjPWNvY: tistory/studio-g/471 - [CAM] 13.12.03 헬로비너스 생명사랑을 위한 희망콘서트 by.
-        철우/131203 헬로비너스 생명사랑을 위한 희망콘서트_MENT2(윤조) by 철우-r3IHWjPWNvY.mp4
-      d7ONJwFX70o: tistory/studio-g/471 - [CAM] 13.12.03 헬로비너스 생명사랑을 위한 희망콘서트 by.
-        철우/131203 헬로비너스 생명사랑을 위한 희망콘서트_차마실래(윤조) by 철우-d7ONJwFX70o.webm
   '472':
     expected: 38
     expected_media: 0
@@ -31894,10 +31492,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/476 - [CAM] 13.12.09 헬로비너스 카스포인트 어워즈 by. 철우/131209
         헬로비너스 카스포인트 어워즈_차마실래(윤조)-991574.flv
-      kfZoFSxwtw8: tistory/studio-g/476 - [CAM] 13.12.09 헬로비너스 카스포인트 어워즈 by. 철우/131209
-        헬로비너스 카스포인트 어워즈_VENUS(윤조) by 철우-kfZoFSxwtw8.mkv
-      lVGO5O9MANc: tistory/studio-g/476 - [CAM] 13.12.09 헬로비너스 카스포인트 어워즈 by. 철우/131209
-        헬로비너스 카스포인트 어워즈_차마실래(윤조) by 철우-lVGO5O9MANc.mp4
   '477':
     expected: 9
     expected_media: 0
@@ -32323,8 +31917,6 @@ studio-g:
         직캠 by. Purple.D/131214kara-2122F44E52B1BAA30D07A7.jpg
     media_files:
       '1536180': tistory/studio-g/488 - [CAM] 13.12.14 카라 DSP 페스티벌 멘트 직캠 by. Purple.D/131214dspkara-1536180.flv
-      rwQmOqoE-gQ: tistory/studio-g/488 - [CAM] 13.12.14 카라 DSP 페스티벌 멘트 직캠 by. Purple.D/131214dsp
-        페스티벌 카라 멘트-rwQmOqoE-gQ.mp4
   '489':
     expected: 1
     expected_media: 2
@@ -32333,8 +31925,6 @@ studio-g:
         직캠 by. Purple.D/131214dspjk-210F2A4F52B1BB8903ADDC.jpg
     media_files:
       '1536180': tistory/studio-g/489 - [CAM] 13.12.14 레인보우 김재경 DSP 페스티벌 직캠 by. Purple.D/131214dspjk-1536180.flv
-      8f0rN-Ua3Hc: tistory/studio-g/489 - [CAM] 13.12.14 레인보우 김재경 DSP 페스티벌 직캠 by.
-        Purple.D/131214dsp 페스티발 레인보우 재경 선샤인-8f0rN-Ua3Hc.mkv
   '490':
     expected: 52
     expected_media: 0
@@ -32543,8 +32133,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/495 - [CAM] 13.12.21 틴트 롯데월드 원음공개방송/131221 틴트 롯데월드
         원음공개방송_첫눈에 반했어(제이미)-991574.flv
-      wU15xnOg8DU: tistory/studio-g/495 - [CAM] 13.12.21 틴트 롯데월드 원음공개방송/131221 틴트
-        롯데월드 원음공개방송_첫눈에 반했어(제이미)-wU15xnOg8DU.mp4
   '496':
     expected: 21
     expected_media: 0
@@ -32600,10 +32188,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/497 - [CAM] 13.12.21 트랜디 롯데월드 원음공개방송/131221 트랜디 롯데월드
         원음공개방송_크리스마스캐롤(나율)-991574.flv
-      zQ-zrPe7Peo: tistory/studio-g/497 - [CAM] 13.12.21 트랜디 롯데월드 원음공개방송/131221 트랜디
-        롯데월드 원음공개방송_캔디보이(나율)-zQ-zrPe7Peo.mp4
-      7G3qYNlHf1U: tistory/studio-g/497 - [CAM] 13.12.21 트랜디 롯데월드 원음공개방송/131221 트랜디
-        롯데월드 원음공개방송_크리스마스캐롤(나율)-7G3qYNlHf1U.mkv
   '498':
     expected: 13
     expected_media: 0
@@ -32643,17 +32227,13 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/499 - [CAM] 13.12.22 틴트 화성실내체육관 여자프로배구/131222 틴트
         화성실내체육관 여자프로배구_첫눈에 반했어(제이미)-991574.flv
-      NEghjJi5FXc: tistory/studio-g/499 - [CAM] 13.12.22 틴트 화성실내체육관 여자프로배구/131222
-        틴트 화성실내체육관 여자프로배구_첫눈에 반했어(제이미)-NEghjJi5FXc.mkv
   '500':
     expected: 1
     expected_media: 1
     files:
       26101F4A52B8AB4C1A66A5: tistory/studio-g/500 - [CAM] 13.12.21 대국남아 롯데월드 원음공개방송
         by. Hamding/131221 대국남아 롯데월드 원음공개방송_미카-26101F4A52B8AB4C1A66A5.jpg
-    media_files:
-      SVB34k20dYQ: tistory/studio-g/500 - [CAM] 13.12.21 대국남아 롯데월드 원음공개방송 by. Hamding/131221
-        대국남아 롯데월드 원음공개방송 미카-SVB34k20dYQ.mp4
+    media_files: {}
   '501':
     expected: 45
     expected_media: 0
@@ -33042,8 +32622,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/508 - [CAM] 13.12.30 틴트 명동 구세군 친선대사 위촉식/131230 틴트
         명동 구세군 친선대사 위촉식_(제이미)-991574.flv
-      AsOR4YDMmVs: tistory/studio-g/508 - [CAM] 13.12.30 틴트 명동 구세군 친선대사 위촉식/131230
-        틴트 명동 구세군 친선대사 위촉식_위촉식행사(제이미)-AsOR4YDMmVs.mp4
   '509':
     expected: 13
     expected_media: 0
@@ -33241,21 +32819,13 @@ studio-g:
     expected_media: 2
     files:
       266F813452C3A3A7272C52: tistory/studio-g/511 - [CAM] 13.12.21 빅스타 롯데월드 원음공개방송/Untitled-1-266F813452C3A3A7272C52.jpg
-    media_files:
-      6C1LUzEMc-I: tistory/studio-g/511 - [CAM] 13.12.21 빅스타 롯데월드 원음공개방송/131221 빅스타
-        롯데월드 원음공개방송_홀로서기(주드)-6C1LUzEMc-I.mp4
-      98G1GUkfKNI: tistory/studio-g/511 - [CAM] 13.12.21 빅스타 롯데월드 원음공개방송/131221 빅스타
-        롯데월드 원음공개방송_일단달려(주드)-98G1GUkfKNI.mp4
+    media_files: {}
   '512':
     expected: 1
     expected_media: 2
     files:
       2403E03452C3A7CA13CE13: tistory/studio-g/512 - [CAM] 13.12.21 대국남아 롯데월드 원음공개방송/Untitled-1-2403E03452C3A7CA13CE13.jpg
-    media_files:
-      kqIA8Xfv6KY: tistory/studio-g/512 - [CAM] 13.12.21 대국남아 롯데월드 원음공개방송/131221 대국남아
-        롯데월드 원음공개방송_Sad Story(가람)-kqIA8Xfv6KY.mp4
-      caWwGzILAm4: tistory/studio-g/512 - [CAM] 13.12.21 대국남아 롯데월드 원음공개방송/131221 대국남아
-        롯데월드 원음공개방송_Why Goodbye(가람)-caWwGzILAm4.mkv
+    media_files: {}
   '513':
     expected: 44
     expected_media: 0
@@ -33514,14 +33084,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/516 - [CAM] 14.01.11 헬로비너스 강원랜드 하이하이콘서트 by. 철우/140111
         헬로비너스 강원랜드 하이하이콘서트_차마실래(윤조)-991574.flv
-      6Sof7yC_Erg: tistory/studio-g/516 - [CAM] 14.01.11 헬로비너스 강원랜드 하이하이콘서트 by. 철우/140111
-        헬로비너스 강원랜드 하이하이콘서트_HELLO(윤조)-6Sof7yC_Erg.webm
-      D1wAQAdhMVo: tistory/studio-g/516 - [CAM] 14.01.11 헬로비너스 강원랜드 하이하이콘서트 by. 철우/140111
-        헬로비너스 강원랜드 하이하이콘서트_VENUS(윤조)-D1wAQAdhMVo.mp4
-      xD9yHmiBNic: tistory/studio-g/516 - [CAM] 14.01.11 헬로비너스 강원랜드 하이하이콘서트 by. 철우/140111
-        헬로비너스 강원랜드 하이하이콘서트_오늘뭐해(윤조)-xD9yHmiBNic.mp4
-      0lM_gB2FPUg: tistory/studio-g/516 - [CAM] 14.01.11 헬로비너스 강원랜드 하이하이콘서트 by. 철우/140111
-        헬로비너스 강원랜드 하이하이콘서트_차마실래(윤조)-0lM_gB2FPUg.webm
   '517':
     expected: 14
     expected_media: 0
@@ -35585,12 +35147,6 @@ studio-g:
         팬싸인회 by. Purple.D/IMG_0480-2673604E5308AF890666BD.jpg
     media_files:
       '1536180': tistory/studio-g/546 - [CAM] 14.02.09 레인보우블랙 김포공항 영풍문고 팬싸인회 by. Purple.D/140209rainbowbed-1536180.flv
-      UsqDCwUPy0M: tistory/studio-g/546 - [CAM] 14.02.09 레인보우블랙 김포공항 영풍문고 팬싸인회 by.
-        Purple.D/140209 레인보우블랙 김포공항팬싸인회 오프닝-UsqDCwUPy0M.mp4
-      Bl0t5Nw8r84: tistory/studio-g/546 - [CAM] 14.02.09 레인보우블랙 김포공항 영풍문고 팬싸인회 by.
-        Purple.D/140209 레인보우블랙 김포공항팬싸인회 흐녕이-Bl0t5Nw8r84.mp4
-      neE2WiqCGPk: tistory/studio-g/546 - [CAM] 14.02.09 레인보우블랙 김포공항 영풍문고 팬싸인회 by.
-        Purple.D/140209 레인보우블랙 김포공항팬싸인회 엔딩-neE2WiqCGPk.mp4
   '547':
     expected: 4
     expected_media: 0
@@ -35929,8 +35485,6 @@ studio-g:
         by Purple.D/IMG_5253-22117B39530CB7D209C9E9.jpg
     media_files:
       '1536180': tistory/studio-g/553 - [CAM] 14.02.23 스텔라 여의도 영풍문고 팬싸인회 by Purple.D/140223stellaed-1536180.flv
-      em72-TJthDQ: tistory/studio-g/553 - [CAM] 14.02.23 스텔라 여의도 영풍문고 팬싸인회 by Purple.D/140223
-        스텔라 여의도 영풍문고 팬싸인회-em72-TJthDQ.mp4
   '554':
     expected: 1
     expected_media: 4
@@ -35939,10 +35493,6 @@ studio-g:
         팬싸인회 by Purple.D/IMG_1855-2675DD3B530CBA512B67A7.jpg
     media_files:
       '1536180': tistory/studio-g/554 - [CAM] 14.02.23 걸스데이 여의도 영풍문고 팬싸인회 by Purple.D/140223girlsdayed-1536180.flv
-      FNmft9eCYUw: tistory/studio-g/554 - [CAM] 14.02.23 걸스데이 여의도 영풍문고 팬싸인회 by Purple.D/140223
-        GirlsDay IFC 팬싸인회 오프닝-FNmft9eCYUw.mp4
-      kFOFzMGClbk: tistory/studio-g/554 - [CAM] 14.02.23 걸스데이 여의도 영풍문고 팬싸인회 by Purple.D/140223
-        GirlsDay IFC 팬싸인회 엔딩-kFOFzMGClbk.mp4
   '555':
     expected: 6
     expected_media: 0
@@ -37050,10 +36600,6 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/568 - [CAM] 14.03.12 씨스타 오송국제바이오산업엑스포 D-200 기념행사/140312
         씨스타 오송국제바이오산업엑스포 D-200 기념행사_Loving U(다솜)-991574.flv
-      BNq9WslqOVw: tistory/studio-g/568 - [CAM] 14.03.12 씨스타 오송국제바이오산업엑스포 D-200 기념행사/140312
-        씨스타 오송국제바이오산업엑스포 D 200 기념행사_Give It To Me(소유)-BNq9WslqOVw.webm
-      hJf0F4E2u6o: tistory/studio-g/568 - [CAM] 14.03.12 씨스타 오송국제바이오산업엑스포 D-200 기념행사/140312
-        씨스타 오송국제바이오산업엑스포 D 200 기념행사_Loving U(다솜)-hJf0F4E2u6o.mkv
   '569':
     expected: 38
     expected_media: 0
@@ -37228,81 +36774,55 @@ studio-g:
     expected_media: 1
     files:
       2511473653282D5E20E256: tistory/studio-g/574 - [CAM] 13.08.24 김태원 평택 록페스티벌/ㅁ-2511473653282D5E20E256.jpg
-    media_files:
-      b6IIBSDqvbI: tistory/studio-g/574 - [CAM] 13.08.24 김태원 평택 록페스티벌/130824 김태원 평택
-        록페스티벌_기타리허설-b6IIBSDqvbI.mp4
+    media_files: {}
   '575':
     expected: 1
     expected_media: 1
     files:
       232626425328303E255657: tistory/studio-g/575 - [CAM] 14.03.12 윙크 오송국제바이오산업엑스포
         D-200 기념행사/ㅁ-232626425328303E255657.jpg
-    media_files:
-      f-EKcMHFH34: tistory/studio-g/575 - [CAM] 14.03.12 윙크 오송국제바이오산업엑스포 D-200 기념행사/140312
-        윙크 오송국제바이오산업엑스포 D 200 기념행사_7080메들리-f-EKcMHFH34.mp4
+    media_files: {}
   '576':
     expected: 1
     expected_media: 3
     files:
       2178984E532835460EC40A: tistory/studio-g/576 - [CAM] 13.08.24 타카피 평택 록페스티벌/ㅁ-2178984E532835460EC40A.jpg
-    media_files:
-      Ae_pPrOjXJU: tistory/studio-g/576 - [CAM] 13.08.24 타카피 평택 록페스티벌/130824 타카피 평택
-        록페스티벌_태양아 떠라-Ae_pPrOjXJU.mp4
-      Z4AZUdiQdRM: tistory/studio-g/576 - [CAM] 13.08.24 타카피 평택 록페스티벌/130824 타카피 평택
-        록페스티벌_Super Star-Z4AZUdiQdRM.mp4
-      Y-LA8mRK8Wc: tistory/studio-g/576 - [CAM] 13.08.24 타카피 평택 록페스티벌/130824 타카피 평택
-        록페스티벌_바다-Y-LA8mRK8Wc.mp4
+    media_files: {}
   '577':
     expected: 1
     expected_media: 2
     files:
       2752343B532837C90FF368: tistory/studio-g/577 - [CAM] 14.03.12 현숙 오송국제바이오산업엑스포
         D-200 기념행사/ㅁ-2752343B532837C90FF368.jpg
-    media_files:
-      XEc4eEYIIGs: tistory/studio-g/577 - [CAM] 14.03.12 현숙 오송국제바이오산업엑스포 D-200 기념행사/140312
-        현숙 오송국제바이오산업엑스포 D 200 기념행사_청춘아-XEc4eEYIIGs.mp4
-      xhJZTP1A16c: tistory/studio-g/577 - [CAM] 14.03.12 현숙 오송국제바이오산업엑스포 D-200 기념행사/140312
-        현숙 오송국제바이오산업엑스포 D 200 기념행사_내 인생의 박수-xhJZTP1A16c.webm
+    media_files: {}
   '578':
     expected: 1
     expected_media: 1
     files:
       24079C4553283B9729CAD6: tistory/studio-g/578 - [CAM] 14.03.12 윤수현 오송국제바이오산업엑스포
         D-200 기념행사/ㅁ-24079C4553283B9729CAD6.jpg
-    media_files:
-      WDxOkHbIR9k: tistory/studio-g/578 - [CAM] 14.03.12 윤수현 오송국제바이오산업엑스포 D-200 기념행사/140312
-        윤수현 오송국제바이오산업엑스포 D 200 기념행사_삐에로-WDxOkHbIR9k.webm
+    media_files: {}
   '579':
     expected: 1
     expected_media: 2
     files:
       221045485328401941CC9D: tistory/studio-g/579 - [CAM] 14.03.12 임수정 오송국제바이오산업엑스포
         D-200 기념행사/ㅁ-221045485328401941CC9D.jpg
-    media_files:
-      1I9u9c_ur90: tistory/studio-g/579 - [CAM] 14.03.12 임수정 오송국제바이오산업엑스포 D-200 기념행사/140312
-        임수정 오송국제바이오산업엑스포 D 200 기념행사_샘물처럼-1I9u9c_ur90.mp4
-      lMjmgiaoaHk: tistory/studio-g/579 - [CAM] 14.03.12 임수정 오송국제바이오산업엑스포 D-200 기념행사/140312
-        임수정 오송국제바이오산업엑스포 D 200 기념행사_연인들의 이야기-lMjmgiaoaHk.mp4
+    media_files: {}
   '580':
     expected: 1
     expected_media: 2
     files:
       222CDB33532853670B51C8: tistory/studio-g/580 - [CAM] 14.03.12 진미령 오송국제바이오산업엑스포
         D-200 기념행사/ㅁ-222CDB33532853670B51C8.jpg
-    media_files:
-      xDWB7vSOB60: tistory/studio-g/580 - [CAM] 14.03.12 진미령 오송국제바이오산업엑스포 D-200 기념행사/140312
-        진미령 오송국제바이오산업엑스포 D 200 기념행사_미운사람-xDWB7vSOB60.webm
-      5_sLxIv7iv0: tistory/studio-g/580 - [CAM] 14.03.12 진미령 오송국제바이오산업엑스포 D-200 기념행사/140312
-        진미령 오송국제바이오산업엑스포 D 200 기념행사_내가 난생처음 여자가 되던날-5_sLxIv7iv0.webm
+    media_files: {}
   '581':
     expected: 1
     expected_media: 1
     files:
       2130443A532858940BEF77: tistory/studio-g/581 - [CAM] 14.03.12 한영주 오송국제바이오산업엑스포
         D-200 기념행사/ㅁ-2130443A532858940BEF77.jpg
-    media_files:
-      VyVIgnZOkg8: tistory/studio-g/581 - [CAM] 14.03.12 한영주 오송국제바이오산업엑스포 D-200 기념행사/140312
-        한영주 오송국제바이오산업엑스포 D 200 기념행사_댄스 파라다이스-VyVIgnZOkg8.mp4
+    media_files: {}
   '582':
     expected: 16
     expected_media: 0
@@ -37346,9 +36866,7 @@ studio-g:
     files:
       2751F53553296BD32BE1C4: tistory/studio-g/583 - [CAM] 14.03.12 박현빈 오송국제바이오산업엑스포
         D-200 기념행사/ㅁ-2751F53553296BD32BE1C4.jpg
-    media_files:
-      b4Q3IjNfJ08: tistory/studio-g/583 - [CAM] 14.03.12 박현빈 오송국제바이오산업엑스포 D-200 기념행사/140312
-        박현빈 오송국제바이오산업엑스포 D 200 기념행사_샤방샤방-b4Q3IjNfJ08.mp4
+    media_files: {}
   '584':
     expected: 40
     expected_media: 0
@@ -37443,11 +36961,3 @@ studio-g:
     media_files:
       '991574': tistory/studio-g/585 - [CAM] 14.03.21 헬로비너스 대구이월드 와팝 K-드림 콘서트 by.
         철우/140321 헬로비너스 대구이월드 와팝 K-드림 콘서트_차마실래(윤조)-991574.flv
-      VKBMOOLgwFk: tistory/studio-g/585 - [CAM] 14.03.21 헬로비너스 대구이월드 와팝 K-드림 콘서트 by.
-        철우/140321 헬로비너스 대구이월드 와팝 K-드림 콘서트_VENUS(윤조)-VKBMOOLgwFk.mkv
-      jbrlgky9e5g: tistory/studio-g/585 - [CAM] 14.03.21 헬로비너스 대구이월드 와팝 K-드림 콘서트 by.
-        철우/140321 헬로비너스 대구이월드 와팝 K-드림 콘서트_MENT(윤조)-jbrlgky9e5g.mp4
-      YuMZUQDlQ74: tistory/studio-g/585 - [CAM] 14.03.21 헬로비너스 대구이월드 와팝 K-드림 콘서트 by.
-        철우/140321 헬로비너스 대구이월드 와팝 K-드림 콘서트_오늘뭐해(윤조)-YuMZUQDlQ74.mkv
-      gcIpyh1kpVw: tistory/studio-g/585 - [CAM] 14.03.21 헬로비너스 대구이월드 와팝 K-드림 콘서트 by.
-        철우/140321 헬로비너스 대구이월드 와팝 K-드림 콘서트_차마실래(윤조)-gcIpyh1kpVw.mp4
