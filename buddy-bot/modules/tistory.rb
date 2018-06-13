@@ -843,7 +843,7 @@ module BuddyBot::Modules::Tistory
     file_uri = key_info["weblink"]
 
     file_size_expected = key_info["file_size"]
-    event.send_message "Huzzah! Starting to download '#{id}' - `#{file_full_name}` (#{(file_size_expected / 2**20).round(1)}MB)!"
+    self.log ":information_desk_person: Starting to download '#{id}' - `#{file_full_name}` (#{(file_size_expected / 2**20).round(1)}MB)!", event.bot
     file_size = 0
     s3_filename = ""
     Dir.mktmpdir do |dir|
