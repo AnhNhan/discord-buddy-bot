@@ -834,7 +834,7 @@ module BuddyBot::Modules::Tistory
       self.log_warning ":warning: SendAnywhere #{id} had multiple files!", event.bot
     end
 
-    file_full_name = filelist["file"][0]
+    file_full_name = filelist["file"][0]["name"]
 
     file_uri = "#{server_uri}webfile/#{id}?device_key=#{device_key}&timezone=2"
     puts file_uri
@@ -843,6 +843,7 @@ module BuddyBot::Modules::Tistory
     Dir.mktmpdir do |dir|
       begin
         local_file_name = File.basename(file_uri)
+        sleep(6)
         `cd #{dir} && curl -v '#{file_uri}' > '#{local_file_name}'`
         file_size = File.size(dir + "/" + local_file_name)
 
