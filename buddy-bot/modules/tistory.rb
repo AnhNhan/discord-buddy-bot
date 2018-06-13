@@ -826,7 +826,7 @@ module BuddyBot::Modules::Tistory
     # only interesting info here is number of files
     # keyinfo = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=keyinfo")
 
-    # file names and list
+    file names and list
     filelist = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=list&start_pos=0&end_pos=30")
     filelist = JSON.parse(filelist.body)
 
@@ -836,8 +836,13 @@ module BuddyBot::Modules::Tistory
 
     file_full_name = filelist["file"][0]["name"]
 
-    file_uri = "#{server_uri}webfile/#{id}?device_key=#{device_key}&timezone=2"
+    # 'register' device key, unlock download
+    key_info = HTTParty.get("https://send-anywhere.com/web/key/#{id}", { headers: { "Cookie": "device_key=" + device_key } })
+    key_info = JSON.parse(key_info.body)
+
+    file_uri = key_info["weblink"]
     puts file_uri
+
     file_size = 0
     s3_filename = ""
     Dir.mktmpdir do |dir|
@@ -849,7 +854,7 @@ module BuddyBot::Modules::Tistory
 
         time_split = Time.now
 
-        s3_filename = "sendanywhere/#{id} - title/filename"
+        s3_filename = "sendanywhere/#{id} - #{file_full_name}/#{file_full_name}"
         object = @@s3_bucket.object(s3_filename)
         result = object.upload_file(dir + "/" + local_file_name)
         if !result
