@@ -136,7 +136,7 @@ module BuddyBot::Modules::BuddyFunctionality
       if @@ignored_roles.include? role.name
         next
       end
-      match = role.name.downcase.scan(@@member_name).find{ |part| searches.include?(part.first) }
+      match = role.name.downcase.scan(@@member_name_regex).find{ |part| searches.include?(part.first) }
       if !match
         next
       end
