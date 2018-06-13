@@ -842,8 +842,8 @@ module BuddyBot::Modules::Tistory
     s3_filename = ""
     Dir.mktmpdir do |dir|
       begin
-        `cd #{dir} && wget '#{file_uri}'`
         local_file_name = File.basename(file_uri)
+        `cd #{dir} && curl -v '#{file_uri}' > '#{local_file_name}'`
         files_size = File.size(dir + "/" + local_file_name)
 
         time_split = Time.now
