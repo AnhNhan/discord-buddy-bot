@@ -46,6 +46,8 @@ module BuddyBot::Modules::BuddyFunctionality
   @@giveaway_joins = {}
   @@global_counted_giveaway_joins = 0
 
+  @@member_name_regex = /([A-z0-9\p{Katakana}\p{Hangul}]+)/
+
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
 
@@ -134,7 +136,7 @@ module BuddyBot::Modules::BuddyFunctionality
       if @@ignored_roles.include? role.name
         next
       end
-      match = role.name.downcase.scan(/([A-z]+)/).find{ |part| searches.include?(part.first) }
+      match = role.name.downcase.scan(@@member_name).find{ |part| searches.include?(part.first) }
       if !match
         next
       end
@@ -166,7 +168,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   def self.members_map(text, cb_member, cb_other_member, cb_special)
-    text.scan(/([A-z]+)/).map do |matches|
+    text.scan(@@member_name_regex).map do |matches|
       original = matches.first
       match = matches.first.downcase
       if @@member_names.has_key? match

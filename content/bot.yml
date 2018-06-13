@@ -15,6 +15,23 @@ member_names:
   eunrin: eunha+yerin
   yurin: yuju+yerin
   wonha: sowon+eunha
+  mainline: yuju+sinb
+  '98': umji+sinb
+  '1998': umji+sinb
+  '97': eunha+yuju
+  '1997': eunha+yuju
+  '96': yerin
+  '1996': yerin
+  '95': sowon
+  '1995': sowon
+  '1004': yuju
+  '0819': yerin+umji
+  '819': yerin+umji
+  '1217': sowon
+  '0603': sinb
+  '603': sinb
+  '0530': eunha
+  '530': eunha
   # regular members
   eunha: eunha
   euhna: eunha # ;_;
@@ -77,6 +94,35 @@ member_names:
   ot6: ot
   ot: ot
   amino: amino
+
+  # hangul
+  소원: sowon
+  예린: yerin
+  은하: eunha
+  유주: yuju
+  신비: sinb
+  엄지: umji
+
+  김소정: sowon
+  정예린: yerin
+  정은비: eunha
+  최유나: yuju
+  황은비: sinb
+  김예원: umji
+
+  은비: eunha+sinb
+
+  정: yerin+umji
+  예: yerin+umji
+
+  # katakana
+  ソウォン: sowon
+  イェリン: yerin
+  ウナ: eunha
+  ユジュ: yuju
+  シンビ: sinb
+  オムジ: umji
+  ジーフレンド: buddy
 
 member_role_emoji_join:
   yerin:
