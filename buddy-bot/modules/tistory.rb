@@ -868,7 +868,8 @@ module BuddyBot::Modules::Tistory
     return { "result" => "success", "path" => s3_filename }
   end
 
-  pm(start_with: /!sendanywhere\s/i) do |event|
+  message(start_with: /!sendanywhere\s/i) do |event|
+    next unless event.user.id == 139342974776639489
     data = event.content.scan(/^!sendanywhere\s+([\w]+)\s*$/i)[0]
     if !data
       event.send_message ":warning: You need to specify a trivia list name..."
