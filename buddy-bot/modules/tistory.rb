@@ -890,4 +890,10 @@ module BuddyBot::Modules::Tistory
     result = self.replicate_sendanywhere_file(id, event)
     puts result
   end
+
+  message(contains: /http:\/\/sendanywhe\.re\/\w+/) do |event|
+    id = event.content.scan(/http:\/\/sendanywhe.re\/(\w+)\b/)[0][0]
+    result = self.replicate_sendanywhere_file(id, event)
+    puts result
+  end
 end
