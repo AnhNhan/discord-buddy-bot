@@ -841,7 +841,6 @@ module BuddyBot::Modules::Tistory
     key_info = JSON.parse(key_info.body)
 
     file_uri = key_info["weblink"]
-    puts file_uri
 
     file_size_expected = key_info["file_size"]
     file_size = 0
@@ -849,7 +848,6 @@ module BuddyBot::Modules::Tistory
     Dir.mktmpdir do |dir|
       begin
         local_file_name = File.basename(file_uri)
-        sleep(6)
         `cd #{dir} && curl -v '#{file_uri}' > '#{local_file_name}'`
         file_size = File.size(dir + "/" + local_file_name)
         if file_size != file_size_expected
