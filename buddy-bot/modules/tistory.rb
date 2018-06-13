@@ -869,13 +869,15 @@ module BuddyBot::Modules::Tistory
   end
 
   pm(start_with: /!sendanywhere\s/i) do |event|
-    data = event.content.scan(/^!sendanywhere\s+([\w-]+)\s*$/i)[0]
+    data = event.content.scan(/^!sendanywhere\s+([\w]+)\s*$/i)[0]
     if !data
       event.send_message ":warning: You need to specify a trivia list name..."
       next
     end
 
     id = data[0]
-    self.replicate_sendanywhere_file(id, event)
+    event.send_message "Huzzah! Starting to download '#{id}'!"
+    result = self.replicate_sendanywhere_file(id, event)
+    puts result
   end
 end
