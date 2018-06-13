@@ -838,13 +838,13 @@ module BuddyBot::Modules::Tistory
 
     file_uri = "#{server_uri}webfile/#{id}?device_key=#{device_key}&timezone=2"
     puts file_uri
-    files_size = 0
+    file_size = 0
     s3_filename = ""
     Dir.mktmpdir do |dir|
       begin
         local_file_name = File.basename(file_uri)
         `cd #{dir} && curl -v '#{file_uri}' > '#{local_file_name}'`
-        files_size = File.size(dir + "/" + local_file_name)
+        file_size = File.size(dir + "/" + local_file_name)
 
         time_split = Time.now
 
@@ -863,7 +863,7 @@ module BuddyBot::Modules::Tistory
     time_end = Time.now
 
     @@sendanywhere_downloaded[id] = s3_filename
-    File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
+    File.open(BuddyBot.path("content/downloaded-sendanywhere.yml"), "w") { |file| file.write(YAML.dump(@@sendanywhere_downloaded)) }
     self.log ":ballot_box_with_check: Successfully replicated SendAnywhere `#{id}` to `#{s3_filename}` (#{(file_size / 2**20).round(1)}MB), downloading in #{(time_split - time_start).round(1)}s and uploading in #{(time_end - time_split).round(1)}!", event.bot
     return { "result" => "success", "path" => s3_filename }
   end
