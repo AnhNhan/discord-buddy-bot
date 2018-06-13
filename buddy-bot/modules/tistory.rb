@@ -826,7 +826,7 @@ module BuddyBot::Modules::Tistory
     # only interesting info here is number of files
     # keyinfo = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=keyinfo")
 
-    file names and list
+    # file names and list
     filelist = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=list&start_pos=0&end_pos=30")
     filelist = JSON.parse(filelist.body)
 
