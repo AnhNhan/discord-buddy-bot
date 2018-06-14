@@ -484,7 +484,7 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "weird-gdrive-file", "id" => gdrive_file_id }
       elsif uri.include? "youtu.be"
         media << { "type" => "youtube", "uri" => uri }
-      elsif uri.eql? uri_sowon_werid_flash_player
+      elsif uri.eql? uri_sowon_weird_flash_player
         media << { "type" => "sowon_weird_flash_player", "uri" => uri, "flashvars" => flashvars }
       else
         media << { "type" => "unknown", "sub-type" => "embed", "uri" => uri, "flashvars" => flashvars }
