@@ -162,7 +162,7 @@ module BuddyBot::Modules::Tistory
         @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"] &&
         @@pages_downloaded[page_name][page_number.to_s].include?("media_files") &&
         @@pages_downloaded[page_name][page_number.to_s].include?("expected_media") &&
-        @@pages_downloaded[page_name][page_number.to_s]["media_files"].keys.length != @@pages_downloaded[page_name][page_number.to_s]["expected_media"]
+        @@pages_downloaded[page_name][page_number.to_s]["media_files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected_media"]
         # Already replicated
         count_replicated = count_replicated + 1
         count_first_404 = 0
