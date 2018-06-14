@@ -261,12 +261,16 @@ module BuddyBot::Modules::Tistory
           self.upload_tistory_parts_video(file_id, info["uri"], page_name, page_number, page_title, event)
         when "weird-gdrive-file"
           self.upload_gdrive_file_video(info["id"], info["id"], page_name, page_number, page_title, event)
+        when "sowon_weird_flash_player"
+          self.log_warning ":warning: Page <#{orig_input}> had `sowon_weird_flash_player`!"
+          { "result" => "skipped" }
         else
-          self.log_warning ":warning: No idea how to process #{info}!", event.bot
+          self.log_warning ":warning: No idea how to process `#{info}`!", event.bot
+          { "result" => "error" }
         end
       rescue Exception => e
         self.log_warning ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`\n```\n#{e.backtrace.join("\n")}\n```", event.bot
-        return { "result" => "error", "error" => e }
+        { "result" => "error", "error" => e }
       end
     end
     # self.log ":information_desk_person: Media result: #{process_results_media}", event.bot
@@ -460,6 +464,7 @@ module BuddyBot::Modules::Tistory
     ]
     uri_part_kakao_flashplayer = "tv.kakao.com/embed/player/cliplink"
     uri_weird_gdrive_flash_player = "https://www.googledrive.com/host/0B-9MTMyoDRgrWTc4bFN6NVNxQmc"
+    uri_sowon_weird_flash_player = "http://951207.com/plugin/CallBack_bootstrapperSrc?nil_profile=tistory&nil_type=copied_post"
     doc.css('embed').each do |embed|
       uri = embed.attribute('src').to_s
       flashvars = (embed.attribute('flashvars') || "").to_s
@@ -476,6 +481,8 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "weird-gdrive-file", "id" => gdrive_file_id }
       elsif uri.include? "youtu.be"
         media << { "type" => "youtube", "uri" => uri }
+      elsif uri.eql? uri_sowon_werid_flash_player
+        media << { "type" => "sowon_weird_flash_player", "uri" => uri, "flashvars" => flashvars }
       else
         media << { "type" => "unknown", "sub-type" => "embed", "uri" => uri, "flashvars" => flashvars }
       end
