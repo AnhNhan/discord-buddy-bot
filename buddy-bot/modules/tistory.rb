@@ -1,6 +1,7 @@
 
 require 'cgi'
 require 'tempfile'
+require 'digest/md5'
 
 require 'aws-sdk'
 require 'nokogiri'
@@ -256,7 +257,7 @@ module BuddyBot::Modules::Tistory
         when "kakao_player"
           self.upload_kakao_player_video(info["uri"], page_name, page_number, page_title, event)
         when "tistory_parts_list"
-          file_id = info["uri"].scan(/\/(\d{5,})\//)[0][0]
+          file_id = Digest::MD5.hexdigest(info["uri"])
           self.upload_tistory_parts_video(file_id, info["uri"], page_name, page_number, page_title, event)
         when "weird-gdrive-file"
           self.upload_gdrive_file_video(info["id"], info["id"], page_name, page_number, page_title, event)
