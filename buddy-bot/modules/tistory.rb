@@ -423,8 +423,12 @@ module BuddyBot::Modules::Tistory
       if uri.nil?
         next
       end
+      uri = uri.to_s
       if uri !~ /^http:\/\/cfile\d+\.uf\.tistory\.com\/(original|image)\/\w+/i
-        self.log_warning ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
+        if uri !~ /\/contents\/emoticon\// # ignore error on emoticons
+          self.log_warning ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
+        end
+        next
       end
       if uri =~ /\/image\//
         uri = uri.sub!("/image/", "/original/")
