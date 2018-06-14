@@ -39,6 +39,19 @@ module BuddyBot::Modules::Tistory
     @@pages_special = YAML.load_file(BuddyBot.path("content/tistory-special-list.yml")) || []
     @@pages_downloaded = YAML.load_file(BuddyBot.path("content/tistory-pages-downloaded.yml")) || {}
     @@sendanywhere_downloaded = YAML.load_file(BuddyBot.path("content/downloaded-sendanywhere.yml")) || {}
+
+    @@pages_downloaded.keys.each do |page_name|
+      site = @@pages_downloaded[page_name]
+      site.keys.each do |page_number|
+        media_files = @@pages_downloaded[page_name][page_number]["media_files"]
+        media_files.keys.each do |id|
+          if id =~ /^[\d]{4,7}$/
+            @@pages_downloaded[page_name][page_number]["media_files"].delete id
+          end
+        end
+      end
+    end
+    File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
   end
 
   def self.log(message, bot)
