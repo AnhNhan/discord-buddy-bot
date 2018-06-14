@@ -149,7 +149,7 @@ module BuddyBot::Modules::Tistory
     range = 1..threshold_really_max
     range.each do |page_number|
       if page_number > threshold_404 && count_404 > threshold_404 && (page_number - count_first_404) > threshold_404
-        self.log ":information_desk_person: Finished with `#{page_name}`'s page, skipped #{count_replicated}x already replicated pages, last checked was ##{page_number - 1}!", event.bot
+        self.log ":information_desk_person: Finished with `#{page_name}`'s page, skipped #{count_replicated}x already replicated pages, last successful was ##{count_first_404 - 1} and last checked was ##{page_number - 1}!", event.bot
         break
       end
 
@@ -157,14 +157,17 @@ module BuddyBot::Modules::Tistory
 
       url = build_url.call page_name, page_number
 
-      # if @@pages_downloaded.include?(page_name) &&
-      #   @@pages_downloaded[page_name].include?(page_number.to_s) &&
-      #   @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"]
-      #   # Already replicated
-      #   count_replicated = count_replicated + 1
-      #   count_first_404 = 0
-      #   next
-      # end
+      if @@pages_downloaded.include?(page_name) &&
+        @@pages_downloaded[page_name].include?(page_number.to_s) &&
+        @@pages_downloaded[page_name][page_number.to_s]["files"].keys.length == @@pages_downloaded[page_name][page_number.to_s]["expected"] &&
+        @@pages_downloaded[page_name][page_number.to_s].include?("media_files") &&
+        @@pages_downloaded[page_name][page_number.to_s].include?("expected_media") &&
+        @@pages_downloaded[page_name][page_number.to_s]["media_files"].keys.length != @@pages_downloaded[page_name][page_number.to_s]["expected_media"]
+        # Already replicated
+        count_replicated = count_replicated + 1
+        count_first_404 = 0
+        next
+      end
 
       result = self.process_mobile_page(url, url, page_name, page_number.to_s, event)
       if @@abort_in_progress
@@ -224,13 +227,13 @@ module BuddyBot::Modules::Tistory
       return nil
     end
 
-    # if verbose
-    #   event.send_message "**#{page_title}** (#{urls_images.length} image(s)) - <#{orig_input}>\n#{urls_images.join("\n")}"
-    #   if media_info.length > 0
-    #     event.send_message "Please note that #{media_info.length} media file(s) have been found, which are tricky to display here!"
-    #   end
-    #   event.message.delete() unless event.channel.pm?
-    # end
+    if verbose
+      event.send_message "**#{page_title}** (#{urls_images.length} image(s)) - <#{orig_input}>\n#{urls_images.join("\n")}"
+      if media_info.length > 0
+        event.send_message "Please note that #{media_info.length} media file(s) have been found, which are tricky to display here!"
+      end
+      event.message.delete() unless event.channel.pm?
+    end
 
     self.log ":information_desk_person: Downloading #{urls_images.length} images and #{media_info.length} media from `#{page_title}` <#{orig_input}>", event.bot
     download_image_results = {}
