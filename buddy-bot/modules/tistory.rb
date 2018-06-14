@@ -265,7 +265,7 @@ module BuddyBot::Modules::Tistory
         when "weird-gdrive-file"
           self.upload_gdrive_file_video(info["id"], info["id"], page_name, page_number, page_title, event)
         when "sowon_weird_flash_player"
-          self.log_warning ":warning: Page <#{orig_input}> had `sowon_weird_flash_player`!"
+          self.log_warning ":warning: Page <#{orig_input}> had `sowon_weird_flash_player`!", event.bot
           { "result" => "skipped" }
         else
           self.log_warning ":warning: No idea how to process `#{info}`!", event.bot
