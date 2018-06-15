@@ -643,7 +643,7 @@ module BuddyBot::Modules::Tistory
           { "full" => full, "name" => file_name, "ext" => file_extension }
         end
 
-        files_support_count = files_sub
+        files_support_count = files_sub.length
       end
 
       {
