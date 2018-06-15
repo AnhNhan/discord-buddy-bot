@@ -594,7 +594,9 @@ module BuddyBot::Modules::Tistory
             return { "result" => "error", "error" => "content-disposition" }
           end
           file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '').sub("/", "\/") # filename is wrapped in quotes
-          file_full_name = File.basename file_full_name, ".*" # remove .001
+          if file_full_name =~ /\.\d+$/
+            file_full_name = File.basename file_full_name, ".*" # remove .001
+          end
           file_name = File.basename(file_full_name, ".*")
           file_extension = File.extname(file_full_name)
           file_extension[0] = "" # still has leading '.'
