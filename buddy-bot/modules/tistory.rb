@@ -2,6 +2,7 @@
 require 'cgi'
 require 'tempfile'
 require 'digest/md5'
+require 'stringio'
 
 require 'aws-sdk'
 require 'nokogiri'
@@ -27,6 +28,8 @@ module BuddyBot::Modules::Tistory
   @@pages_special = []
   @@pages_downloaded = {}
   @@sendanywhere_downloaded = {}
+  @@twitter_list = []
+  @@twitter_downloaded = {}
 
   @@initialized = false
 
@@ -39,6 +42,9 @@ module BuddyBot::Modules::Tistory
     @@pages_special = YAML.load_file(BuddyBot.path("content/tistory-special-list.yml")) || []
     @@pages_downloaded = YAML.load_file(BuddyBot.path("content/tistory-pages-downloaded.yml")) || {}
     @@sendanywhere_downloaded = YAML.load_file(BuddyBot.path("content/downloaded-sendanywhere.yml")) || {}
+
+    @@twitter_list = YAML.load_file(BuddyBot.path("content/pages-twitter.yml")) || []
+    @@twitter_downloaded = YAML.load_file(BuddyBot.path("content/downloaded-twitter.yml")) || {}
   end
 
   def self.log(message, bot)
@@ -57,6 +63,11 @@ module BuddyBot::Modules::Tistory
     puts "Ready to upload to '#{@@s3_bucket_name}'"
 
     # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
+    self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
+    self.process_tweet("https://twitter.com/Mochi_Yellow/status/1007198387693748224", event)
+    self.process_tweet("https://twitter.com/mystarmyangel/status/1007664325916438528", event)
+    self.process_tweet("https://twitter.com/gagadoli/status/1007639571150991361", event)
+    self.process_tweet("https://twitter.com/_Simplykpop/status/994782508083539968", event)
   end
 
   def self.set_s3_bucket_name(name)
@@ -912,5 +923,102 @@ module BuddyBot::Modules::Tistory
     id = event.content.scan(/http:\/\/sendanywhe.re\/(\w+)\b/)[0][0]
     result = self.replicate_sendanywhere_file(id, event)
     puts result
+  end
+
+  message(start_with: "!twitter ") do |event|
+    next if event.user.bot_account?
+    data = event.content.scan(/^!twitter\s+(\S+)\s*$/i)[0]
+    if !data
+      event.send_message ":warning: You need to specify a trivia list name..."
+      next
+    end
+    data = data[0]
+
+    url = data
+    if data =~ /^\d+$/
+      url = self.twitter_determine_full_url(data)
+    end
+    puts "#{self.process_tweet(url, event)}"
+  end
+
+  def self.twitter_determine_full_url(id)
+    url = "https://twitter.com/twitter/statuses/#{id}"
+    result = HTTParty.head(url, follow_redirects: false)
+    if result.code != 301
+      self.log_warning ":warning: Tweet ##{id} was maybe not found: `#{result.inspect}`", event.bot
+    end
+    tweet_url = result.headers["location"]
+  end
+
+  def self.process_tweet(url, event)
+    author, id = url.scan(/^https:\/\/twitter.com\/(\w+)\/status\/(\d+)$/)[0]
+    page_contents = HTTParty.get(url)
+    if page_contents.code != 200
+      # :sowonnotlikethis:
+      return { "result": "error", "request" => page_contents }
+    end
+    page_contents = Nokogiri::HTML(page_contents.body)
+    images = page_contents.css('meta[property="og:image"]').map do |meta|
+      image_url = meta.attribute("content").to_s.sub(/:large$/, ":orig")
+      next unless image_url =~ /\/media\//
+      image_url
+    end.compact
+    title = page_contents.at_css('meta[property="og:description"]').attribute("content").to_s.gsub(URI::regexp, "").gsub(/[“”]/, "").gsub(/\s+/, " ").gsub(/\s”/, "”").gsub("/", "\/").strip
+    videos = page_contents.css('meta[property="og:video:url"]').map do |meta|
+      video_id = meta.attribute("content").to_s.scan(/(\d{4,})/)[0][0]
+    end.compact
+    links = page_contents.css('.TweetTextSize--jumbo.tweet-text a:not(.u-hidden):not(.twitter-hashtag)').map do |link|
+      link_url = link.attribute("data-expanded-url").to_s
+    end.compact
+
+    subfolder = id.to_s
+    if title && title.length != 0
+      subfolder = subfolder + " - " + title
+    end
+    s3_folder = "twitter/@#{author}/#{subfolder}/"
+
+    self.log ":information_desk_person: Twitter summary: <#{url}>\n" +
+      "```\n" +
+      "title: '#{title}'\n" +
+      "images: #{images}\n" +
+      "video ids: #{videos}\n" +
+      "links: #{links}\n" +
+      "s3 folder: #{s3_folder}\n" +
+      "```", event.bot
+
+    results_images = images.map do |image_url|
+      image_filename = image_url.scan(/\/([\w-]+\.jpg):/)[0][0]
+      file_size = 0
+      s3_path = s3_folder + image_filename
+      begin
+        Tempfile.create('tmpf') do |tempfile|
+          tempfile.write HTTParty.get(image_url).body
+          tempfile.seek(0)
+          file_size = tempfile.size
+          object = @@s3_bucket.object(s3_path)
+          result = object.upload_file(tempfile)
+          puts "Just uploaded #{s3_path}"
+          if !result
+            raise 'Upload not successful!'
+          end
+        end
+        { "result" => "success", "path" => s3_path }
+      rescue Exception => e
+        self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
+        { "result" => "error", "error" => e }
+      end
+    end
+
+    results_videos = videos.map do |video_id|
+      # uploading urls
+      video_info_url = "https://api.twitter.com/1.1/videos/tweet/config/#{id}.json"
+      # track -> playbackUrl (-> resolve playlist/direct link)
+      { "result" => "skipped", "reason" => "not implemented" }
+    end
+
+    results_links = links.map do |link_url|
+      { "result" => "skipped", "reason" => "not implemented" }
+    end
+
   end
 end
