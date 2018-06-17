@@ -61,13 +61,6 @@ module BuddyBot::Modules::Tistory
       @@initialized = true
     end
     self.log "Ready to upload to '#{@@s3_bucket_name}'", event.bot
-    range = 1..200
-    output = Parallel.map(range, in_processes: @@number_of_processes) do |number|
-      number
-    end
-
-    puts "#{output.join("\n")}"
-    Process.exit()
 
     # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
     self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
