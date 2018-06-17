@@ -60,7 +60,14 @@ module BuddyBot::Modules::Tistory
       self.scan_bot_files()
       @@initialized = true
     end
-    puts "Ready to upload to '#{@@s3_bucket_name}'"
+    self.log "Ready to upload to '#{@@s3_bucket_name}'", event.bot
+    range = 1..200
+    output = Parallel.map(range, in_processes: @@number_of_processes) do |number|
+      number
+    end
+
+    puts "#{output.join("\n")}"
+    Process.exit()
 
     # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
     self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
@@ -642,6 +649,9 @@ module BuddyBot::Modules::Tistory
           return { "result" => "error" }
         end
         output_filename = scan[0][0]
+      elsif output =~ /ERROR: This video contains content from .*?, who has blocked it on copyright grounds\./
+        self.log_warning ":closed_lock_with_key: YT Video <#{url}> is blocked."
+        return { "result" => "skipped" }
       else
         self.log_warning ":warning: could not infer file name\n```\n#{output}\n```", event.bot
         return { "result" => "error" }
