@@ -91,8 +91,7 @@ member_names:
   minecraft: buddycraft
 
   # gfbuddies
-  ot6: ot
-  ot: ot
+  ot6: ot6
   amino: amino
 
   # hangul
@@ -147,7 +146,7 @@ member_role_emoji_join:
     - 368193370738130946 # :YujuHeart:
   umji:
     - 292830051383115777 # :umjiheart:
-  ot:
+  ot6:
     - 291561178516422667 # :glass_bong:
     - 326116072866578432 # :blobglassbong:
 
@@ -170,7 +169,7 @@ member_role_emoji_leave:
   umji:
     - 292830047457247232 # :umjipout:
     - 350805044200734724 # :umjicry:
-  ot:
+  ot6:
     - 431133727528058880 # :tumbleweed:
 
 biasgame_easter_eggs:
@@ -196,7 +195,7 @@ primary_role_names:
   - yerin
   - yuju
   - umji
-  - ot
+  - ot6
 
 primary_ids:
   # gfriend

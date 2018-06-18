@@ -594,14 +594,14 @@ module BuddyBot::Modules::Tistory
       xml_tracks = xml.css("track").sort_by { |k| k.at_css("title").content.to_i }.map{ |track| track.at_css("location").content }.each do |part_url|
         part_download = HTTParty.get(part_url)
         if part_download.code != 200
-          self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.headers.inspect}\n```", event.bot
+          self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.inspect}\n```", event.bot
           return { "result" => "error", "http" => part_download }
         end
         if temp_file.nil?
           part_download
           params = CGI.parse(part_download.headers["content-disposition"])
           if !params || !params[" filename"] || params[" filename"].length > 1
-            self.log_warning ":warning: Url <#{url}> had malicious content-disposition!\n```\n#{part_download.headers.inspect}\n```", event.bot
+            self.log_warning ":warning: Url <#{url}> had uncompliant content-disposition!\n```\n#{part_download.headers.inspect}\n```", event.bot
             return { "result" => "error", "error" => "content-disposition" }
           end
           file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '').sub("/", "\/") # filename is wrapped in quotes
