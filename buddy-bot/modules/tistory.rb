@@ -947,6 +947,19 @@ module BuddyBot::Modules::Tistory
     puts "#{self.process_tweet(url, event)}"
   end
 
+  message(start_with: "!twitter-page ") do |event|
+    next if event.user.bot_account?
+    data = event.content.scan(/^!twitter\s+(\S+)\s*$/i)[0]
+    if !data
+      event.send_message ":warning: You need to specify a trivia list name..."
+      next
+    end
+    data = data[0]
+
+    author = data
+    self.process_twitter_profile(author, event)
+  end
+
   def self.twitter_determine_full_url(id)
     url = "https://twitter.com/twitter/statuses/#{id}"
     result = HTTParty.head(url, follow_redirects: false)
@@ -957,7 +970,8 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.process_tweet(url, event)
-    author, id = url.scan(/^https:\/\/twitter.com\/(\w+)\/status\/(\d+)$/)[0]
+    time_start = Time.now
+    twitter_host, author, id = url.scan(/^(https:\/\/twitter.com)?\/(\w+)\/status\/(\d+)$/)[0]
     page_contents = HTTParty.get(url)
     if page_contents.code != 200
       # :sowonnotlikethis:
@@ -1026,5 +1040,39 @@ module BuddyBot::Modules::Tistory
       { "result" => "skipped", "reason" => "not implemented" }
     end
 
+    time_end = Time.now
+    self.log ":ballot_box_with_check: Replicated Tweet <#{url}> in #{(time_end - time_start).round(1)}s", event.bot
+    { "result" => "success", "path" => s3_folder }
+  end
+
+  # this routine will also process retweets
+  def self.process_twitter_profile(author, event)
+    self.log ":information_desk_person: Going through #{author}'s Twitter page", event.bot
+    profile_page = HTTParty.get("https://twitter.com/#{author}")
+    if profile_page.code != 200
+      # :sowonnotlikethis:
+      return { "result": "error", "request" => profile_page }
+    end
+    profile_page = Nokogiri::HTML(profile_page.body)
+    earliest_tweet_id = nil
+    tweet_urls = profile_page.css(".tweet").map do |div|
+      if earliest_tweet_id.nil?
+        earliest_tweet_id = div.attribute("data-tweet-id").to_s
+      else
+        earliest_tweet_id = [ earliest_tweet_id, div.attribute("data-tweet-id").to_s ].min
+      end
+      div.attribute("data-permalink-path").to_s
+    end
+
+    url_timeline_api = "https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&include_entities=1&max_position=#{earliest_tweet_id}&reset_error_state=false'"
+
+    results = []
+
+    tweet_urls.each do |tweet_url|
+      results << self.process_tweet(tweet_url, event)
+    end
+
+    self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets!", event.bot
+    puts results.inspect
   end
 end
