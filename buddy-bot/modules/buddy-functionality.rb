@@ -322,7 +322,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
     if text =~ /\bot6\b/i
       removed_roles = []
-      role = self.find_roles(event.server, 'ot', true).first
+      role = self.find_roles(event.server, 'ot6', true).first
       if role
         current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
         current_primary_roles.map do |current_primary_role|
@@ -337,7 +337,7 @@ module BuddyBot::Modules::BuddyFunctionality
           .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
           .reject()
           .each{ |emoji| event.message.create_reaction(emoji) }
-        join_emojis = self.find_emoji('ot')
+        join_emojis = self.find_emoji('ot6')
           .map{ |name| @@member_role_emoji_join[name] }
           .map(&:sample)
           .map{ |raw| BuddyBot.emoji(raw) }
