@@ -645,7 +645,7 @@ module BuddyBot::Modules::Tistory
           return { "result" => "error" }
         end
         output_filename = scan[0][0]
-      elsif output =~ /ERROR: This video contains content from .*?, who has blocked it on copyright grounds\./
+      elsif output =~ /(ERROR: This video contains content from .*?, who has blocked it on copyright grounds\.|ERROR: This video is unavailable.)/
         self.log_warning ":closed_lock_with_key: YT Video <#{url}> is blocked."
         return { "result" => "skipped" }
       else
