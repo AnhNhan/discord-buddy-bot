@@ -1055,24 +1055,8 @@ module BuddyBot::Modules::Tistory
     results = []
     has_more_pages = true
 
-    cb_url_timeline_api = lambda do ||
-      "https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false"
-    end
-
-
-    cb_process_batch = lambda do |page|
-      tweet_urls = profile_page.css(".tweet").map do |div|
-        # these are absolute urls without host
-        div.attribute("data-permalink-path").to_s
-      end
-
-      tweet_urls.each do |tweet_url|
-        results << self.process_tweet(tweet_url, event)
-      end
-    end
-
     while has_more_pages do
-      tweets = HTTParty.get(cb_url_timeline_api.call())
+      tweets = HTTParty.get("https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false")
       if tweets.code != 200
         # :sowonnotlikethis:
         return { "result": "error", "request" => tweets }
@@ -1081,6 +1065,15 @@ module BuddyBot::Modules::Tistory
       tweets_html = Nokogiri::HTML(tweets["items_html"])
       has_more_pages = tweets["has_more_pages"]
       earliest_tweet_id = tweets["min_position"]
+
+      tweet_urls = tweets_html.css(".tweet").map do |div|
+        # these are absolute urls without host
+        div.attribute("data-permalink-path").to_s
+      end
+
+      tweet_urls.each do |tweet_url|
+        results << self.process_tweet(tweet_url, event)
+      end
     end
 
     self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets!", event.bot
