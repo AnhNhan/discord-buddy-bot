@@ -63,11 +63,11 @@ module BuddyBot::Modules::Tistory
     self.log "Ready to upload to '#{@@s3_bucket_name}'", event.bot
 
     # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
-    self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
-    self.process_tweet("https://twitter.com/Mochi_Yellow/status/1007198387693748224", event)
-    self.process_tweet("https://twitter.com/mystarmyangel/status/1007664325916438528", event)
-    self.process_tweet("https://twitter.com/gagadoli/status/1007639571150991361", event)
-    self.process_tweet("https://twitter.com/_Simplykpop/status/994782508083539968", event)
+    # self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
+    # self.process_tweet("https://twitter.com/Mochi_Yellow/status/1007198387693748224", event)
+    # self.process_tweet("https://twitter.com/mystarmyangel/status/1007664325916438528", event)
+    # self.process_tweet("https://twitter.com/gagadoli/status/1007639571150991361", event)
+    # self.process_tweet("https://twitter.com/_Simplykpop/status/994782508083539968", event)
   end
 
   def self.set_s3_bucket_name(name)
