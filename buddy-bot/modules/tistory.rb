@@ -1053,9 +1053,9 @@ module BuddyBot::Modules::Tistory
     self.log ":information_desk_person: Going through #{author}'s Twitter page", event.bot
     earliest_tweet_id = nil
     results = []
-    has_more_pages = true
+    has_more_items = true
 
-    while has_more_pages do
+    while has_more_items do
       tweets = HTTParty.get("https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false")
       if tweets.code != 200
         # :sowonnotlikethis:
@@ -1063,7 +1063,7 @@ module BuddyBot::Modules::Tistory
       end
       tweets = JSON.parse(tweets.body)
       tweets_html = Nokogiri::HTML(tweets["items_html"])
-      has_more_pages = tweets["has_more_pages"]
+      has_more_items = tweets["has_more_items"]
       earliest_tweet_id = tweets["min_position"]
 
       tweet_urls = tweets_html.css(".tweet").map do |div|
@@ -1075,7 +1075,7 @@ module BuddyBot::Modules::Tistory
         results << self.process_tweet(tweet_url, event)
       end
 
-      puts "has more pages: #{has_more_pages.inspect}, min pos #{earliest_tweet_id.inspect}"
+      puts "has more pages: #{has_more_items.inspect}, min pos #{earliest_tweet_id.inspect}"
     end
 
     self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets!", event.bot
