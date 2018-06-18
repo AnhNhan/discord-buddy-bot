@@ -1051,6 +1051,7 @@ module BuddyBot::Modules::Tistory
   # this routine will also process retweets
   def self.process_twitter_profile(author, event)
     self.log ":information_desk_person: Going through #{author}'s Twitter page", event.bot
+    time_start = Time.now
     earliest_tweet_id = nil
     results = []
     has_more_items = true
@@ -1078,7 +1079,8 @@ module BuddyBot::Modules::Tistory
       puts "has more pages: #{has_more_items.inspect}, min pos #{earliest_tweet_id.inspect}"
     end
 
-    self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets!", event.bot
+    time_end = Time.now
+    self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets in #{(time_end - time_start).round(1)}s", event.bot
     puts results.inspect
   end
 end
