@@ -1074,6 +1074,8 @@ module BuddyBot::Modules::Tistory
       tweet_urls.each do |tweet_url|
         results << self.process_tweet(tweet_url, event)
       end
+
+      puts "has more pages: #{has_more_pages.inspect}, min pos #{earliest_tweet_id.inspect}"
     end
 
     self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets!", event.bot
