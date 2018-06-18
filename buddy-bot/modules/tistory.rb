@@ -972,6 +972,9 @@ module BuddyBot::Modules::Tistory
   def self.process_tweet(url, event)
     time_start = Time.now
     twitter_host, author, id = url.scan(/^(https:\/\/twitter.com)?\/(\w+)\/status\/(\d+)$/)[0]
+    if twitter_host.nil? || twitter_host.empty?
+      url = "https://twitter.com" + url
+    end
     page_contents = HTTParty.get(url)
     if page_contents.code != 200
       # :sowonnotlikethis:
