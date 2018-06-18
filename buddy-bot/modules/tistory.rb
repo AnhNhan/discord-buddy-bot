@@ -60,7 +60,7 @@ module BuddyBot::Modules::Tistory
       self.scan_bot_files()
       @@initialized = true
     end
-    self.log "Ready to upload to '#{@@s3_bucket_name}'", event.bot
+    self.log ":information_desk_person: Ready to upload to '#{@@s3_bucket_name}'", event.bot
 
     # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
     # self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
