@@ -1072,7 +1072,7 @@ module BuddyBot::Modules::Tistory
     end
 
     while has_more_pages do
-      tweets = HTTParty.get(cb_url_timeline_api.call(earliest_tweet_id))
+      tweets = HTTParty.get(cb_url_timeline_api.call())
       if tweets.code != 200
         # :sowonnotlikethis:
         return { "result": "error", "request" => tweets }
