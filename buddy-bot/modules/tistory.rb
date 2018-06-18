@@ -192,7 +192,7 @@ module BuddyBot::Modules::Tistory
             count_first_404 = page_number
           end
           if count_404 % 20 == 0
-            self.log ":information_desk_person: Had #{count_404}x 404s already, currently at ##{page_number}, ##{count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
+            # self.log ":information_desk_person: Had #{count_404}x 404s already, currently at ##{page_number}, ##{count_first_404} was the first in this series for `#{page_name}`'s page!", event.bot
           end
         else
           self.log_warning ":warning: :warning: `#{url}` received a `#{result}`", event.bot
@@ -1000,14 +1000,14 @@ module BuddyBot::Modules::Tistory
     end
     s3_folder = "twitter/@#{author}/#{subfolder}/"
 
-    self.log ":information_desk_person: Twitter summary: <#{url}>\n" +
-      "```\n" +
-      "title: '#{title}'\n" +
-      "images: #{images}\n" +
-      "video ids: #{videos}\n" +
-      "links: #{links}\n" +
-      "s3 folder: #{s3_folder}\n" +
-      "```", event.bot
+    # self.log ":information_desk_person: Twitter summary: <#{url}>\n" +
+    #   "```\n" +
+    #   "title: '#{title}'\n" +
+    #   "images: #{images}\n" +
+    #   "video ids: #{videos}\n" +
+    #   "links: #{links}\n" +
+    #   "s3 folder: #{s3_folder}\n" +
+    #   "```", event.bot
 
     results_images = images.map do |image_url|
       image_filename = image_url.scan(/\/([\w-]+\.jpg):/)[0][0]
@@ -1051,28 +1051,36 @@ module BuddyBot::Modules::Tistory
   # this routine will also process retweets
   def self.process_twitter_profile(author, event)
     self.log ":information_desk_person: Going through #{author}'s Twitter page", event.bot
-    profile_page = HTTParty.get("https://twitter.com/#{author}")
-    if profile_page.code != 200
-      # :sowonnotlikethis:
-      return { "result": "error", "request" => profile_page }
-    end
-    profile_page = Nokogiri::HTML(profile_page.body)
     earliest_tweet_id = nil
-    tweet_urls = profile_page.css(".tweet").map do |div|
-      if earliest_tweet_id.nil?
-        earliest_tweet_id = div.attribute("data-tweet-id").to_s
-      else
-        earliest_tweet_id = [ earliest_tweet_id, div.attribute("data-tweet-id").to_s ].min
-      end
-      div.attribute("data-permalink-path").to_s
+    results = []
+    has_more_pages = true
+
+    cb_url_timeline_api = lambda do ||
+      "https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false"
     end
 
-    url_timeline_api = "https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&include_entities=1&max_position=#{earliest_tweet_id}&reset_error_state=false'"
 
-    results = []
+    cb_process_batch = lambda do |page|
+      tweet_urls = profile_page.css(".tweet").map do |div|
+        # these are absolute urls without host
+        div.attribute("data-permalink-path").to_s
+      end
 
-    tweet_urls.each do |tweet_url|
-      results << self.process_tweet(tweet_url, event)
+      tweet_urls.each do |tweet_url|
+        results << self.process_tweet(tweet_url, event)
+      end
+    end
+
+    while has_more_pages do
+      tweets = HTTParty.get(cb_url_timeline_api.call(earliest_tweet_id))
+      if tweets.code != 200
+        # :sowonnotlikethis:
+        return { "result": "error", "request" => tweets }
+      end
+      tweets = JSON.parse(tweets.body)
+      tweets_html = Nokogiri::HTML(tweets["items_html"])
+      has_more_pages = tweets["has_more_pages"]
+      earliest_tweet_id = tweets["min_position"]
     end
 
     self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets!", event.bot
