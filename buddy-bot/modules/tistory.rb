@@ -949,7 +949,7 @@ module BuddyBot::Modules::Tistory
 
   message(start_with: "!twitter-page ") do |event|
     next if event.user.bot_account?
-    data = event.content.scan(/^!twitter\s+(\S+)\s*$/i)[0]
+    data = event.content.scan(/^!twitter-page\s+(\S+)\s*$/i)[0]
     if !data
       event.send_message ":warning: You need to specify a trivia list name..."
       next
