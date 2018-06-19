@@ -1025,6 +1025,11 @@ module BuddyBot::Modules::Tistory
 
     results_images = images.map do |image_url|
       image_filename = image_url.scan(/\/([\w-]+\.jpg):/)[0][0]
+      if @@twitter_downloaded.include?(author) &&
+        @@twitter_downloaded[author].include?(id) &&
+        @@twitter_downloaded[author][id]["files_images"].include?(image_filename)
+        next { "result" => "skipped" }
+      end
       file_size = 0
       s3_path = s3_folder + image_filename
       begin
@@ -1047,6 +1052,11 @@ module BuddyBot::Modules::Tistory
     end
 
     results_videos = videos.map do |video_id|
+      if @@twitter_downloaded.include?(author) &&
+        @@twitter_downloaded[author].include?(id) &&
+        @@twitter_downloaded[author][id]["files_videos"].include?(video_id)
+        next { "result" => "skipped" }
+      end
       # uploading urls
       video_info_url = "https://api.twitter.com/1.1/videos/tweet/config/#{id}.json"
       # track -> playbackUrl (-> resolve playlist/direct link)
@@ -1054,6 +1064,11 @@ module BuddyBot::Modules::Tistory
     end
 
     results_links = links.map do |link_url|
+      if @@twitter_downloaded.include?(author) &&
+        @@twitter_downloaded[author].include?(id) &&
+        @@twitter_downloaded[author][id]["files_links"].include?(Digest::MD5.hexdigest(link_url))
+        next { "result" => "skipped" }
+      end
       { "result" => "skipped", "reason" => "not implemented" }
     end
 
