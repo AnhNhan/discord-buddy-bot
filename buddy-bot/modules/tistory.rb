@@ -1125,7 +1125,7 @@ module BuddyBot::Modules::Tistory
         result = self.process_tweet(tweet_url, event)
         results << result
 
-        if result["result"] == "success"
+        if result && result["result"] == "success"
           begin
             self.twitter_record_successful_result(author, result["id"], result)
           rescue => e
