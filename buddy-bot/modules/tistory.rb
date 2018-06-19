@@ -1048,7 +1048,7 @@ module BuddyBot::Modules::Tistory
           file_size = tempfile.size
           object = @@s3_bucket.object(s3_path)
           result = object.upload_file(tempfile)
-          puts "Just uploaded #{s3_path} (#{(file_size / 2**20).round(1)}MB)"
+          puts "Just uploaded #{s3_path} (#{(file_size / 2**20).round(2)}MB)"
           if !result
             raise 'Upload not successful!'
           end
