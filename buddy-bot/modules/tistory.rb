@@ -1010,6 +1010,7 @@ module BuddyBot::Modules::Tistory
     page_contents = Nokogiri::HTML(page_contents.body)
     images = page_contents.css('meta[property="og:image"]').map do |meta|
       image_url = meta.attribute("content").to_s.sub(/:large$/, ":orig")
+      image_url = image_url + ":orig" unless image_url =~ /:orig$/
       next unless image_url =~ /\/media\//
       image_url
     end.compact
