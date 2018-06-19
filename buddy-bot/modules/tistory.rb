@@ -602,6 +602,10 @@ module BuddyBot::Modules::Tistory
       xml_tracks = xml.css("track").sort_by { |k| k.at_css("title").content.to_i }
       Parallel.map(xml_tracks, in_processes: @@number_of_processes) do |track|
         part_url = track.at_css("location").content
+        if part_url =~ /\/attachment\/http:\/\//
+          # sometimes we get urls like http://kkangjiilove.tistory.com/attachment/http://cfile8.uf.tistory.com/media/213F224E5415065A215AEA
+          part_url = part_url.scan(/\/attachment\/(http:\/\/.*)$/)[0][0]
+        end
         part_download = HTTParty.get(part_url)
         if part_download.code != 200
           self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.inspect}\n```", event.bot
