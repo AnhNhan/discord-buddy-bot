@@ -1099,7 +1099,7 @@ module BuddyBot::Modules::Tistory
 
   # this routine will also process retweets
   def self.process_twitter_profile(author, event)
-    self.log ":information_desk_person: Going through #{author}'s Twitter page", event.bot
+    self.log ":information_desk_person: Going through @#{author}'s Twitter page", event.bot
     time_start = Time.now
     earliest_tweet_id = nil
     results = []
@@ -1137,7 +1137,7 @@ module BuddyBot::Modules::Tistory
 
       File.open(BuddyBot.path("content/downloaded-twitter.yml"), "w") { |file| file.write(YAML.dump(@@twitter_downloaded)) }
 
-      self.log ":ballot_box_with_check: Just went through #{tweet_urls.length}x tweets from @#{author}'s profile", event.bot
+      self.log ":ballot_box_with_check: Just went through #{tweet_urls.length}x tweets from @#{author}'s profile, #{results.length}x tweets so far", event.bot
 
       puts "has more pages: #{has_more_items.inspect}, min pos #{earliest_tweet_id.inspect}"
     end
