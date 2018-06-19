@@ -1033,7 +1033,12 @@ module BuddyBot::Modules::Tistory
     #   "```", event.bot
 
     results_images = images.map do |image_url|
-      image_filename = image_url.scan(/\/([\w-]+\.jpg):/)[0][0]
+      begin
+        image_filename = image_url.scan(/\/([\w-]+\.jpg):/)[0][0]
+      rescue => e
+        self.log_warning ":warning: Had an error extracting image_filename from `#{image_url}`:\n```\n#{e.inspect}\n```", event.bot
+        next { "result" => "error" }
+      end
       if @@twitter_downloaded.include?(author) &&
         @@twitter_downloaded[author].include?(id) &&
         @@twitter_downloaded[author][id]["files_images"].include?(image_filename)
