@@ -278,8 +278,10 @@ module BuddyBot::Modules::Tistory
         when "sowon_weird_flash_player"
           self.log_warning ":warning: Page <#{orig_input}> had `sowon_weird_flash_player`!", event.bot
           { "result" => "skipped" }
+        when "nonexistent"
+          { "result" => "skipped" }
         else
-          self.log_warning ":warning: No idea how to process `#{info}`!", event.bot
+          self.log_warning ":warning: No idea how to process `#{info}` (<#{orig_input}>)!", event.bot
           { "result" => "error" }
         end
       rescue Exception => e
@@ -479,6 +481,9 @@ module BuddyBot::Modules::Tistory
     uri_part_kakao_flashplayer = "tv.kakao.com/embed/player/cliplink"
     uri_weird_gdrive_flash_player = "https://www.googledrive.com/host/0B-9MTMyoDRgrWTc4bFN6NVNxQmc"
     uri_sowon_weird_flash_player = "http://951207.com/plugin/CallBack_bootstrapperSrc?nil_profile=tistory&nil_type=copied_post"
+    uri_nonexistent_players = [ # any player that we should ignore
+      "http://cfile23.uf.tistory.com/media/230A50475842C1E20ED51F",
+    ]
     doc.css('embed').each do |embed|
       uri = embed.attribute('src').to_s
       flashvars = (embed.attribute('flashvars') || "").to_s
@@ -487,6 +492,8 @@ module BuddyBot::Modules::Tistory
         parsed_vars = CGI.parse(flashvars)
         uri_parts_list = parsed_vars["xml"][0]
         media << { "type" => "tistory_parts_list", "uri" => uri_parts_list }
+      elsif uri_nonexistent_players.include? uri
+        media << { "type" => "nonexistent", "uri" => uri }
       elsif uri.include? uri_part_kakao_flashplayer
         media << { "type" => "kakao_player", "uri" => uri }
       elsif uri.eql? uri_weird_gdrive_flash_player
@@ -944,7 +951,13 @@ module BuddyBot::Modules::Tistory
     if data =~ /^\d+$/
       url = self.twitter_determine_full_url(data)
     end
-    puts "#{self.process_tweet(url, event)}"
+    result = self.process_tweet(url, event)
+    puts "#{result}"
+    if result["result"] == "success"
+      self.twitter_record_successful_result(result["author"], result["id"], result)
+      File.open(BuddyBot.path("content/downloaded-twitter.yml"), "w") { |file| file.write(YAML.dump(@@twitter_downloaded)) }
+    end
+    # TODO Do something with errors
   end
 
   message(start_with: "!twitter-page ") do |event|
@@ -1020,12 +1033,12 @@ module BuddyBot::Modules::Tistory
           file_size = tempfile.size
           object = @@s3_bucket.object(s3_path)
           result = object.upload_file(tempfile)
-          puts "Just uploaded #{s3_path}"
+          puts "Just uploaded #{s3_path} (#{(file_size / 2**20).round(1)}MB)"
           if !result
             raise 'Upload not successful!'
           end
         end
-        { "result" => "success", "path" => s3_path }
+        { "result" => "success", "id" => image_filename, "path" => s3_path }
       rescue Exception => e
         self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
         { "result" => "error", "error" => e }
@@ -1045,7 +1058,18 @@ module BuddyBot::Modules::Tistory
 
     time_end = Time.now
     self.log ":ballot_box_with_check: Replicated Tweet <#{url}> in #{(time_end - time_start).round(1)}s", event.bot
-    { "result" => "success", "path" => s3_folder }
+    {
+      "result" => "success",
+      "id" => id,
+      "author" => author,
+      "path" => s3_folder,
+      "images" => results_images,
+      "videos" => results_videos,
+      "links" => results_links,
+      "expected_images" => images.length,
+      "expected_videos" => videos.length,
+      "expected_links" => links.length,
+    }
   end
 
   # this routine will also process retweets
@@ -1073,8 +1097,16 @@ module BuddyBot::Modules::Tistory
       end
 
       tweet_urls.each do |tweet_url|
-        results << self.process_tweet(tweet_url, event)
+        result = self.process_tweet(tweet_url, event)
+        results << result
+
+        if result["result"] == "success"
+          self.twitter_record_successful_result(author, id, result)
+        end
+        # TODO Do something with errors
       end
+
+      File.open(BuddyBot.path("content/downloaded-twitter.yml"), "w") { |file| file.write(YAML.dump(@@twitter_downloaded)) }
 
       puts "has more pages: #{has_more_items.inspect}, min pos #{earliest_tweet_id.inspect}"
     end
@@ -1082,5 +1114,30 @@ module BuddyBot::Modules::Tistory
     time_end = Time.now
     self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets in #{(time_end - time_start).round(1)}s", event.bot
     puts results.inspect
+  end
+
+  def self.twitter_record_successful_result(author, id, result)
+    if !@@twitter_downloaded.include? author
+      @@twitter_downloaded[author] = {}
+    end
+    if !@@twitter_downloaded[author].include? id
+      @@twitter_downloaded[author][id] = {
+        "expected_images" => 0,
+        "expected_videos" => 0,
+        "expected_links" => 0,
+        "files_images" => {},
+        "files_videos" => {},
+        "files_links" => {},
+      }
+    end
+
+    [ "images", "videos", "links" ].each do |key|
+      @@twitter_downloaded[author][id]["expected_" + key] = [ @@twitter_downloaded[author][id]["expected_" + key], result["expected_" + key] ].max
+      result[key].each do |element_result|
+        if element_result["result"] == "success"
+          @@twitter_downloaded[author][id]["files_" + key][element_result["id"]] = element_result["path"]
+        end
+      end
+    end
   end
 end
