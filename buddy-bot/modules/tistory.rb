@@ -1168,5 +1168,6 @@ module BuddyBot::Modules::Tistory
     (screen_names.each_slice(10) || []).each do |_screen_names|
       event.send_message _screen_names.map{ |name| "- `#{name}`" }.join("\n")
     end
+    event.send_message "EL FINITO."
   end
 end
