@@ -974,6 +974,13 @@ module BuddyBot::Modules::Tistory
     self.process_twitter_profile(author, event)
   end
 
+  message(content: "!twitter-queue-run") do |event|
+    next if event.user.bot_account?
+    @@twitter_list.each do |author|
+      self.process_twitter_profile(author, event)
+    end
+  end
+
   def self.twitter_determine_full_url(id)
     url = "https://twitter.com/twitter/statuses/#{id}"
     result = HTTParty.head(url, follow_redirects: false)
@@ -1117,7 +1124,7 @@ module BuddyBot::Modules::Tistory
         results << result
 
         if result["result"] == "success"
-          self.twitter_record_successful_result(author, id, result)
+          self.twitter_record_successful_result(author, result["id"], result)
         end
         # TODO Do something with errors
       end
