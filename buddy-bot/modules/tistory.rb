@@ -1034,7 +1034,7 @@ module BuddyBot::Modules::Tistory
 
     results_images = images.map do |image_url|
       begin
-        image_filename = image_url.scan(/\/([\w-]+\.jpg):/)[0][0]
+        image_filename = image_url.scan(/\/([\w-]+\.(jpg|png)):/)[0][0]
       rescue => e
         self.log_warning ":warning: Had an error extracting image_filename from `#{image_url}`:\n```\n#{e.inspect}\n```", event.bot
         next { "result" => "error" }
