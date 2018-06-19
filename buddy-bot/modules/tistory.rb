@@ -644,7 +644,9 @@ module BuddyBot::Modules::Tistory
       output_filename = "<not downloaded yet>"
       output_file_list = []
       files_support_count = 0
-      if output.include? "[ffmpeg] Merging formats into \""
+      if output =~ /ERROR: giving up after 10 fragment retries/
+        return { "result" => "error" }
+      elsif output.include? "[ffmpeg] Merging formats into \""
         output_filename = output.scan(/\[ffmpeg\] Merging formats into "(.*?)"\n/)[0][0]
       elsif output.include? "[download] Destination: "
         scan = output.scan(/\[download\] Destination: (.*?)$/)
