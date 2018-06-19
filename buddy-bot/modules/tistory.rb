@@ -3,6 +3,7 @@ require 'cgi'
 require 'tempfile'
 require 'digest/md5'
 require 'stringio'
+require 'enumerator'
 
 require 'aws-sdk'
 require 'nokogiri'
@@ -1138,6 +1139,34 @@ module BuddyBot::Modules::Tistory
           @@twitter_downloaded[author][id]["files_" + key][element_result["id"]] = element_result["path"]
         end
       end
+    end
+  end
+
+  # provide bearer token from logging into twitter and looking into the network panel
+  message(start_with: "!twitter-get-following ") do |event|
+    screen_name, bearer_token, cursor = event.content.scan(/^!twitter-get-following\s+(\w+)\s+(.*?)(\s+(.*?))?\s*$/i)[0]
+
+    screen_names = []
+
+    cursor = (cursor || "-1").strip
+    while !cursor.nil? && cursor != "0"
+      request = HTTParty.get("https://api.twitter.com/1.1/friends/list.json?cursor=#{cursor}&count=200&include_user_entities=false&skip_status=1&screen_name=#{screen_name}", { "headers": { "authorization": "Bearer " + bearer_token } })
+      puts request.code
+      if request.code != 200
+        if request.code == 429
+          event.send_message "Bumped into rate limiting, current cursor is '#{cursor}'"
+        end
+        break
+      end
+      data = JSON.parse(request.body)
+      cursor = data["next_cursor_str"]
+      data["users"].each{ |user| screen_names << user["screen_name"] }
+
+      puts "Just added #{data["users"].length}x followings, next cursor is '#{cursor.inspect}'"
+      sleep(5)
+    end
+    (screen_names.each_slice(10) || []).each do |_screen_names|
+      event.send_message _screen_names.map{ |name| "- `#{name}`" }.join("\n")
     end
   end
 end
