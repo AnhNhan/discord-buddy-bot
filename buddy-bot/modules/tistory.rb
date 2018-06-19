@@ -1126,7 +1126,11 @@ module BuddyBot::Modules::Tistory
         results << result
 
         if result["result"] == "success"
-          self.twitter_record_successful_result(author, result["id"], result)
+          begin
+            self.twitter_record_successful_result(author, result["id"], result)
+          rescue => e
+            self.log_warning ":warning: Tweet `#{tweet_url}` had exception:\n```\n#{e.inspect}\n```"
+          end
         end
         # TODO Do something with errors
       end
