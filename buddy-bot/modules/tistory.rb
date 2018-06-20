@@ -1111,11 +1111,11 @@ module BuddyBot::Modules::Tistory
   def self.process_twitter_profile(author, event)
     self.log ":information_desk_person: Going through @#{author}'s Twitter page", event.bot
     time_start = Time.now
-    earliest_tweet_id = nil
+    earliest_tweet_id = false
     results = []
     has_more_items = true
 
-    while has_more_items do
+    while has_more_items && !earliest_tweet_id.nil? do
       tweets = HTTParty.get("https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&count=200&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false")
       if tweets.code != 200
         # :sowonnotlikethis:
