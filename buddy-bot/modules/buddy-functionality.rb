@@ -297,10 +297,12 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
+  # talk with BuddyBot
   mention() do |event|
     next if event.user.bot_account?
     next if @@cleverbot.nil?
     next if event.content.nil? || event.content.empty?
+    event.channel.start_typing
     event.send_message @@cleverbot.say(event.content)
   end
 
