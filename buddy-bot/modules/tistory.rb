@@ -36,7 +36,8 @@ module BuddyBot::Modules::Tistory
 
   @@number_of_processes = 50
 
-  @@abort_in_progress = false
+  @@abort_tistory_queue_in_progress = false
+  @@abort_twitter_queue_in_progress = false
 
   def self.scan_bot_files()
     @@pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml")) || []
@@ -126,11 +127,13 @@ module BuddyBot::Modules::Tistory
 
   message(start_with: /!tistory-queue-abort/i) do |event|
     next unless event.user.id == 139342974776639489
-    @@abort_in_progress = true
+    @@abort_tistory_queue_in_progress = true
+    @@abort_twitter_queue_in_progress = true
   end
 
   message(start_with: /!tistory-queue-run/i) do |event|
     next unless event.user.id == 139342974776639489
+    @@abort_tistory_queue_in_progress = false
 
     self.log ":information_desk_person: Starting to process the page queue! :sujipraise:", event.bot
     @@pages_special.each do |page_name|
@@ -140,14 +143,14 @@ module BuddyBot::Modules::Tistory
       self.process_pages(page_name, event) { |page_name, page_number| "http://#{page_name}.tistory.com/m/#{page_number}" }
     end
 
-    if @@abort_in_progress
-      @@abort_in_progress = false
-      self.log ":information_desk_person: Aborted!", event.bot
+    if @@abort_tistory_queue_in_progress
+      @@abort_tistory_queue_in_progress = false
+      self.log ":information_desk_person: Aborted Tistory!", event.bot
     end
   end
 
   def self.process_pages(page_name, event, &build_url)
-    if @@abort_in_progress
+    if @@abort_tistory_queue_in_progress
       return
     end
     self.log ":information_desk_person: Going through `#{page_name}`'s page!", event.bot
@@ -182,7 +185,7 @@ module BuddyBot::Modules::Tistory
       end
 
       result = self.process_mobile_page(url, url, page_name, page_number.to_s, event)
-      if @@abort_in_progress
+      if @@abort_tistory_queue_in_progress
         break
       end
 
@@ -207,7 +210,7 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.process_mobile_page(url, orig_input, page_name, page_number, event, verbose = nil)
-    if @@abort_in_progress
+    if @@abort_tistory_queue_in_progress
       return "abort"
     end
     time_start = Time.now
@@ -291,7 +294,7 @@ module BuddyBot::Modules::Tistory
       end
     end
     # self.log ":information_desk_person: Media result: #{process_results_media}", event.bot
-    if @@abort_in_progress
+    if @@abort_tistory_queue_in_progress
       return "abort"
     end
     process_results_images.each do |result|
@@ -693,7 +696,7 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.generic_multi_upload(file_id, url, page_name, page_number, page_title, event, &cb)
-    if @@abort_in_progress
+    if @@abort_tistory_queue_in_progress
       return { "result" => "error", "error" => "Aborting..." }
     end
     if url.nil?
@@ -771,7 +774,7 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.upload_tistory_image_file(url, page_name, page_number, page_title, event)
-    if @@abort_in_progress
+    if @@abort_tistory_queue_in_progress
       return { "result" => "error", "error" => "Aborting..." }
     end
     if url.nil?
@@ -955,6 +958,7 @@ module BuddyBot::Modules::Tistory
 
   message(start_with: "!twitter ") do |event|
     next if event.user.bot_account?
+    @@abort_twitter_queue_in_progress = false
     data = event.content.scan(/^!twitter\s+(\S+)\s*$/i)[0]
     if !data
       event.send_message ":warning: You need to specify a trivia list name..."
@@ -973,10 +977,15 @@ module BuddyBot::Modules::Tistory
       File.open(BuddyBot.path("content/downloaded-twitter.yml"), "w") { |file| file.write(YAML.dump(@@twitter_downloaded)) }
     end
     # TODO Do something with errors
+    if @@abort_twitter_queue_in_progress
+      @@abort_twitter_queue_in_progress = false
+      self.log ":information_desk_person: Aborted Twitter.", event.bot
+    end
   end
 
   message(start_with: "!twitter-page ") do |event|
     next if event.user.bot_account?
+    @@abort_twitter_queue_in_progress = false
     data = event.content.scan(/^!twitter-page\s+(\S+)\s*$/i)[0]
     if !data
       event.send_message ":warning: You need to specify a trivia list name..."
@@ -986,12 +995,21 @@ module BuddyBot::Modules::Tistory
 
     author = data
     self.process_twitter_profile(author, event)
+    if @@abort_twitter_queue_in_progress
+      @@abort_twitter_queue_in_progress = false
+      self.log ":information_desk_person: Aborted Twitter.", event.bot
+    end
   end
 
   message(content: "!twitter-queue-run") do |event|
     next if event.user.bot_account?
+    @@abort_twitter_queue_in_progress = false
     @@twitter_list.each do |author|
       self.process_twitter_profile(author, event)
+    end
+    if @@abort_twitter_queue_in_progress
+      @@abort_twitter_queue_in_progress = false
+      self.log ":information_desk_person: Aborted Twitter.", event.bot
     end
   end
 
@@ -1005,6 +1023,9 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.process_tweet(url, event)
+    if @@abort_twitter_queue_in_progress
+      return
+    end
     time_start = Time.now
     twitter_host, author, id = url.scan(/^(https:\/\/twitter.com)?\/(\w+)\/status\/(\d+)$/)[0]
     if twitter_host.nil? || twitter_host.empty?
@@ -1117,6 +1138,9 @@ module BuddyBot::Modules::Tistory
 
   # this routine will also process retweets
   def self.process_twitter_profile(author, event)
+    if @@abort_twitter_queue_in_progress
+      return
+    end
     self.log ":information_desk_person: Going through @#{author}'s Twitter page", event.bot
     time_start = Time.now
     earliest_tweet_id = false
@@ -1141,6 +1165,9 @@ module BuddyBot::Modules::Tistory
 
       tweet_urls.each do |tweet_url|
         result = self.process_tweet(tweet_url, event)
+        if @@abort_twitter_queue_in_progress
+          return
+        end
         results << result
 
         if result && result["result"] == "success"
@@ -1151,6 +1178,9 @@ module BuddyBot::Modules::Tistory
           end
         end
         # TODO Do something with errors
+      end
+      if @@abort_twitter_queue_in_progress
+        return
       end
 
       File.open(BuddyBot.path("content/downloaded-twitter.yml"), "w") { |file| file.write(YAML.dump(@@twitter_downloaded)) }
