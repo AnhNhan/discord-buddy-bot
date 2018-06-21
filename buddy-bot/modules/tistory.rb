@@ -754,6 +754,7 @@ module BuddyBot::Modules::Tistory
       time_end = Time.now
       files_size = files_size.to_f / (2 ** 20)
       self.log ":ballot_box_with_check: Successfully uploaded media `#{file_id}` => `#{uploaded_file_names[0]}`, #{files_size.round(1)} MB, #{(time_end - time_start).round(1)}s total", event.bot
+      puts "Just uploaded #{uploaded_file_names[0]} (#{(file_size.to_f / 2**20).round(2)}MB)"
       return {
         "result" => "ok",
         "id" => file_id,
@@ -833,6 +834,7 @@ module BuddyBot::Modules::Tistory
     #   "(#{(file_size.to_f / 2 ** 20).round(2)} MB, #{image_w}x#{image_h}, #{(time_split - time_start).round(1)}s " +
     #   "download + write, #{(time_end - time_split).round(1)}s upload S3): " +
     #   "<#{object.presigned_url(:get, expires_in: 604800)}>", event.bot
+    puts "Just uploaded #{s3_filename} (#{(file_size.to_f / 2**20).round(2)}MB)"
     result = {
       "result" => "ok",
       "id" => file_id,
@@ -898,7 +900,7 @@ module BuddyBot::Modules::Tistory
     file_size_expected = key_info["file_size"]
     self.log ":information_desk_person: Starting to download '#{id}' - `#{file_full_name}` (#{(file_size_expected / 2**20).round(1)}MB)!", event.bot
     file_size = 0
-    s3_filename = ""
+    s3_path = ""
     Dir.mktmpdir do |dir|
       begin
         local_file_name = File.basename(file_uri)
@@ -911,8 +913,8 @@ module BuddyBot::Modules::Tistory
 
         time_split = Time.now
 
-        s3_filename = "sendanywhere/#{id} - #{file_full_name}/#{file_full_name}"
-        object = @@s3_bucket.object(s3_filename)
+        s3_path = "sendanywhere/#{id} - #{file_full_name}/#{file_full_name}"
+        object = @@s3_bucket.object(s3_path)
         result = object.upload_file(dir + "/" + local_file_name)
         if !result
           raise 'Upload not successful!'
@@ -924,11 +926,12 @@ module BuddyBot::Modules::Tistory
     end
 
     time_end = Time.now
+    puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
 
-    @@sendanywhere_downloaded[id] = s3_filename
+    @@sendanywhere_downloaded[id] = s3_path
     File.open(BuddyBot.path("content/downloaded-sendanywhere.yml"), "w") { |file| file.write(YAML.dump(@@sendanywhere_downloaded)) }
-    self.log ":ballot_box_with_check: Successfully replicated SendAnywhere `#{id}` to `#{s3_filename}` (#{(file_size / 2**20).round(1)}MB), downloading in #{(time_split - time_start).round(1)}s and uploading in #{(time_end - time_split).round(1)}!", event.bot
-    return { "result" => "success", "path" => s3_filename }
+    self.log ":ballot_box_with_check: Successfully replicated SendAnywhere `#{id}` to `#{s3_path}` (#{(file_size.to_f / 2**20).round(1)}MB), downloading in #{(time_split - time_start).round(1)}s and uploading in #{(time_end - time_split).round(1)}!", event.bot
+    return { "result" => "success", "path" => s3_path }
   end
 
   message(start_with: /!sendanywhere\s/i) do |event|
@@ -1063,7 +1066,7 @@ module BuddyBot::Modules::Tistory
           file_size = tempfile.size
           object = @@s3_bucket.object(s3_path)
           result = object.upload_file(tempfile)
-          puts "Just uploaded #{s3_path} (#{(file_size / 2**20).round(2)}MB)"
+          puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
           if !result
             raise 'Upload not successful!'
           end
