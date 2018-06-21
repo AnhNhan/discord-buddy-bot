@@ -600,36 +600,41 @@ module BuddyBot::Modules::Tistory
 
       xml = Nokogiri::XML(player_data.body)
       xml_tracks = xml.css("track").sort_by { |k| k.at_css("title").content.to_i }
-      Parallel.map(xml_tracks, in_processes: @@number_of_processes) do |track|
-        part_url = track.at_css("location").content
-        if part_url =~ /\/attachment\/http:\/\//
-          # sometimes we get urls like http://kkangjiilove.tistory.com/attachment/http://cfile8.uf.tistory.com/media/213F224E5415065A215AEA
-          part_url = part_url.scan(/\/attachment\/(http:\/\/.*)$/)[0][0]
-        end
-        part_download = HTTParty.get(part_url)
-        if part_download.code != 200
-          self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.inspect}\n```", event.bot
-          return { "result" => "error", "http" => part_download }
-        end
-        part_download
-      end.each do |part_download|
-        if temp_file.nil?
-          params = CGI.parse(part_download.headers["content-disposition"])
-          if !params || !params[" filename"] || params[" filename"].length > 1
-            self.log_warning ":warning: Url <#{url}> had uncompliant content-disposition!\n```\n#{part_download.headers.inspect}\n```", event.bot
-            return { "result" => "error", "error" => "content-disposition" }
+      begin
+        Parallel.map(xml_tracks, in_processes: @@number_of_processes) do |track|
+          part_url = track.at_css("location").content
+          if part_url =~ /\/attachment\/http:\/\//
+            # sometimes we get urls like http://kkangjiilove.tistory.com/attachment/http://cfile8.uf.tistory.com/media/213F224E5415065A215AEA
+            part_url = part_url.scan(/\/attachment\/(http:\/\/.*)$/)[0][0]
           end
-          file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '').sub("/", "\/") # filename is wrapped in quotes
-          if file_full_name =~ /\.\d+$/
-            file_full_name = File.basename file_full_name, ".*" # remove .001
+          part_download = HTTParty.get(part_url)
+          if part_download.code != 200
+            self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.inspect}\n```", event.bot
+            return { "result" => "error", "http" => part_download }
           end
-          file_name = File.basename(file_full_name, ".*")
-          file_extension = File.extname(file_full_name)
-          file_extension[0] = "" # still has leading '.'
-          output_file_list = [ { "full" => file_full_name, "name" => file_name, "ext" => file_extension } ]
-          temp_file = File.open(dir + "/" + file_full_name, "wb")
+          part_download
+        end.each do |part_download|
+          if temp_file.nil?
+            params = CGI.parse(part_download.headers["content-disposition"])
+            if !params || !params[" filename"] || params[" filename"].length > 1
+              self.log_warning ":warning: Url <#{url}> had uncompliant content-disposition!\n```\n#{part_download.headers.inspect}\n```", event.bot
+              return { "result" => "error", "error" => "content-disposition" }
+            end
+            file_full_name = (params[" filename"] || [ 'Untitled' ])[0].gsub!('"', '').sub("/", "\/") # filename is wrapped in quotes
+            if file_full_name =~ /\.\d+$/
+              file_full_name = File.basename file_full_name, ".*" # remove .001
+            end
+            file_name = File.basename(file_full_name, ".*")
+            file_extension = File.extname(file_full_name)
+            file_extension[0] = "" # still has leading '.'
+            output_file_list = [ { "full" => file_full_name, "name" => file_name, "ext" => file_extension } ]
+            temp_file = File.open(dir + "/" + file_full_name, "wb")
+          end
+          written = temp_file.write part_download.body
         end
-        written = temp_file.write part_download.body
+      rescue => e
+        self.log_warning ":warning: Tistory video down/upload had a big error: \n```\n#{e.inspect}\n```", event.bot
+        return { "result" => "error", "e" => e }
       end
 
       {
