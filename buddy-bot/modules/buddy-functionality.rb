@@ -9,6 +9,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@bot_owner_id = 0
 
+  @@cleverbot = nil
+
   @@member_names = {}
 
   @@primary_role_names = []
@@ -91,6 +93,10 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.persist_giveaway_joins()
     File.open(BuddyBot.path("content/giveaway-joins.yml"), "w") { |file| file.write(YAML.dump(@@giveaway_joins)) }
+  end
+
+  def self.set_cleverbot(bot)
+    @@cleverbot = bot
   end
 
   def self.is_mod?(server, user)
@@ -288,6 +294,13 @@ module BuddyBot::Modules::BuddyFunctionality
       # @@global_counted_messages = 0 # prevent overflow from long running counting
       self.persist_member_message_counts()
     end
+  end
+
+  mention() do |event|
+    next if event.user.bot_account?
+    next if @@cleverbot.nil?
+    next if event.content.nil? || event.content.empty?
+    event.send_message @@cleverbot.say(event.content)
   end
 
   message(start_with: /^!suggest-bias\s*/i, in: "whos-your-bias") do |event|
