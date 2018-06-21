@@ -979,7 +979,7 @@ module BuddyBot::Modules::Tistory
     # TODO Do something with errors
     if @@abort_twitter_queue_in_progress
       @@abort_twitter_queue_in_progress = false
-      self.log ":information_desk_person: Aborted Twitter.", event.bot
+      self.log ":information_desk_person: Aborted Twitter!", event.bot
     end
   end
 
@@ -997,7 +997,7 @@ module BuddyBot::Modules::Tistory
     self.process_twitter_profile(author, event)
     if @@abort_twitter_queue_in_progress
       @@abort_twitter_queue_in_progress = false
-      self.log ":information_desk_person: Aborted Twitter.", event.bot
+      self.log ":information_desk_person: Aborted Twitter!", event.bot
     end
   end
 
@@ -1009,7 +1009,7 @@ module BuddyBot::Modules::Tistory
     end
     if @@abort_twitter_queue_in_progress
       @@abort_twitter_queue_in_progress = false
-      self.log ":information_desk_person: Aborted Twitter.", event.bot
+      self.log ":information_desk_person: Aborted Twitter!", event.bot
     end
   end
 
@@ -1028,6 +1028,13 @@ module BuddyBot::Modules::Tistory
     end
     time_start = Time.now
     twitter_host, author, id = url.scan(/^(https:\/\/twitter.com)?\/(\w+)\/status\/(\d+)$/)[0]
+    if @@twitter_downloaded.include?(author) &&
+      @@twitter_downloaded[author].include?(id) &&
+      @@twitter_downloaded[author][id]["files_images"].keys.length == @@twitter_downloaded[author][id]["expected_images"] &&
+      @@twitter_downloaded[author][id]["files_videos"].keys.length == @@twitter_downloaded[author][id]["expected_videos"] &&
+      @@twitter_downloaded[author][id]["files_links"].keys.length == @@twitter_downloaded[author][id]["expected_links"]
+      return { "result" => "skipped" }
+    end
     if twitter_host.nil? || twitter_host.empty?
       url = "https://twitter.com" + url
     end
