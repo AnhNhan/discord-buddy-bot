@@ -1,0 +1,13 @@
+source 'https://rubygems.org'
+
+gem 'discordrb'
+gem 'levenshtein'
+gem 'levenshtein-ffi'
+gem 'rbnacl-libsodium'
+gem 'aws-sdk'
+gem 'image_size'
+gem 'nokogiri'
+gem 'httparty'
+gem 'activerecord'
+gem 'standalone_migrations'
+gem 'mysql2'

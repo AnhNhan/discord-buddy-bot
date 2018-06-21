@@ -370,6 +370,9 @@ members_of_other_groups:
   yuujin:
     - "The Ark"
     - "CL.Clear"
+  yujin:
+    - "The Ark"
+    - "CL.Clear"
   seungyeon:
     - "CL.Clear"
   seunghee:
@@ -616,6 +619,10 @@ members_of_other_groups:
   euijin:
     - "UNB"
     - "UNI.T"
+  sakura:
+    - "서울48"
+  jurina:
+    - "서울48"
   yg:
     - "Daddy!"
   dad:
@@ -666,8 +673,6 @@ members_of_other_groups:
     - "..."
   kbuddy:
     - "This bot will not be able to converse with you."
-  canadabuddy:
-    - "Kindly, be a buddy."
   usbuddy:
     - "We, Us, Together."
   ibuddy:

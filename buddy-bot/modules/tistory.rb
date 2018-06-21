@@ -602,6 +602,10 @@ module BuddyBot::Modules::Tistory
       xml_tracks = xml.css("track").sort_by { |k| k.at_css("title").content.to_i }
       Parallel.map(xml_tracks, in_processes: @@number_of_processes) do |track|
         part_url = track.at_css("location").content
+        if part_url =~ /\/attachment\/http:\/\//
+          # sometimes we get urls like http://kkangjiilove.tistory.com/attachment/http://cfile8.uf.tistory.com/media/213F224E5415065A215AEA
+          part_url = part_url.scan(/\/attachment\/(http:\/\/.*)$/)[0][0]
+        end
         part_download = HTTParty.get(part_url)
         if part_download.code != 200
           self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.inspect}\n```", event.bot
@@ -1006,6 +1010,7 @@ module BuddyBot::Modules::Tistory
     page_contents = Nokogiri::HTML(page_contents.body)
     images = page_contents.css('meta[property="og:image"]').map do |meta|
       image_url = meta.attribute("content").to_s.sub(/:large$/, ":orig")
+      image_url = image_url + ":orig" unless image_url =~ /:orig$/
       next unless image_url =~ /\/media\//
       image_url
     end.compact
@@ -1033,7 +1038,12 @@ module BuddyBot::Modules::Tistory
     #   "```", event.bot
 
     results_images = images.map do |image_url|
-      image_filename = image_url.scan(/\/([\w-]+\.jpg):/)[0][0]
+      begin
+        image_filename = image_url.scan(/\/([\w-]+\.(jpg|png)):/)[0][0]
+      rescue => e
+        self.log_warning ":warning: Had an error extracting image_filename from `#{image_url}`:\n```\n#{e.inspect}\n```", event.bot
+        next { "result" => "error" }
+      end
       if @@twitter_downloaded.include?(author) &&
         @@twitter_downloaded[author].include?(id) &&
         @@twitter_downloaded[author][id]["files_images"].include?(image_filename)
@@ -1101,11 +1111,11 @@ module BuddyBot::Modules::Tistory
   def self.process_twitter_profile(author, event)
     self.log ":information_desk_person: Going through @#{author}'s Twitter page", event.bot
     time_start = Time.now
-    earliest_tweet_id = nil
+    earliest_tweet_id = false
     results = []
     has_more_items = true
 
-    while has_more_items do
+    while has_more_items && !earliest_tweet_id.nil? do
       tweets = HTTParty.get("https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&count=200&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false")
       if tweets.code != 200
         # :sowonnotlikethis:
