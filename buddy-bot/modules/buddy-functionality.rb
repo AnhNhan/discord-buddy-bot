@@ -97,6 +97,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.set_cleverbot(bot)
     @@cleverbot = bot
+    @cleverbot.nick = "BuddyBot"
   end
 
   def self.is_mod?(server, user)
