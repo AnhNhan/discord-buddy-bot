@@ -1050,7 +1050,11 @@ module BuddyBot::Modules::Tistory
       next unless image_url =~ /\/media\//
       image_url
     end.compact
-    title = page_contents.at_css('meta[property="og:description"]').attribute("content").to_s.gsub(URI::regexp, "").gsub(/[“”]/, "").gsub(/\s+/, " ").gsub(/\s”/, "”").gsub("/", "\/").strip
+    title = ""
+    description_meta = page_contents.at_css('meta[property="og:description"]')
+    if description_meta
+      title = description_meta.attribute("content").to_s.gsub(URI::regexp, "").gsub(/[“”]/, "").gsub(/\s+/, " ").gsub(/\s”/, "”").gsub("/", "\/").strip
+    end
     videos = page_contents.css('meta[property="og:video:url"]').map do |meta|
       video_id = meta.attribute("content").to_s.scan(/(\d{4,})/)[0][0]
     end.compact
