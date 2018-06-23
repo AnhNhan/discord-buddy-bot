@@ -449,7 +449,7 @@ module BuddyBot::Modules::Tistory
       end
       uri = uri.to_s
       if uri !~ /^http:\/\/cfile\d+\.uf\.tistory\.com\/(original|image)\/\w+/i
-        if uri !~ /\/contents\/emoticon\// # ignore error on emoticons
+        if uri !~ /(\/contents\/emoticon\/|abs\.twimg\.com\/emoji\/)/ # ignore error on emoticons
           self.log_warning ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
         end
         next
@@ -667,7 +667,7 @@ module BuddyBot::Modules::Tistory
           return { "result" => "error" }
         end
         output_filename = scan[0][0]
-      elsif output =~ /(ERROR: This video contains content from .*?, who has blocked it on copyright grounds\.|ERROR: This video is unavailable.)/
+      elsif output =~ /(ERROR: This video contains content from .*?, who has blocked it( in your country)? on copyright grounds\.|ERROR: This video is unavailable.)/
         self.log_warning ":closed_lock_with_key: YT Video <#{url}> is blocked.", event.bot
         return { "result" => "skipped" }
       else
