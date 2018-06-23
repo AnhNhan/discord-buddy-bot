@@ -186,7 +186,7 @@ module BuddyBot::Modules::BuddyFunctionality
     rejected_names_text = rejected_names.map do |name|
       " - #{name.capitalize} (#{@@members_of_other_groups[name].sample})"
     end.join "\n"
-    event.send_message "Warning, the following member#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you. Remember, the only thing you need in life is GFriend."
+    event.send_message ":warning: #{BuddyBot.emoji(434376562142478367)} The following member#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you. Remember, the only thing you need in life is GFriend."
   end
 
   ready do |event|
@@ -220,7 +220,11 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       member = event.user.on(server)
       member.roles = roles
-      self.log "Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+      self.log ":information_desk_person: Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+      if @@member_message_counts.include?(event.user.id)
+        self.log ":warning: User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+        @@member_message_counts.delete(event.user.id)
+      end
       event.server.general_channel.send_message "#{event.user.mention} joined! " +
         "Welcome to the GFriend Discord server! Please make sure to read the " +
         "rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>. " +
