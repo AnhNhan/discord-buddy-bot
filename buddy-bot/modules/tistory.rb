@@ -757,7 +757,7 @@ module BuddyBot::Modules::Tistory
       time_end = Time.now
       files_size = files_size.to_f / (2 ** 20)
       self.log ":ballot_box_with_check: Successfully uploaded media `#{file_id}` => `#{uploaded_file_names[0]}`, #{files_size.round(1)} MB, #{(time_end - time_start).round(1)}s total", event.bot
-      puts "Just uploaded #{uploaded_file_names[0]} (#{(file_size.to_f / 2**20).round(2)}MB)"
+      puts "Just uploaded #{uploaded_file_names[0]} (#{(files_size.to_f / 2**20).round(2)}MB)"
       return {
         "result" => "ok",
         "id" => file_id,
