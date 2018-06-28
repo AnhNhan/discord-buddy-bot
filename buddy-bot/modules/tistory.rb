@@ -648,6 +648,10 @@ module BuddyBot::Modules::Tistory
   end
 
   def self.upload_gdrive_file_video(file_id, _, page_name, page_number, page_title, event)
+    self.generic_multi_upload(file_id, "https://drive.google.com/open?id=#{file_id}", page_name, page_number, page_title, event) do |dir|
+      output = `cd #{dir}; gdrive download '#{file_id}'`
+      puts output
+    end
   end
 
   def self.upload_youtube_video(file_id, url, page_name, page_number, page_title, event)
