@@ -699,6 +699,29 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(content: "!fix-gfcord-non-buddies-new") do |event|
+    self.only_mods(event.server, event.user) {
+      event.bot.servers.each do |server_id, server|
+        if server_id != 166304074252288000 # gfcord only
+          next
+        end
+
+        server.members.each do |member|
+          if member.roles.find {|role| role.id == 166339124129693696 } # check for buddy role
+            next
+          end
+
+          member.add_role 166339124129693696
+          member.add_role 430593431195353088
+
+          self.log "Fix roles: Added roles '#{server.role(430593431195353088).name}, #{server.role(166339124129693696).name}' to '#{member.username} - \##{member.id}'", event.bot, event.server
+
+          # No belated greeting per server mods
+        end
+      end
+    }
+  end
+
   message(content: "!list-gfcord-non-buddies") do |event|
     self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
