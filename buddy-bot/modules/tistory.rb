@@ -885,6 +885,9 @@ module BuddyBot::Modules::Tistory
     inquiry_info = JSON.parse(inquiry_info.body)
     server_uri = inquiry_info["server"]
 
+    file_is_multiple = false
+    file_full_name = nil
+
     # only interesting info here is number of files
     # keyinfo = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=keyinfo")
 
@@ -893,10 +896,12 @@ module BuddyBot::Modules::Tistory
     filelist = JSON.parse(filelist.body)
 
     if filelist["file"].length > 1
-      self.log_warning ":warning: SendAnywhere #{id} had multiple files!", event.bot
+      file_is_multiple = true
     end
 
-    file_full_name = filelist["file"][0]["name"]
+    if !file_is_multiple
+      file_full_name = filelist["file"][0]["name"]
+    end
 
     # 'register' device key, unlock download
     key_info = HTTParty.get("https://send-anywhere.com/web/key/#{id}", { headers: { "Cookie": "device_key=" + device_key } })
@@ -905,17 +910,27 @@ module BuddyBot::Modules::Tistory
     file_uri = key_info["weblink"]
 
     file_size_expected = key_info["file_size"]
-    self.log ":information_desk_person: Starting to download '#{id}' - `#{file_full_name}` (#{(file_size_expected / 2**20).round(1)}MB)!", event.bot
+    self.log ":information_desk_person: Starting to download '#{id}' - `#{file_full_name || 'Multi-File Archive'}` (#{(file_size_expected / 2**20).round(1)}MB)!", event.bot
     file_size = 0
     s3_path = ""
     Dir.mktmpdir do |dir|
       begin
         local_file_name = File.basename(file_uri)
-        `cd #{dir} && curl -v '#{file_uri}' > '#{local_file_name}'`
+        `cd #{dir} && curl -v -D headers.txt '#{file_uri}' > '#{local_file_name}'`
         file_size = File.size(dir + "/" + local_file_name)
         if file_size != file_size_expected
           self.log_warning ":warning: SendAnywhere `#{id}` had unexpected file size: #{file_size} but expected #{file_size_expected}", event.bot
-          return { "result" => "error" }
+          # return { "result" => "error" }
+        end
+
+        if file_is_multiple
+          stdout = open(dir + "/" + "headers.txt").read
+          result_scan = stdout.scan(/Content-Disposition: attachment; filename="(.*?)"/i)
+          if !result_scan || !result_scan[0] || !result_scan[0][0]
+            self.log_warning ":warning: SendAnywhere `#{id}` had missing content disposition:\n```\n#{stdout}\n```", event.bot
+            return { "result" => "error" }
+          end
+          file_full_name = result_scan[0][0]
         end
 
         time_split = Time.now
