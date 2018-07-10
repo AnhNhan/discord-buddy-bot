@@ -39,7 +39,9 @@ Aws.config.update({
   region: localconf['s3region'],
 })
 
-BuddyBot::Modules::BuddyFunctionality.set_cleverbot(Cleverbot.new(localconf['cleverbot_access'], localconf['cleverbot_secret']))
+if localconf['cleverbot_access'] && localconf['cleverbot_secret']
+  BuddyBot::Modules::BuddyFunctionality.set_cleverbot(Cleverbot.new(localconf['cleverbot_access'], localconf['cleverbot_secret']))
+end
 
 BuddyBot::Modules::Tistory.set_s3_bucket_name(localconf['s3bucket'])
 
