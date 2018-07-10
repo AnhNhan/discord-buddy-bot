@@ -193,7 +193,7 @@ module BuddyBot::Modules::BuddyFunctionality
     rejected_names_text = rejected_names.map do |name|
       " - #{name.capitalize} (#{@@members_of_other_groups[name].sample})"
     end.join "\n"
-    event.send_message ":warning: #{BuddyBot.emoji(434376562142478367)} The following member#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend:\n#{rejected_names_text}\nOfficials have been alerted and now are on the search for you. Remember, the only thing you need in life is GFriend."
+    event.send_message ":warning: #{BuddyBot.emoji(434376562142478367)} The following idol#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend. Officials have been alerted and now are on the search for you.\n#{rejected_names_text}"
   end
 
   ready do |event|
@@ -335,37 +335,25 @@ module BuddyBot::Modules::BuddyFunctionality
     user = event.user.on event.server
     added_roles = []
     rejected_names = []
+    added_ot6 = false
 
-    if text =~ /^!(secondary|bias) /i
+    if text =~ /^!(secondary|bias|add) /i
       event.send_message "#{user.mention} you do not need to provide the `!secondary` / `!bias` command."
     end
 
     if text =~ /\bot6\b/i
-      removed_roles = []
-      role = self.find_roles(event.server, 'ot6', true).first
-      if role
-        current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
-        current_primary_roles.map do |current_primary_role|
-          removed_roles << "**#{current_primary_role.name}**"
-          self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot, event.server
-          user.remove_role current_primary_role
+      current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
+      ot6_role = self.find_roles(event.server, 'ot6', true).first
+      if current_primary_roles.length != 0
+        if !current_primary_roles.find{ |current_role| current_role.id != ot6_role.id }
+          event.send_message "You wanted OT6 but you already have a primary role. Please note that you have to explicitly specify `!primary OT6` to receive it as a primary."
         end
-        removed_roles_text = removed_roles.join ", "
-        user.add_role role
-        self.find_emoji(removed_roles_text)
-          .map{ |name| @@member_role_emoji_leave[name] }
-          .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
-          .reject()
-          .each{ |emoji| event.message.create_reaction(emoji) }
-        join_emojis = self.find_emoji('ot6')
-          .map{ |name| @@member_role_emoji_join[name] }
-          .map(&:sample)
-          .map{ |raw| BuddyBot.emoji(raw) }
-          .reject{ |emoji| emoji.nil? }
-          .map(&:mention)
-          .to_a
-          .join
-        event.send_message(join_emojis) unless join_emojis.length
+      else
+        user.add_role ot6_role
+        self.log "Added role '#{ot6_role.name}' to '#{user.name}'", event.bot, event.server
+        added_roles << "**#{ot6_role.name}**"
+        text = text.gsub /\bot6\b/i, ""
+        added_ot6 = true
       end
     end
 
@@ -378,21 +366,25 @@ module BuddyBot::Modules::BuddyFunctionality
       user.add_role roles
       roles.map do |role|
         added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
-        self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot, event.server
+        self.log "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
       end
     end
     cb_other_member = lambda do |match, original|
       rejected_names << match
     end
     cb_special = lambda do |match, original, user_id|
-      member = event.server.member(user_id)
-      event.send_message "Hey **@#{member.nick || member.username}**, lookie lookie super lookie! You have an admirer!"
+      # for now disabled
+      # member = event.server.member(user_id)
+      # event.send_message "Hey **@#{member.nick || member.username}**, lookie lookie super lookie! You have an admirer!"
     end
     self.members_map(text, cb_member, cb_other_member, cb_special)
 
     if !added_roles.empty?
       added_roles_text = added_roles.join ", "
       event.send_message "#{user.mention} your bias#{if added_roles.length > 1 then 'es' end} #{added_roles_text} #{if added_roles.length > 1 then 'have' else 'has' end} been added"
+      if added_ot6
+        event.send_message "Do note that OT6 has been added as a primary and any further bias has been added as a secondary."
+      end
     end
     if !rejected_names.empty?
       self.print_rejected_names rejected_names, event
@@ -427,7 +419,10 @@ module BuddyBot::Modules::BuddyFunctionality
       end
 
       if current_primary_roles.find{ |current_role| current_role.id == role.id }
-        event.respond "You can't hop to your current primary bias #{self.random_derp_emoji()}"
+        event.send_message "You can't hop to your current primary bias #{self.random_derp_emoji()}"
+        if current_primary_roles.length > 1
+          event.send_message "Do note that you have _multiple_ primary biases. If you are not satisfied with your current color you might consider to `!remove #{current_primary_roles.find_all{ |current_role| current_role.id != role.id }.map(&:name).join(" ")}` #{BuddyBot.emoji(342101928903442432)}"
+        end
         next
       end
 
@@ -485,8 +480,9 @@ module BuddyBot::Modules::BuddyFunctionality
         member_name = @@member_names[match]
         role = self.find_roles event.server, member_name, true
         role = role + (self.find_roles event.server, member_name, false)
-        user.remove_role role
         role.map do |role|
+          next unless user.role?(role.id)
+          user.remove_role role
           removed_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
           self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
         end
@@ -525,7 +521,7 @@ module BuddyBot::Modules::BuddyFunctionality
       if @@ignored_roles.include? role.name
         next
       end
-      role.name.downcase.scan(/([A-z]+)/).find do |matches|
+      role.name.downcase.scan(/([A-z0-6]+)/).find do |matches|
         @@primary_role_names.include? matches.first
       end
     end

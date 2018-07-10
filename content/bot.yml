@@ -50,8 +50,13 @@ member_names:
   mystery: sinb
   sowon: sowon
   sojung: sowon
+  sojeong: sowon
   wish: sowon
   onegai: sowon
+  kimsowon: sowon
+  kimsoojung: sowon
+  kimsoojeong: sowon
+
   yerin: yerin
   yenni: yerin
   yennie: yerin
@@ -67,15 +72,44 @@ member_names:
   yeri: yerin
   hyeri: yerin
   hyerin: yerin
+  jungyerin: yerin
+  jeongyering: yerin
+
+  eunha: eunha
+  euhna: eunha # ;_;
+  euna: eunha
+  galaxy: eunha
+  milkyway: eunha
+  oonar: eunha # :eunhawtf:
+  oonarr: eunha # :eunhawtf:
+  jungeunbi: eunha
+  jungeunbi: eunha
+  jeongeunbi: eunha
+  jeongeunbi: eunha
+
   yuju: yuju
   yuna: yuju
   yujy: yuju
   monarch: yuju
+  choiyuna: yuju
+
+  sinb: sinb
+  sinbi: sinb
+  shinbi: sinb
+  shinb: sinb
+  ddinb: sinb
+  ddinbi: sinb
+  secret: sinb
+  mystery: sinb
+  hwangeunbi: sinb
+
   umji: umji
   yewon: umji
   umjiya: umji
   umjiyah: umji
   thumb: umji
+  kimyewon: umji
+
   manager: manager
   buddy: buddy
   imabuddy: buddy
@@ -109,10 +143,16 @@ member_names:
   황은비: sinb
   김예원: umji
 
+  소정: sowon
+  유나: yuju
+  예원: umji
+
   은비: eunha+sinb
 
-  정: yerin+umji
+  정: yerin+eunha
   예: yerin+umji
+
+  김: sowon+umji
 
   버디: buddy
 
@@ -304,6 +344,11 @@ giveaway_channels:
     - 446755943384875008 # giveaways
 
 trivia_config_reveal_after: 300 # 5 minutes
+
+bias_replacements:
+  "hong jin young": hongjinyoung
+  "kang daniel": kangdaniel
+  "big bang": bigbang
 
 members_of_other_groups:
   momo:
@@ -571,6 +616,10 @@ members_of_other_groups:
     - "SJ"
   heechul:
     - "SJ"
+  "희철":
+    - "SJ"
+  "김희철":
+    - "SJ"
   kyuhyun:
     - "SJ"
   jackson:
@@ -622,6 +671,8 @@ members_of_other_groups:
     - "UNB"
     - "UNI.T"
   sakura:
+    - "서울48"
+  "咲良":
     - "서울48"
   jurina:
     - "서울48"
