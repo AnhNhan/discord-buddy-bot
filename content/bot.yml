@@ -33,21 +33,6 @@ member_names:
   '0530': eunha
   '530': eunha
   # regular members
-  eunha: eunha
-  euhna: eunha # ;_;
-  euna: eunha
-  galaxy: eunha
-  milkyway: eunha
-  oonar: eunha # :eunhawtf:
-  oonarr: eunha # :eunhawtf:
-  sinb: sinb
-  sinbi: sinb
-  shinbi: sinb
-  shinb: sinb
-  ddinb: sinb
-  ddinbi: sinb
-  secret: sinb
-  mystery: sinb
   sowon: sowon
   sojung: sowon
   sojeong: sowon
@@ -73,7 +58,7 @@ member_names:
   hyeri: yerin
   hyerin: yerin
   jungyerin: yerin
-  jeongyering: yerin
+  jeongyerin: yerin
 
   eunha: eunha
   euhna: eunha # ;_;
@@ -111,6 +96,7 @@ member_names:
   kimyewon: umji
 
   manager: manager
+
   buddy: buddy
   imabuddy: buddy
   canada: canadabuddy
