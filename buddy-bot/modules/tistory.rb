@@ -1214,6 +1214,7 @@ module BuddyBot::Modules::Tistory
     end
 
     result_counts = {
+      "total_error" => 0,
       "success_images" => 0,
       "success_videos" => 0,
       "success_links" => 0,
@@ -1229,6 +1230,10 @@ module BuddyBot::Modules::Tistory
     }
 
     results.each do |result|
+      if !result
+        result_counts["total_error"] = result_counts["total_error"] + 1
+        next
+      end
       [ "images", "videos", "links" ].each do |key|
         result[key].each do |element_result|
           if !element_result || !element_result["result"]
