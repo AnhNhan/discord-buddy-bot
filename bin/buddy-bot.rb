@@ -58,8 +58,9 @@ bot.message(with_text: /^!ping\W*$/i) do |event|
 end
 
 bot.include! BuddyBot::Modules::BuddyFunctionality
-bot.include! BuddyBot::Modules::Tistory
-# bot.include! BuddyBot::Modules::InviteBot
-# bot.include! BuddyBot::Modules::Memes
+if localconf["appid"] == 462291371408228352
+  bot.include! BuddyBot::Modules::Tistory
+  BuddyBot::Modules::BuddyFunctionality.activate_crawler_mode()
+end
 
 bot.run

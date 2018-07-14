@@ -999,7 +999,9 @@ module BuddyBot::Modules::Tistory
     if @@abort_twitter_queue_in_progress
       @@abort_twitter_queue_in_progress = false
       self.log ":information_desk_person: Aborted Twitter!", event.bot
+      next
     end
+    self.log ":information_desk_person: Finished going through <#{url}>: \n```\n#{result}\n```"
   end
 
   message(start_with: "!twitter-page ") do |event|
@@ -1087,15 +1089,6 @@ module BuddyBot::Modules::Tistory
     end
     s3_folder = "twitter/@#{author}/#{subfolder}/"
 
-    # self.log ":information_desk_person: Twitter summary: <#{url}>\n" +
-    #   "```\n" +
-    #   "title: '#{title}'\n" +
-    #   "images: #{images}\n" +
-    #   "video ids: #{videos}\n" +
-    #   "links: #{links}\n" +
-    #   "s3 folder: #{s3_folder}\n" +
-    #   "```", event.bot
-
     results_images = images.map do |image_url|
       begin
         image_filename = image_url.scan(/\/([\w-]+\.(jpg|png)):/)[0][0]
@@ -1138,7 +1131,7 @@ module BuddyBot::Modules::Tistory
       # uploading urls
       video_info_url = "https://api.twitter.com/1.1/videos/tweet/config/#{id}.json"
       # track -> playbackUrl (-> resolve playlist/direct link)
-      { "result" => "skipped", "reason" => "not implemented" }
+      { "result" => "not_implemented", "reason" => "not implemented" }
     end
 
     results_links = links.map do |link_url|
@@ -1147,7 +1140,7 @@ module BuddyBot::Modules::Tistory
         @@twitter_downloaded[author][id]["files_links"].include?(Digest::MD5.hexdigest(link_url))
         next { "result" => "skipped" }
       end
-      { "result" => "skipped", "reason" => "not implemented" }
+      { "result" => "not_implemented", "reason" => "not implemented" }
     end
 
     time_end = Time.now
@@ -1220,9 +1213,35 @@ module BuddyBot::Modules::Tistory
       puts "has more pages: #{has_more_items.inspect}, min pos #{earliest_tweet_id.inspect}"
     end
 
+    result_counts = {
+      "success_images" => 0,
+      "success_videos" => 0,
+      "success_links" => 0,
+      "skipped_images" => 0,
+      "skipped_videos" => 0,
+      "skipped_links" => 0,
+      "error_images" => 0,
+      "error_videos" => 0,
+      "error_links" => 0,
+      "not_implemented_images" => 0,
+      "not_implemented_videos" => 0,
+      "not_implemented_links" => 0,
+    }
+
+    [ "images", "videos", "links" ].each do |key|
+      result[key].each do |element_result|
+        if !element_result || !element_result["result"]
+          result_counts["error_" + key] = result_counts["error_" + key] + 1
+        else
+          result_counts[element_result["result"] + "_" + key] = result_counts[element_result["result"] + "_" + key] + 1
+        end
+      end
+    end
+
+    download_summary = result_counts.delete_if { |key, value| value == 0 }.map { |key, value| "#{key}: #{value}x" }.join("\n") || "no media found"
+
     time_end = Time.now
-    self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets in #{(time_end - time_start).round(1)}s", event.bot
-    puts results.inspect
+    self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets in #{(time_end - time_start).round(1)}s\n#{download_summary}", event.bot
   end
 
   def self.twitter_record_successful_result(author, id, result)

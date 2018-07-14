@@ -6,6 +6,7 @@ module BuddyBot::Modules::BuddyFunctionality
   extend Discordrb::EventContainer
 
   @@initialized = false
+  @@is_crawler = false
 
   @@bot_owner_id = 0
 
@@ -98,6 +99,10 @@ module BuddyBot::Modules::BuddyFunctionality
   def self.set_cleverbot(bot)
     @@cleverbot = bot
     @@cleverbot.nick = "BuddyBot"
+  end
+
+  def self.activate_crawler_mode()
+    @@is_crawler = true
   end
 
   def self.is_mod?(server, user)
