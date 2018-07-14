@@ -1228,12 +1228,14 @@ module BuddyBot::Modules::Tistory
       "not_implemented_links" => 0,
     }
 
-    [ "images", "videos", "links" ].each do |key|
-      result[key].each do |element_result|
-        if !element_result || !element_result["result"]
-          result_counts["error_" + key] = result_counts["error_" + key] + 1
-        else
-          result_counts[element_result["result"] + "_" + key] = result_counts[element_result["result"] + "_" + key] + 1
+    results.each do |result|
+      [ "images", "videos", "links" ].each do |key|
+        result[key].each do |element_result|
+          if !element_result || !element_result["result"]
+            result_counts["error_" + key] = result_counts["error_" + key] + 1
+          else
+            result_counts[element_result["result"] + "_" + key] = result_counts[element_result["result"] + "_" + key] + 1
+          end
         end
       end
     end
