@@ -1215,6 +1215,7 @@ module BuddyBot::Modules::Tistory
 
     result_counts = {
       "total_error" => 0,
+      "total_skipped" => 0,
       "success_images" => 0,
       "success_videos" => 0,
       "success_links" => 0,
@@ -1230,8 +1231,12 @@ module BuddyBot::Modules::Tistory
     }
 
     results.each do |result|
-      if !result
+      if !result || result["result"] == "error"
         result_counts["total_error"] = result_counts["total_error"] + 1
+        next
+      end
+      if result["result"] == "skipped"
+        result_counts["total_skipped"] = result_counts["total_skipped"] + 1
         next
       end
       [ "images", "videos", "links" ].each do |key|
