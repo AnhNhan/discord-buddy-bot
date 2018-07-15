@@ -11,6 +11,7 @@ require 'nokogiri'
 require 'httparty'
 require 'image_size'
 require 'parallel'
+require 'm3u8'
 
 require 'discordrb'
 require 'yaml'
@@ -69,12 +70,12 @@ module BuddyBot::Modules::Tistory
     end
     self.log ":information_desk_person: Ready to upload to '#{@@s3_bucket_name}'", event.bot
 
-    @@twt_app_bearer = self.twitter_retrieve_app_bearer(@@twt_consumer_key, @@twt_consumer_secret)
+    @@twt_app_bearer = self.twitter_retrieve_app_bearer(@@twt_consumer_key, @@twt_consumer_secret, event.bot)
 
     # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
     # self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
-    # self.process_tweet("https://twitter.com/Mochi_Yellow/status/1007198387693748224", event)
-    # self.process_tweet("https://twitter.com/mystarmyangel/status/1007664325916438528", event)
+    puts self.process_tweet("https://twitter.com/Mochi_Yellow/status/1007198387693748224", event)
+    puts self.process_tweet("https://twitter.com/mystarmyangel/status/1007664325916438528", event)
     # self.process_tweet("https://twitter.com/gagadoli/status/1007639571150991361", event)
     # self.process_tweet("https://twitter.com/_Simplykpop/status/994782508083539968", event)
   end
@@ -1148,8 +1149,109 @@ module BuddyBot::Modules::Tistory
       end
       # uploading urls
       video_info_url = "https://api.twitter.com/1.1/videos/tweet/config/#{id}.json"
-      # track -> playbackUrl (-> resolve playlist/direct link)
-      { "result" => "not_implemented", "reason" => "not implemented" }
+      video_info_request = HTTParty.get(video_info_url, { headers: { "Authorization" => "Bearer #{@@twt_app_bearer}" } })
+      if video_info_request.code != 200
+        next { "result" => "error", "request" => video_info_request }
+      end
+      video_info = JSON.parse video_info_request.body
+
+      # poster
+      poster_uri = video_info["posterImage"]
+      s3_path = s3_folder + File.basename(poster_uri)
+      begin
+        Tempfile.create('tmpf') do |tempfile|
+          tempfile.write HTTParty.get(poster_uri).body
+          tempfile.seek(0)
+          file_size = tempfile.size
+          object = @@s3_bucket.object(s3_path)
+          result = object.upload_file(tempfile)
+          puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
+          if !result
+            raise 'Upload not successful!'
+          end
+        end
+      rescue Exception => e
+        retry_count = retry_count + 1
+        retry unless retry_count > 5
+        self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
+        next { "result" => "error", "error" => e }
+      end
+
+      # actual video
+      video_uri = video_info["track"]["playbackUrl"]
+      video_type = video_info["track"]["playbackType"]
+      if video_type != "video/mp4" && video_type != "application/x-mpegURL"
+        self.log_warning ":warning: Twitter <#{url}> had unknown video type: #{video_type}\nInfo: `#{video_info}`", event.bot
+        next { "result" => "error", "video_info" => video_info }
+      end
+      if video_type == "application/x-mpegURL"
+        filename = File.basename(video_uri, ".m3u8") + ".mp4"
+        twt_video_host = "https://video.twimg.com"
+        playlist_request = HTTParty.get(video_uri)
+        if playlist_request.code != 200
+          return { "result" => "error", "request" => playlist_request }
+        end
+        playlist = M3u8::Playlist.read playlist_request.body
+        next_playlist_uri = twt_video_host + playlist.items.sort_by { |item| item.bandwidth }[-1].uri
+        next_playlist_request = HTTParty.get(next_playlist_uri)
+        if next_playlist_request.code != 200
+          return { "result" => "error", "request" => next_playlist_request }
+        end
+        next_playlist = M3u8::Playlist.read next_playlist_request.body
+        begin
+          Tempfile.create('tmpf') do |tempfile|
+            next_playlist.items.map { |segment| twt_video_host + segment.segment }.each do |segment_uri|
+              segment_request = HTTParty.get(segment_uri)
+              if segment_request.code != 200
+                return { "result" => "error", "request" => segment_request }
+              end
+              tempfile.write segment_request.body
+            end
+            path = tempfile.path
+            tempfile.flush
+            `ffmpeg -i #{path} -c:v copy -c:a copy -bsf:a aac_adtstoasc #{path}2.mp4`
+
+            s3_path = s3_folder + filename
+            file_size = tempfile.size
+            object = @@s3_bucket.object(s3_path)
+            result = object.upload_file("#{path}2.mp4")
+            puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
+            if !result
+              raise 'Upload not successful!'
+            end
+          end
+        rescue Exception => e
+          retry_count = retry_count + 1
+          retry unless retry_count > 5
+          self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
+          { "result" => "error", "error" => e }
+        end
+
+        { "result" => "success", "id" => filename, "path" => s3_path }
+      else
+        # straight mp4
+        s3_path = s3_folder + File.basename(video_uri)
+        begin
+          Tempfile.create('tmpf') do |tempfile|
+            tempfile.write HTTParty.get(video_uri).body
+            tempfile.flush
+            tempfile.seek(0)
+            file_size = tempfile.size
+            object = @@s3_bucket.object(s3_path)
+            result = object.upload_file(tempfile)
+            puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
+            if !result
+              raise 'Upload not successful!'
+            end
+          end
+          { "result" => "success", "id" => File.basename(video_uri, ".*"), "path" => s3_path }
+        rescue Exception => e
+          retry_count = retry_count + 1
+          retry unless retry_count > 5
+          self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
+          { "result" => "error", "error" => e }
+        end
+      end
     end
 
     results_links = links.map do |link_url|
@@ -1162,7 +1264,6 @@ module BuddyBot::Modules::Tistory
     end
 
     time_end = Time.now
-    # self.log ":ballot_box_with_check: Replicated Tweet <#{url}> in #{(time_end - time_start).round(1)}s", event.bot
     {
       "result" => "success",
       "id" => id,
@@ -1174,6 +1275,7 @@ module BuddyBot::Modules::Tistory
       "expected_images" => images.length,
       "expected_videos" => videos.length,
       "expected_links" => links.length,
+      "time_taken" => time_end - time_start,
     }
   end
 
@@ -1215,7 +1317,7 @@ module BuddyBot::Modules::Tistory
           begin
             self.twitter_record_successful_result(result["author"], result["id"], result)
           rescue => e
-            self.log_warning ":warning: Tweet `#{tweet_url}` had exception:\n```\n#{e.inspect}\n```"
+            self.log_warning ":warning: Tweet `#{tweet_url}` had exception:\n```\n#{e.inspect}\n```", event.bot
           end
         end
         # TODO Do something with errors
