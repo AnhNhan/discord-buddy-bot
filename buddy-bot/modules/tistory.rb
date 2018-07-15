@@ -819,6 +819,7 @@ module BuddyBot::Modules::Tistory
     file_size = 0
     image_w = 0
     image_h = 0
+    retry_count = 0
 
     begin
       Tempfile.create('tmpf') do |tempfile|
@@ -833,6 +834,8 @@ module BuddyBot::Modules::Tistory
         end
       end
     rescue Exception => e
+      retry_count = retry_count + retry_count
+      retry unless retry_count > 5
       self.log_warning ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return { "result" => "error", "error" => e }
     end
@@ -1001,7 +1004,7 @@ module BuddyBot::Modules::Tistory
       self.log ":information_desk_person: Aborted Twitter!", event.bot
       next
     end
-    self.log ":information_desk_person: Finished going through <#{url}>: \n```\n#{result}\n```"
+    self.log ":information_desk_person: Finished going through <#{url}>: \n```\n#{result}\n```", event.bot
   end
 
   message(start_with: "!twitter-page ") do |event|
@@ -1103,6 +1106,7 @@ module BuddyBot::Modules::Tistory
       end
       file_size = 0
       s3_path = s3_folder + image_filename
+      retry_count = 0
       begin
         Tempfile.create('tmpf') do |tempfile|
           tempfile.write HTTParty.get(image_url).body
@@ -1117,6 +1121,8 @@ module BuddyBot::Modules::Tistory
         end
         { "result" => "success", "id" => image_filename, "path" => s3_path }
       rescue Exception => e
+        retry_count = retry_count + 1
+        retry unless retry_count > 5
         self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
         { "result" => "error", "error" => e }
       end
