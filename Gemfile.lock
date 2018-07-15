@@ -649,6 +649,7 @@ GEM
     loofah (2.2.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
+    m3u8 (0.8.1)
     method_source (0.9.0)
     mime-types (3.1)
       mime-types-data (~> 3.2015)
@@ -715,6 +716,7 @@ DEPENDENCIES
   image_size
   levenshtein
   levenshtein-ffi
+  m3u8
   mysql2
   nokogiri
   parallel
