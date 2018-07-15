@@ -1180,7 +1180,8 @@ module BuddyBot::Modules::Tistory
       # actual video
       video_uri = video_info["track"]["playbackUrl"]
       video_type = video_info["track"]["playbackType"]
-      if video_type != "video/mp4" && video_type != "application/x-mpegURL"
+      video_content_type = video_info["track"]["contentType"]
+      if (video_content_type == "media_entity" && (video_type != "video/mp4" && video_type != "application/x-mpegURL")) || video_content_type != "vmap"
         self.log_warning ":warning: Twitter <#{url}> had unknown video type: #{video_type}\nInfo: `#{video_info}`", event.bot
         next { "result" => "error", "video_info" => video_info }
       end
@@ -1229,7 +1230,19 @@ module BuddyBot::Modules::Tistory
 
         { "result" => "success", "id" => filename, "path" => s3_path }
       else
-        # straight mp4
+        # straight mp4 (/ vmap)
+
+        if video_content_type == "vmap"
+          vmap_uri = video_info["track"]["vmapUrl"]
+          vmap_request = HTTParty.get(vmap_uri)
+          if vmap_request.code != 200
+            self.log_warning ":warning: Could not retrieve vmap for <#{url}>: `#{vmap_request.inspect}`", event.bot
+            next { "result" => "error", "request" => vmap_request }
+          end
+          vmap = Nokogiri::XML(vmap_request.body)
+          video_uri = vmap.xpath("//MediaFile").first.content.strip
+        end
+
         s3_path = s3_folder + File.basename(video_uri)
         begin
           Tempfile.create('tmpf') do |tempfile|
