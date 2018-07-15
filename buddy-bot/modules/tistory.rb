@@ -4,6 +4,7 @@ require 'tempfile'
 require 'digest/md5'
 require 'stringio'
 require 'enumerator'
+require 'base64'
 
 require 'aws-sdk'
 require 'nokogiri'
@@ -39,6 +40,10 @@ module BuddyBot::Modules::Tistory
   @@abort_tistory_queue_in_progress = false
   @@abort_twitter_queue_in_progress = false
 
+  @@twt_consumer_key = nil
+  @@twt_consumer_secret = nil
+  @@twt_app_bearer = nil
+
   def self.scan_bot_files()
     @@pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml")) || []
     @@pages_special = YAML.load_file(BuddyBot.path("content/tistory-special-list.yml")) || []
@@ -64,6 +69,8 @@ module BuddyBot::Modules::Tistory
     end
     self.log ":information_desk_person: Ready to upload to '#{@@s3_bucket_name}'", event.bot
 
+    @@twt_app_bearer = self.twitter_retrieve_app_bearer(@@twt_consumer_key, @@twt_consumer_secret)
+
     # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
     # self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
     # self.process_tweet("https://twitter.com/Mochi_Yellow/status/1007198387693748224", event)
@@ -76,6 +83,11 @@ module BuddyBot::Modules::Tistory
     @@s3_bucket_name = name
     @@s3 = Aws::S3::Resource.new()
     @@s3_bucket = @@s3.bucket(@@s3_bucket_name)
+  end
+
+  def self.set_twitter_credentials(key, secret)
+    @@twt_consumer_key = key
+    @@twt_consumer_secret = secret
   end
 
   # invoke this command if you want to e.g. add new audio clips or memes, but don't want to restart the bot. for now, you also have to invoke e.g. #audio-load manually afterwards.
@@ -1314,5 +1326,27 @@ module BuddyBot::Modules::Tistory
       event.send_message _screen_names.map{ |name| "- `#{name}`" }.join("\n")
     end
     event.send_message "EL FINITO."
+  end
+
+  def self.twitter_retrieve_app_bearer(key, secret, bot)
+    endpoint = "https://api.twitter.com/oauth2/token"
+    bearer_basic_authentication = Base64.strict_encode64 "#{key}:#{secret}"
+    result = HTTParty.post(endpoint, {
+      body: 'grant_type=client_credentials',
+      headers: {
+        "Authorization" => "Basic #{bearer_basic_authentication}",
+        "Content-Type" => "application/x-www-form-urlencoded;charset=UTF-8",
+      }
+    })
+    if result.code != 200
+      self.log_warning ":warning: Invalid request when requesting app bearer for Twitter: #{result.inspect}", bot
+      return nil
+    end
+    result_json = JSON.parse(result.body)
+    if result_json["token_type"] != "bearer"
+      self.log_warning ":warning: Invalid data when requesting app bearer for Twitter: #{result_json.inspect}", bot
+      return nil
+    end
+    result_json["access_token"]
   end
 end
