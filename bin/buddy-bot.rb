@@ -10,9 +10,6 @@ end
 require 'discordrb'
 require 'yaml'
 
-require 'aws-sdk'
-require 'cleverbot'
-
 require 'buddy-bot'
 require 'modules/buddy-functionality'
 require 'modules/invite-bot'
@@ -40,10 +37,13 @@ Aws.config.update({
 })
 
 if localconf['cleverbot_access'] && localconf['cleverbot_secret']
+  require 'cleverbot'
   BuddyBot::Modules::BuddyFunctionality.set_cleverbot(Cleverbot.new(localconf['cleverbot_access'], localconf['cleverbot_secret']))
 end
 
-BuddyBot::Modules::Tistory.set_s3_bucket_name(localconf['s3bucket'])
+if localconf['twt_consumer_key'] && localconf['twt_consumer_secret']
+  BuddyBot::Modules::Tistory.set_twitter_credentials(localconf['twt_consumer_key'], localconf['twt_consumer_secret'])
+end
 
 bot = nil
 if localconf["token"] && localconf["token"].length && localconf["appid"] != 0
@@ -58,7 +58,10 @@ bot.message(with_text: /^!ping\W*$/i) do |event|
 end
 
 bot.include! BuddyBot::Modules::BuddyFunctionality
-if localconf["appid"] == 462291371408228352
+
+if localconf["appid"] == 462291371408228352 || localconf["appid"] == 169371086067204096
+  require 'aws-sdk'
+  BuddyBot::Modules::Tistory.set_s3_bucket_name(localconf['s3bucket'])
   bot.include! BuddyBot::Modules::Tistory
   BuddyBot::Modules::BuddyFunctionality.activate_crawler_mode()
 end
