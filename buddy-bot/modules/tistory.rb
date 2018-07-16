@@ -1147,6 +1147,7 @@ module BuddyBot::Modules::Tistory
         @@twitter_downloaded[author][id]["files_videos"].include?(video_id)
         next { "result" => "skipped" }
       end
+      poster_filename = nil
       # uploading urls
       video_info_url = "https://api.twitter.com/1.1/videos/tweet/config/#{id}.json"
       video_info_request = HTTParty.get(video_info_url, { headers: { "Authorization" => "Bearer #{@@twt_app_bearer}" } })
@@ -1155,9 +1156,36 @@ module BuddyBot::Modules::Tistory
       end
       video_info = JSON.parse video_info_request.body
 
+      video_uri = video_info["track"]["playbackUrl"]
+      video_type = video_info["track"]["playbackType"]
+      video_content_type = video_info["track"]["contentType"]
+      if ((video_content_type == "media_entity" || video_content_type == "gif") && (video_type != "video/mp4" && video_type != "application/x-mpegURL")) && video_content_type != "vmap"
+        self.log_warning ":warning: Twitter <#{url}> had unknown video type: #{video_type}\nInfo: `#{video_info}`", event.bot
+        next { "result" => "error", "video_info" => video_info }
+      end
+
+      if video_content_type == "vmap"
+        vmap_uri = video_info["track"]["vmapUrl"]
+        vmap_request = HTTParty.get(vmap_uri)
+        if vmap_request.code != 200
+          self.log_warning ":warning: Could not retrieve vmap for <#{url}>: `#{vmap_request.inspect}`", event.bot
+          next { "result" => "error", "request" => vmap_request }
+        end
+        vmap = Nokogiri::XML(vmap_request.body)
+        video_uri = vmap.xpath("//MediaFile").first.content.strip
+        poster_filename = File.basename(video_uri, ".*") + ".png"
+      end
+
+      if video_type == "application/x-mpegURL"
+        poster_filename = File.basename(video_uri.sub("?tag=3", ""), ".m3u8") + ".jpg"
+      end
+
       # poster
       poster_uri = video_info["posterImage"]
-      s3_path = s3_folder + File.basename(poster_uri)
+      if !poster_filename
+        poster_filename = File.basename(poster_uri)
+      end
+      s3_path = s3_folder + poster_filename
       begin
         Tempfile.create('tmpf') do |tempfile|
           tempfile.write HTTParty.get(poster_uri).body
@@ -1178,15 +1206,8 @@ module BuddyBot::Modules::Tistory
       end
 
       # actual video
-      video_uri = video_info["track"]["playbackUrl"]
-      video_type = video_info["track"]["playbackType"]
-      video_content_type = video_info["track"]["contentType"]
-      if (video_content_type == "media_entity" && (video_type != "video/mp4" && video_type != "application/x-mpegURL")) || video_content_type != "vmap"
-        self.log_warning ":warning: Twitter <#{url}> had unknown video type: #{video_type}\nInfo: `#{video_info}`", event.bot
-        next { "result" => "error", "video_info" => video_info }
-      end
       if video_type == "application/x-mpegURL"
-        filename = File.basename(video_uri, ".m3u8") + ".mp4"
+        filename = File.basename(video_uri.sub("?tag=3", ""), ".m3u8") + ".mp4"
         twt_video_host = "https://video.twimg.com"
         playlist_request = HTTParty.get(video_uri)
         if playlist_request.code != 200
@@ -1231,17 +1252,6 @@ module BuddyBot::Modules::Tistory
         { "result" => "success", "id" => filename, "path" => s3_path }
       else
         # straight mp4 (/ vmap)
-
-        if video_content_type == "vmap"
-          vmap_uri = video_info["track"]["vmapUrl"]
-          vmap_request = HTTParty.get(vmap_uri)
-          if vmap_request.code != 200
-            self.log_warning ":warning: Could not retrieve vmap for <#{url}>: `#{vmap_request.inspect}`", event.bot
-            next { "result" => "error", "request" => vmap_request }
-          end
-          vmap = Nokogiri::XML(vmap_request.body)
-          video_uri = vmap.xpath("//MediaFile").first.content.strip
-        end
 
         s3_path = s3_folder + File.basename(video_uri)
         begin
@@ -1317,7 +1327,7 @@ module BuddyBot::Modules::Tistory
       tweet_urls = tweets_html.css(".tweet").map do |div|
         # these are absolute urls without host
         div.attribute("data-permalink-path").to_s
-      end
+      end || []
 
       tweet_urls.each do |tweet_url|
         result = self.process_tweet(tweet_url, event)
