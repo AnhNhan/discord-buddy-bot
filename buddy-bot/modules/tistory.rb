@@ -1383,7 +1383,7 @@ module BuddyBot::Modules::Tistory
         next
       end
       [ "images", "videos", "links" ].each do |key|
-        result[key].each do |element_result|
+        (result[key] []).each do |element_result|
           if !element_result || !element_result["result"]
             result_counts["error_" + key] = result_counts["error_" + key] + 1
           else
