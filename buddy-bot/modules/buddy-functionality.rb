@@ -218,9 +218,9 @@ module BuddyBot::Modules::BuddyFunctionality
     BuddyBot.build_emoji_map(event.bot.servers)
     event.bot.game = @@motd.sample
 
-    @@scheduler.every '20m' do
-      event.bot.send_message @@yerin_pic_spam_channel, "Test"
-    end
+    # @@scheduler.every '20m' do
+    #   event.bot.send_message @@yerin_pic_spam_channel, "Test"
+    # end
 
     self.log "ready!", event.bot
   end
