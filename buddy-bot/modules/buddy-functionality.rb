@@ -51,6 +51,9 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@member_name_regex = /([A-z0-9\p{Katakana}\p{Hangul}]+)/
 
+  @@scheduler = Rufus::Scheduler.new
+  @@yerin_pic_spam_channel = 0
+
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
 
@@ -74,6 +77,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@bot_owner_id = member_config["bot_owner_id"]
     @@server_log_channels = member_config["server_log_channels"]
     @@server_moderator_roles = member_config["server_moderator_roles"]
+    @@yerin_pic_spam_channel = member_config["yerin_pic_spam_channel"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
 
@@ -212,6 +216,11 @@ module BuddyBot::Modules::BuddyFunctionality
     end
     BuddyBot.build_emoji_map(event.bot.servers)
     event.bot.game = @@motd.sample
+
+    scheduler.every '20m' do
+      bot.send_message @@yerin_pic_spam_channel, "Test"
+    end
+
     self.log "ready!", event.bot
   end
 
