@@ -1,5 +1,6 @@
 
 $LOAD_PATH << (File.dirname(__FILE__) + "/../buddy-bot/")
+$LOAD_PATH << (File.dirname(__FILE__) + "/../buddybot-api/")
 
 begin
   require 'rbnacl/libsodium'
