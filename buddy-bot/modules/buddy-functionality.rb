@@ -232,7 +232,7 @@ module BuddyBot::Modules::BuddyFunctionality
     begin
       server = event.server
       if !@@new_member_roles.include? server.id
-        self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot, event.server
+        self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot, server
         next
       end
       role_ids = @@new_member_roles[server.id]
@@ -241,15 +241,19 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       member = event.user.on(server)
       member.roles = roles
-      self.log ":information_desk_person: Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+      self.log ":information_desk_person: Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot, server
       if @@member_message_counts.include?(event.user.id)
-        self.log ":warning: User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+        self.log ":warning: User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, server
         @@member_message_counts.delete(event.user.id)
       end
-      event.server.general_channel.send_message "#{event.user.mention} joined! " +
-        "Welcome to the GFriend Discord server! Please make sure to read the " +
-        "rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>. " +
-        "_Do note new members are blocked from posting pictures and embeds for a limited amount of time._"
+      if server.id == 468731351374364672 # yerin pic spam
+        server.general_channel.send_message "#{event.user.mention} :sujipraise: Thanks for subscribing to the Yerin pic spam!"
+      else
+        server.general_channel.send_message "#{event.user.mention} joined! " +
+          "Welcome to the GFriend Discord server! Please make sure to read the " +
+          "rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>. " +
+          "_Do note new members are blocked from posting pictures and embeds for a limited amount of time._"
+      end
     rescue
     end
   end
