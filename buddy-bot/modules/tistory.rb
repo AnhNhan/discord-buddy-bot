@@ -4,12 +4,14 @@ require 'tempfile'
 require 'digest/md5'
 require 'stringio'
 require 'enumerator'
+require 'base64'
 
 require 'aws-sdk'
 require 'nokogiri'
 require 'httparty'
 require 'image_size'
 require 'parallel'
+require 'm3u8'
 
 require 'discordrb'
 require 'yaml'
@@ -39,6 +41,10 @@ module BuddyBot::Modules::Tistory
   @@abort_tistory_queue_in_progress = false
   @@abort_twitter_queue_in_progress = false
 
+  @@twt_consumer_key = nil
+  @@twt_consumer_secret = nil
+  @@twt_app_bearer = nil
+
   def self.scan_bot_files()
     @@pages = YAML.load_file(BuddyBot.path("content/tistory-list.yml")) || []
     @@pages_special = YAML.load_file(BuddyBot.path("content/tistory-special-list.yml")) || []
@@ -64,10 +70,12 @@ module BuddyBot::Modules::Tistory
     end
     self.log ":information_desk_person: Ready to upload to '#{@@s3_bucket_name}'", event.bot
 
+    @@twt_app_bearer = self.twitter_retrieve_app_bearer(@@twt_consumer_key, @@twt_consumer_secret, event.bot)
+
     # self.process_mobile_page("http://gfriendcom.tistory.com/m/145", "http://gfriendcom.tistory.com/m/145", "gfriendcom", "145", event, true)
     # self.process_tweet("https://twitter.com/Candle4_YB/status/1007759490588934144", event)
-    # self.process_tweet("https://twitter.com/Mochi_Yellow/status/1007198387693748224", event)
-    # self.process_tweet("https://twitter.com/mystarmyangel/status/1007664325916438528", event)
+    # puts self.process_tweet("https://twitter.com/Mochi_Yellow/status/1007198387693748224", event)
+    # puts self.process_tweet("https://twitter.com/mystarmyangel/status/1007664325916438528", event)
     # self.process_tweet("https://twitter.com/gagadoli/status/1007639571150991361", event)
     # self.process_tweet("https://twitter.com/_Simplykpop/status/994782508083539968", event)
   end
@@ -76,6 +84,11 @@ module BuddyBot::Modules::Tistory
     @@s3_bucket_name = name
     @@s3 = Aws::S3::Resource.new()
     @@s3_bucket = @@s3.bucket(@@s3_bucket_name)
+  end
+
+  def self.set_twitter_credentials(key, secret)
+    @@twt_consumer_key = key
+    @@twt_consumer_secret = secret
   end
 
   # invoke this command if you want to e.g. add new audio clips or memes, but don't want to restart the bot. for now, you also have to invoke e.g. #audio-load manually afterwards.
@@ -819,6 +832,7 @@ module BuddyBot::Modules::Tistory
     file_size = 0
     image_w = 0
     image_h = 0
+    retry_count = 0
 
     begin
       Tempfile.create('tmpf') do |tempfile|
@@ -833,6 +847,8 @@ module BuddyBot::Modules::Tistory
         end
       end
     rescue Exception => e
+      retry_count = retry_count + retry_count
+      retry unless retry_count > 5
       self.log_warning ":warning: Url <#{url}> / `#{s3_filename}` had upload error to S3! #{e}", event.bot
       return { "result" => "error", "error" => e }
     end
@@ -999,7 +1015,9 @@ module BuddyBot::Modules::Tistory
     if @@abort_twitter_queue_in_progress
       @@abort_twitter_queue_in_progress = false
       self.log ":information_desk_person: Aborted Twitter!", event.bot
+      next
     end
+    self.log ":information_desk_person: Finished going through <#{url}>: \n```\n#{result}\n```", event.bot
   end
 
   message(start_with: "!twitter-page ") do |event|
@@ -1087,15 +1105,6 @@ module BuddyBot::Modules::Tistory
     end
     s3_folder = "twitter/@#{author}/#{subfolder}/"
 
-    # self.log ":information_desk_person: Twitter summary: <#{url}>\n" +
-    #   "```\n" +
-    #   "title: '#{title}'\n" +
-    #   "images: #{images}\n" +
-    #   "video ids: #{videos}\n" +
-    #   "links: #{links}\n" +
-    #   "s3 folder: #{s3_folder}\n" +
-    #   "```", event.bot
-
     results_images = images.map do |image_url|
       begin
         image_filename = image_url.scan(/\/([\w-]+\.(jpg|png)):/)[0][0]
@@ -1110,6 +1119,7 @@ module BuddyBot::Modules::Tistory
       end
       file_size = 0
       s3_path = s3_folder + image_filename
+      retry_count = 0
       begin
         Tempfile.create('tmpf') do |tempfile|
           tempfile.write HTTParty.get(image_url).body
@@ -1124,6 +1134,8 @@ module BuddyBot::Modules::Tistory
         end
         { "result" => "success", "id" => image_filename, "path" => s3_path }
       rescue Exception => e
+        retry_count = retry_count + 1
+        retry unless retry_count > 5
         self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
         { "result" => "error", "error" => e }
       end
@@ -1135,10 +1147,134 @@ module BuddyBot::Modules::Tistory
         @@twitter_downloaded[author][id]["files_videos"].include?(video_id)
         next { "result" => "skipped" }
       end
+      poster_filename = nil
       # uploading urls
       video_info_url = "https://api.twitter.com/1.1/videos/tweet/config/#{id}.json"
-      # track -> playbackUrl (-> resolve playlist/direct link)
-      { "result" => "skipped", "reason" => "not implemented" }
+      video_info_request = HTTParty.get(video_info_url, { headers: { "Authorization" => "Bearer #{@@twt_app_bearer}" } })
+      if video_info_request.code != 200
+        next { "result" => "error", "request" => video_info_request }
+      end
+      video_info = JSON.parse video_info_request.body
+
+      video_uri = video_info["track"]["playbackUrl"]
+      video_type = video_info["track"]["playbackType"]
+      video_content_type = video_info["track"]["contentType"]
+      if ((video_content_type == "media_entity" || video_content_type == "gif") && (video_type != "video/mp4" && video_type != "application/x-mpegURL")) && video_content_type != "vmap"
+        self.log_warning ":warning: Twitter <#{url}> had unknown video type: #{video_type}\nInfo: `#{video_info}`", event.bot
+        next { "result" => "error", "video_info" => video_info }
+      end
+
+      if video_content_type == "vmap"
+        vmap_uri = video_info["track"]["vmapUrl"]
+        vmap_request = HTTParty.get(vmap_uri)
+        if vmap_request.code != 200
+          self.log_warning ":warning: Could not retrieve vmap for <#{url}>: `#{vmap_request.inspect}`", event.bot
+          next { "result" => "error", "request" => vmap_request }
+        end
+        vmap = Nokogiri::XML(vmap_request.body)
+        video_uri = vmap.xpath("//MediaFile").first.content.strip
+        poster_filename = File.basename(video_uri, ".*") + ".png"
+      end
+
+      if video_type == "application/x-mpegURL"
+        poster_filename = File.basename(video_uri.sub("?tag=3", ""), ".m3u8") + ".jpg"
+      end
+
+      # poster
+      poster_uri = video_info["posterImage"]
+      if !poster_filename
+        poster_filename = File.basename(poster_uri)
+      end
+      s3_path = s3_folder + poster_filename
+      begin
+        Tempfile.create('tmpf') do |tempfile|
+          tempfile.write HTTParty.get(poster_uri).body
+          tempfile.seek(0)
+          file_size = tempfile.size
+          object = @@s3_bucket.object(s3_path)
+          result = object.upload_file(tempfile)
+          puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
+          if !result
+            raise 'Upload not successful!'
+          end
+        end
+      rescue Exception => e
+        retry_count = retry_count + 1
+        retry unless retry_count > 5
+        self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
+        next { "result" => "error", "error" => e }
+      end
+
+      # actual video
+      if video_type == "application/x-mpegURL"
+        filename = File.basename(video_uri.sub("?tag=3", ""), ".m3u8") + ".mp4"
+        twt_video_host = "https://video.twimg.com"
+        playlist_request = HTTParty.get(video_uri)
+        if playlist_request.code != 200
+          return { "result" => "error", "request" => playlist_request }
+        end
+        playlist = M3u8::Playlist.read playlist_request.body
+        next_playlist_uri = twt_video_host + playlist.items.sort_by { |item| item.bandwidth }[-1].uri
+        next_playlist_request = HTTParty.get(next_playlist_uri)
+        if next_playlist_request.code != 200
+          return { "result" => "error", "request" => next_playlist_request }
+        end
+        next_playlist = M3u8::Playlist.read next_playlist_request.body
+        begin
+          Tempfile.create('tmpf') do |tempfile|
+            next_playlist.items.map { |segment| twt_video_host + segment.segment }.each do |segment_uri|
+              segment_request = HTTParty.get(segment_uri)
+              if segment_request.code != 200
+                return { "result" => "error", "request" => segment_request }
+              end
+              tempfile.write segment_request.body
+            end
+            path = tempfile.path
+            tempfile.flush
+            `ffmpeg -i #{path} -c:v copy -c:a copy -bsf:a aac_adtstoasc #{path}2.mp4`
+
+            s3_path = s3_folder + filename
+            file_size = tempfile.size
+            object = @@s3_bucket.object(s3_path)
+            result = object.upload_file("#{path}2.mp4")
+            puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
+            if !result
+              raise 'Upload not successful!'
+            end
+          end
+        rescue Exception => e
+          retry_count = retry_count + 1
+          retry unless retry_count > 5
+          self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
+          { "result" => "error", "error" => e }
+        end
+
+        { "result" => "success", "id" => filename, "path" => s3_path }
+      else
+        # straight mp4 (/ vmap)
+
+        s3_path = s3_folder + File.basename(video_uri)
+        begin
+          Tempfile.create('tmpf') do |tempfile|
+            tempfile.write HTTParty.get(video_uri).body
+            tempfile.flush
+            tempfile.seek(0)
+            file_size = tempfile.size
+            object = @@s3_bucket.object(s3_path)
+            result = object.upload_file(tempfile)
+            puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
+            if !result
+              raise 'Upload not successful!'
+            end
+          end
+          { "result" => "success", "id" => File.basename(video_uri, ".*"), "path" => s3_path }
+        rescue Exception => e
+          retry_count = retry_count + 1
+          retry unless retry_count > 5
+          self.log_warning ":warning: Url <#{url}> / `#{s3_path}` had upload error to S3! #{e.inspect}", event.bot
+          { "result" => "error", "error" => e }
+        end
+      end
     end
 
     results_links = links.map do |link_url|
@@ -1147,11 +1283,10 @@ module BuddyBot::Modules::Tistory
         @@twitter_downloaded[author][id]["files_links"].include?(Digest::MD5.hexdigest(link_url))
         next { "result" => "skipped" }
       end
-      { "result" => "skipped", "reason" => "not implemented" }
+      { "result" => "not_implemented", "reason" => "not implemented" }
     end
 
     time_end = Time.now
-    # self.log ":ballot_box_with_check: Replicated Tweet <#{url}> in #{(time_end - time_start).round(1)}s", event.bot
     {
       "result" => "success",
       "id" => id,
@@ -1163,6 +1298,7 @@ module BuddyBot::Modules::Tistory
       "expected_images" => images.length,
       "expected_videos" => videos.length,
       "expected_links" => links.length,
+      "time_taken" => time_end - time_start,
     }
   end
 
@@ -1191,7 +1327,7 @@ module BuddyBot::Modules::Tistory
       tweet_urls = tweets_html.css(".tweet").map do |div|
         # these are absolute urls without host
         div.attribute("data-permalink-path").to_s
-      end
+      end || []
 
       tweet_urls.each do |tweet_url|
         result = self.process_tweet(tweet_url, event)
@@ -1204,7 +1340,7 @@ module BuddyBot::Modules::Tistory
           begin
             self.twitter_record_successful_result(result["author"], result["id"], result)
           rescue => e
-            self.log_warning ":warning: Tweet `#{tweet_url}` had exception:\n```\n#{e.inspect}\n```"
+            self.log_warning ":warning: Tweet `#{tweet_url}` had exception:\n```\n#{e.inspect}\n```", event.bot
           end
         end
         # TODO Do something with errors
@@ -1220,9 +1356,47 @@ module BuddyBot::Modules::Tistory
       puts "has more pages: #{has_more_items.inspect}, min pos #{earliest_tweet_id.inspect}"
     end
 
+    result_counts = {
+      "total_error" => 0,
+      "total_skipped" => 0,
+      "success_images" => 0,
+      "success_videos" => 0,
+      "success_links" => 0,
+      "skipped_images" => 0,
+      "skipped_videos" => 0,
+      "skipped_links" => 0,
+      "error_images" => 0,
+      "error_videos" => 0,
+      "error_links" => 0,
+      "not_implemented_images" => 0,
+      "not_implemented_videos" => 0,
+      "not_implemented_links" => 0,
+    }
+
+    results.each do |result|
+      if !result || result["result"] == "error"
+        result_counts["total_error"] = result_counts["total_error"] + 1
+        next
+      end
+      if result["result"] == "skipped"
+        result_counts["total_skipped"] = result_counts["total_skipped"] + 1
+        next
+      end
+      [ "images", "videos", "links" ].each do |key|
+        (result[key] || []).each do |element_result|
+          if !element_result || !element_result["result"]
+            result_counts["error_" + key] = result_counts["error_" + key] + 1
+          else
+            result_counts[element_result["result"] + "_" + key] = result_counts[element_result["result"] + "_" + key] + 1
+          end
+        end
+      end
+    end
+
+    download_summary = result_counts.delete_if { |key, value| value == 0 }.map { |key, value| "#{key}: #{value}x" }.join("\n") || "no media found"
+
     time_end = Time.now
-    self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets in #{(time_end - time_start).round(1)}s", event.bot
-    puts results.inspect
+    self.log ":ballot_box_with_check: Finished going through @#{author}'s page, processing #{results.length}x tweets in #{(time_end - time_start).round(1)}s\n#{download_summary}", event.bot
   end
 
   def self.twitter_record_successful_result(author, id, result)
@@ -1277,5 +1451,27 @@ module BuddyBot::Modules::Tistory
       event.send_message _screen_names.map{ |name| "- `#{name}`" }.join("\n")
     end
     event.send_message "EL FINITO."
+  end
+
+  def self.twitter_retrieve_app_bearer(key, secret, bot)
+    endpoint = "https://api.twitter.com/oauth2/token"
+    bearer_basic_authentication = Base64.strict_encode64 "#{key}:#{secret}"
+    result = HTTParty.post(endpoint, {
+      body: 'grant_type=client_credentials',
+      headers: {
+        "Authorization" => "Basic #{bearer_basic_authentication}",
+        "Content-Type" => "application/x-www-form-urlencoded;charset=UTF-8",
+      }
+    })
+    if result.code != 200
+      self.log_warning ":warning: Invalid request when requesting app bearer for Twitter: #{result.inspect}", bot
+      return nil
+    end
+    result_json = JSON.parse(result.body)
+    if result_json["token_type"] != "bearer"
+      self.log_warning ":warning: Invalid data when requesting app bearer for Twitter: #{result_json.inspect}", bot
+      return nil
+    end
+    result_json["access_token"]
   end
 end

@@ -277,6 +277,7 @@ special_members:
   azradiel: 241236030890442753
 
 bot_owner_id: 139342974776639489
+bot_crawler_id: 462291371408228352
 
 server_log_channels:
   166304074252288000: 449778819310682112 # gfcord
@@ -287,6 +288,8 @@ server_log_channels:
 server_moderator_roles:
   166304074252288000:
     - 166349311871811585 # Bot Commander
+  468731351374364672: # yerin pic spam
+    - 468779610520289300 # Moooods
 
 new_member_roles:
   166304074252288000: # gfcord
@@ -295,6 +298,8 @@ new_member_roles:
   165551300375871488: # anh-test
     - 430694026954670081 # new
     - 168813906444156929 # buddy
+  468731351374364672: # yerin pic spam
+    - 468779096566923276 # Yenhie
 
 server_thresholds:
   166304074252288000: 100 # gfcord
