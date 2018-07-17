@@ -284,6 +284,7 @@ server_log_channels:
   165551300375871488: 449780784119676940 # anh-test
   123456            : 453243720922431508 # tistory-log
   12345678          : 455427647619465238 # tistory-log-warnings
+  468731351374364672: 468818853783273512 # yerinpicspam
 
 server_moderator_roles:
   166304074252288000:
@@ -300,16 +301,20 @@ new_member_roles:
     - 168813906444156929 # buddy
   468731351374364672: # yerin pic spam
     - 468779096566923276 # Yenhie
+    - 468850607843835914 # New Guy
 
 server_thresholds:
   166304074252288000: 100 # gfcord
   165551300375871488: 5   # anh-test
+  468731351374364672: 2   # yerin pic spam
 
 server_threshold_remove_roles:
   166304074252288000: # gfcord
     - 430593431195353088 # NEW
   165551300375871488: # anh-test
     - 430694026954670081 # new
+  468731351374364672: # yerin pic spam
+    - 468850607843835914 # New Guy
 
 server_threshold_ignore_channels:
   166304074252288000: # gfcord
@@ -320,6 +325,8 @@ server_threshold_ignore_channels:
   165551300375871488: # anh-test
     - 168814529902280704 # whos-your-bias
     - 435593424117301259 # bot-commands
+  468731351374364672: # yerin pic spam
+    - 468829727830835200 # bot
 
 # if set, whitelisted channels for bot commands & giveaway status requests
 server_bot_commands:
@@ -327,6 +334,8 @@ server_bot_commands:
     - 318787939360571393 # bot-commands
   165551300375871488: # anh-test
     - 435593424117301259 # bot-commands
+  468731351374364672: # yerin pic spam
+    - 468829727830835200 # bot
 
 # whitelisted channels for giveaway status requests
 giveaway_channels:
