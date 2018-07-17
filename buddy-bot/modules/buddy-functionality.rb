@@ -219,7 +219,7 @@ module BuddyBot::Modules::BuddyFunctionality
     event.bot.game = @@motd.sample
 
     @@scheduler.every '20m' do
-      bot.send_message @@yerin_pic_spam_channel, "Test"
+      event.bot.send_message @@yerin_pic_spam_channel, "Test"
     end
 
     self.log "ready!", event.bot
