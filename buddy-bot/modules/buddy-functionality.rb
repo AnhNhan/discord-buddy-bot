@@ -1,6 +1,7 @@
 
 require 'discordrb'
 require 'yaml'
+require 'rufus-scheduler'
 
 module BuddyBot::Modules::BuddyFunctionality
   extend Discordrb::EventContainer
