@@ -258,7 +258,7 @@ module BuddyBot::Modules::BuddyFunctionality
         @@member_message_counts.delete(event.user.id)
       end
       if server.id == 468731351374364672 # yerin pic spam
-        server.general_channel.send_message "#{event.user.mention} :sujipraise: Thanks for subscribing to the Yerin pic spam!"
+        event.bot.send_message @@yerin_pic_spam_channel, "#{event.user.mention} :sujipraise: Thanks for subscribing to the Yerin pic spam!"
       else
         server.general_channel.send_message "#{event.user.mention} joined! " +
           "Welcome to the GFriend Discord server! Please make sure to read the " +
