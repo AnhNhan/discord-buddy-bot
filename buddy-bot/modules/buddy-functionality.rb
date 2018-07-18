@@ -224,7 +224,7 @@ module BuddyBot::Modules::BuddyFunctionality
       @@scheduler.every '2m' do
         yerinpics_root = BuddyBot.path("content/yerinpics/")
         selected_file = yerinpics_root + `cd #{yerinpics_root}; find . -type f | grep -v .gitkeep | shuf -n1`[2..-1]
-        self.log ":information_desk_person: Sending `#{selected_file}` to <##{@@yerin_pic_spam_channel}>."
+        self.log ":information_desk_person: Sending `#{selected_file}` to <##{@@yerin_pic_spam_channel}>.", event.bot, { :id => 468731351374364672 }
         event.bot.send_file @@yerin_pic_spam_channel, File.open(selected_file, "r")
       end
     end
