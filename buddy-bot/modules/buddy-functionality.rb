@@ -1,6 +1,7 @@
 
 require 'discordrb'
 require 'yaml'
+require 'rufus-scheduler'
 
 module BuddyBot::Modules::BuddyFunctionality
   extend Discordrb::EventContainer
@@ -51,6 +52,9 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@member_name_regex = /([A-z0-9\p{Katakana}\p{Hangul}]+)/
 
+  @@scheduler = Rufus::Scheduler.new
+  @@yerin_pic_spam_channel = 0
+
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
 
@@ -74,6 +78,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@bot_owner_id = member_config["bot_owner_id"]
     @@server_log_channels = member_config["server_log_channels"]
     @@server_moderator_roles = member_config["server_moderator_roles"]
+    @@yerin_pic_spam_channel = member_config["yerin_pic_spam_channel"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
 
@@ -212,6 +217,11 @@ module BuddyBot::Modules::BuddyFunctionality
     end
     BuddyBot.build_emoji_map(event.bot.servers)
     event.bot.game = @@motd.sample
+
+    # @@scheduler.every '20m' do
+    #   event.bot.send_message @@yerin_pic_spam_channel, "Test"
+    # end
+
     self.log "ready!", event.bot
   end
 
@@ -223,7 +233,7 @@ module BuddyBot::Modules::BuddyFunctionality
     begin
       server = event.server
       if !@@new_member_roles.include? server.id
-        self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot, event.server
+        self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot, server
         next
       end
       role_ids = @@new_member_roles[server.id]
@@ -232,15 +242,19 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       member = event.user.on(server)
       member.roles = roles
-      self.log ":information_desk_person: Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+      self.log ":information_desk_person: Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - \##{event.user.id}'", event.bot, server
       if @@member_message_counts.include?(event.user.id)
-        self.log ":warning: User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+        self.log ":warning: User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, server
         @@member_message_counts.delete(event.user.id)
       end
-      event.server.general_channel.send_message "#{event.user.mention} joined! " +
-        "Welcome to the GFriend Discord server! Please make sure to read the " +
-        "rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>. " +
-        "_Do note new members are blocked from posting pictures and embeds for a limited amount of time._"
+      if server.id == 468731351374364672 # yerin pic spam
+        server.general_channel.send_message "#{event.user.mention} :sujipraise: Thanks for subscribing to the Yerin pic spam!"
+      else
+        server.general_channel.send_message "#{event.user.mention} joined! " +
+          "Welcome to the GFriend Discord server! Please make sure to read the " +
+          "rules in <#290827788016156674>. You can pick a bias in <#166340324355080193>. " +
+          "_Do note new members are blocked from posting pictures and embeds for a limited amount of time._"
+      end
     rescue
     end
   end
