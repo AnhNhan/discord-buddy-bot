@@ -225,6 +225,7 @@ module BuddyBot::Modules::BuddyFunctionality
         yerinpics_root = BuddyBot.path("content/yerinpics/")
         selected_file = `cd /; find #{yerinpics_root} -type f | grep -v .gitkeep | shuf -n1`
         selected_file = selected_file.sub "../", ""
+        selected_file = selected_file.strip
         self.log ":information_desk_person: Sending `#{selected_file}` to <##{@@yerin_pic_spam_channel}>.", event.bot, Struct.new(:id).new(468731351374364672)
         event.bot.send_file @@yerin_pic_spam_channel, File.open(selected_file, "r")
       end
