@@ -221,7 +221,7 @@ module BuddyBot::Modules::BuddyFunctionality
     event.bot.game = @@motd.sample
 
     if !@@is_crawler
-      @@scheduler.every '2m' do
+      @@scheduler.every '20m' do
         yerinpics_root = BuddyBot.path("content/yerinpics/")
         selected_file = `cd /; find #{yerinpics_root} -type f | grep -v .gitkeep | shuf -n1`
         selected_file = selected_file.sub /\n/, ""
