@@ -222,7 +222,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
     if !@@is_crawler
       @@scheduler.every '2m' do
-        yerinpics_root = BuddyBot.path("../content/yerinpics/")
+        yerinpics_root = BuddyBot.path("content/yerinpics/")
         selected_file = `cd /; find #{yerinpics_root} -type f | grep -v .gitkeep | shuf -n1`
         selected_file = selected_file.sub /\n/, ""
         self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{@@yerin_pic_spam_channel}>.", event.bot, Struct.new(:id).new(468731351374364672)
