@@ -209,18 +209,24 @@ module BuddyBot::Modules::BuddyFunctionality
   ready do |event|
     if not @@initialized
       self.scan_bot_files()
-      self.scan_member_message_counts()
-      self.scan_giveaway_joins()
-      self.scan_trivia_lists()
+      if !@@is_crawler
+        self.scan_member_message_counts()
+        self.scan_giveaway_joins()
+        self.scan_trivia_lists()
+      end
       # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
       @@initialized = true
     end
     BuddyBot.build_emoji_map(event.bot.servers)
     event.bot.game = @@motd.sample
 
-    # @@scheduler.every '20m' do
-    #   event.bot.send_message @@yerin_pic_spam_channel, "Test"
-    # end
+    if !@@is_crawler
+      @@scheduler.every '20m' do
+        yerinpics_root = BuddyBot.path("content/yerinpics/")
+        selected_file = yerinpics_root + `cd #{yerinpics_root}; find . -type f | grep -v .gitkeep | shuf -n1`
+        event.bot.send_file @@yerin_pic_spam_channel, File.open(selected_file, "r")
+      end
+    end
 
     self.log "ready!", event.bot
   end
@@ -230,6 +236,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   member_join do |event|
+    next if @@is_crawler
     begin
       server = event.server
       if !@@new_member_roles.include? server.id
@@ -276,6 +283,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # new member counting
   message() do |event|
+    next if @@is_crawler
     server = event.server
     if server.nil? || event.user.nil? || event.user.bot_account? || !@@server_threshold_remove_roles.include?(server.id) || !@@server_thresholds.include?(server.id)
       next
