@@ -220,7 +220,7 @@ module BuddyBot::Modules::BuddyFunctionality
     BuddyBot.build_emoji_map(event.bot.servers)
     event.bot.game = @@motd.sample
 
-    if event.bot.id == 168796631137910784
+    if event.bot.profile.id == 168796631137910784
       @@scheduler.every '20m' do
         yerinpics_root = BuddyBot.path("content/yerinpics/")
         selected_file = `cd /; find #{yerinpics_root} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
