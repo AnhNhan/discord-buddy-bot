@@ -1249,7 +1249,7 @@ module BuddyBot::Modules::Tistory
           { "result" => "error", "error" => e }
         end
 
-        { "result" => "success", "id" => filename, "path" => s3_path }
+        { "result" => "success", "id" => video_id, "path" => s3_path }
       else
         # straight mp4 (/ vmap)
 
@@ -1267,7 +1267,7 @@ module BuddyBot::Modules::Tistory
               raise 'Upload not successful!'
             end
           end
-          { "result" => "success", "id" => File.basename(video_uri, ".*"), "path" => s3_path }
+          { "result" => "success", "id" => video_id, "path" => s3_path }
         rescue Exception => e
           retry_count = retry_count + 1
           retry unless retry_count > 5
