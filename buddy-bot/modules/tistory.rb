@@ -67,18 +67,6 @@ module BuddyBot::Modules::Tistory
     if !@@initialized
       self.scan_bot_files()
       @@initialized = true
-
-      @@twitter_downloaded.keys.each do |page_name|
-        site = @@twitter_downloaded[page_name]
-        site.keys.each do |page_number|
-          files_videos = @@twitter_downloaded[page_name][page_number]["files_videos"]
-          files_videos.keys.each do |id|
-              @@twitter_downloaded[page_name][page_number]["files_videos"].delete id
-          end
-        end
-      end
-      File.open(BuddyBot.path("content/downloaded-twitter.yml"), "w") { |file| file.write(YAML.dump(@@twitter_downloaded)) }
-
     end
     self.log ":information_desk_person: Ready to upload to '#{@@s3_bucket_name}'", event.bot
 
