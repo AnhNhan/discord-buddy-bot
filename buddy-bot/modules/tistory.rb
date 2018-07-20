@@ -67,6 +67,18 @@ module BuddyBot::Modules::Tistory
     if !@@initialized
       self.scan_bot_files()
       @@initialized = true
+
+      @@twitter_downloaded.keys.each do |page_name|
+        site = @@twitter_downloaded[page_name]
+        site.keys.each do |page_number|
+          files_videos = @@twitter_downloaded[page_name][page_number]["files_videos"]
+          files_videos.keys.each do |id|
+              @@twitter_downloaded[page_name][page_number]["files_videos"].delete id
+          end
+        end
+      end
+      File.open(BuddyBot.path("content/downloaded-twitter.yml"), "w") { |file| file.write(YAML.dump(@@twitter_downloaded)) }
+
     end
     self.log ":information_desk_person: Ready to upload to '#{@@s3_bucket_name}'", event.bot
 
@@ -1149,7 +1161,7 @@ module BuddyBot::Modules::Tistory
       end
       poster_filename = nil
       # uploading urls
-      video_info_url = "https://api.twitter.com/1.1/videos/tweet/config/#{id}.json"
+      video_info_url = "https://api.twitter.com/1.1/videos/tweet/config/#{video_id}.json"
       video_info_request = HTTParty.get(video_info_url, { headers: { "Authorization" => "Bearer #{@@twt_app_bearer}" } })
       if video_info_request.code != 200
         next { "result" => "error", "request" => video_info_request }
