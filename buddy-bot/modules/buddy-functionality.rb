@@ -134,7 +134,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   def self.find_emoji(input)
-    input.downcase.scan(/([A-z]+)/).select{ |part| @@member_role_emoji_join.include?(part.first) }.flatten
+    input.downcase.scan(/([A-z6]+)/).select{ |part| @@member_role_emoji_join.include?(part.first) }.flatten
   end
 
   def self.random_derp_emoji()
