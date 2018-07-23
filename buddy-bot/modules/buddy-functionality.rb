@@ -365,25 +365,26 @@ module BuddyBot::Modules::BuddyFunctionality
     added_roles = []
     rejected_names = []
     added_ot6 = false
+    current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
+    ot6_role = self.find_roles(event.server, 'ot6', true).first
+    has_ot6_primary = current_primary_roles.find{ |current_role| current_role.id == ot6_role.id }
+    has_non_ot6_primary = current_primary_roles.find{ |current_role| current_role.id != ot6_role.id }
 
     if text =~ /^!(secondary|bias|add) /i
       event.send_message "#{user.mention} you do not need to provide the `!secondary` / `!bias` command."
     end
 
     if text =~ /\bot6\b/i
-      current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
-      ot6_role = self.find_roles(event.server, 'ot6', true).first
-      if current_primary_roles.length != 0
-        if !current_primary_roles.find{ |current_role| current_role.id != ot6_role.id }
-          event.send_message "You wanted OT6 but you already have a primary role. Please note that you have to explicitly specify `!primary OT6` to receive it as a primary."
-        end
-      else
+      if current_primary_roles.length > 0 && !has_ot6_primary && has_non_ot6_primary
+        event.send_message "You wanted OT6 but you already have a primary role. Please note that you have to explicitly specify `!primary OT6` to receive it as a primary."
+      elsif !has_ot6_primary
         user.add_role ot6_role
         self.log "Added role '#{ot6_role.name}' to '#{user.name}'", event.bot, event.server
         added_roles << "**#{ot6_role.name}**"
-        text = text.gsub /\bot6\b/i, ""
         added_ot6 = true
       end
+      # we only handle ot6 up here
+      text = text.gsub /\bot6\b/i, ""
     end
 
     cb_member = lambda do |match, original|
