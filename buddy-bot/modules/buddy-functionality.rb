@@ -571,6 +571,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: ["!help", "!commands"]) do |event|
+    next if @@is_crawler
     if event.user.bot_account?
       next
     end
@@ -603,6 +604,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!sigh") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       name = "Yerin"
       emoji = "<:yerinlove:437006461751656470>"
@@ -620,6 +622,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!say") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       data = event.content.scan(/^!say\s+((\d+)\s+(.*?))\s*$/i)[0]
       if !data
@@ -641,6 +644,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-message-counts") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a dynamic data reload!", event.bot, event.server
       self.scan_member_message_counts()
@@ -650,6 +654,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!save-all") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a dynamic data persist!", event.bot, event.server
       self.persist_member_message_counts()
@@ -659,6 +664,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!print-message-counts") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a member message count print-out on '#{event.server.name}' - '##{event.channel.name}'!", event.bot, event.server
       event.respond "Current messages counted at #{@@global_counted_messages}"
@@ -674,6 +680,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!print-role-lists") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         roles = server.roles.sort_by(&:position).map do |role|
@@ -685,6 +692,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!print-emoji-lists") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         self.log "**#{server.name}**\n", event.bot, event.server
@@ -703,6 +711,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!fix-gfcord-non-buddies") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         if server_id != 166304074252288000 # gfcord only
@@ -726,6 +735,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!fix-gfcord-non-buddies-new") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         if server_id != 166304074252288000 # gfcord only
@@ -749,6 +759,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!list-gfcord-non-buddies") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         if server_id != 166304074252288000 # gfcord only
@@ -787,6 +798,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!gdpr-giveaway") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     self.only_mods(event.server, event.user) {
@@ -798,6 +810,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!giveaway list") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -812,6 +825,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!giveaway status") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     self.only_mods(event.server, event.user) {
@@ -826,6 +840,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!giveaway announce ") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     self.only_mods(event.server, event.user) {
@@ -856,6 +871,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!giveaway fix ") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     self.only_mods(event.server, event.user) {
@@ -897,6 +913,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!giveaway draw ") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     self.only_mods(event.server, event.user) {
@@ -953,6 +970,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!giveaway join ") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1021,6 +1039,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: "!giveaway leave ") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1156,6 +1175,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!reload-trivia-lists") do |event|
+    next if @@is_crawler
     self.only_mods(event.server, event.user) {
       self.log "'#{event.user.name}' just requested a trivia list reload!", event.bot, event.server
       self.scan_trivia_lists()
@@ -1164,6 +1184,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!bot-commands-only-test") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1172,6 +1193,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!trivia list") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1181,6 +1203,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # score for the current game
   message(content: "!trivia score") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1194,6 +1217,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # repeat question
   message(content: "!trivia repeat") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1207,6 +1231,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # skip question... for now...
   message(content: "!trivia skip") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1221,6 +1246,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # spoil the game for all
   message(content: "!trivia reveal") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1241,6 +1267,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: "!trivia stop") do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
@@ -1254,6 +1281,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: /^!trivia start\b/i) do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if self.trivia_game_running?()
@@ -1296,6 +1324,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message() do |event|
+    next if @@is_crawler
     next unless !event.user.bot_account?
     next unless event.server
     next unless self.trivia_game_running?()
