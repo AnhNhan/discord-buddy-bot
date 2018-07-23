@@ -332,6 +332,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   # talk with BuddyBot
   mention() do |event|
+    next if @@is_crawler
     next if event.user.bot_account?
     next if @@cleverbot.nil?
     next if event.content.nil? || event.content.empty?
@@ -340,6 +341,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: /^!suggest-bias\s*/i, in: "whos-your-bias") do |event|
+    next if @@is_crawler
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
@@ -351,6 +353,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(in: "whos-your-bias") do |event|
+    next if @@is_crawler
     text = event.content
     if text =~ /^!(remove|primary|suggest)/i
       next
@@ -422,6 +425,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: /^!primary\s*/i, in: "whos-your-bias") do |event|
+    next if @@is_crawler
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
@@ -491,6 +495,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(start_with: /^!remove\s+/i, in: "whos-your-bias") do |event|
+    next if @@is_crawler
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
@@ -538,6 +543,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   message(content: ["!remove-all"]) do |event|
+    next if @@is_crawler
     if event.user.nil?
       self.log "The message received in #{event.channel.mention} did not have a user?", event.bot, event.server
     end
