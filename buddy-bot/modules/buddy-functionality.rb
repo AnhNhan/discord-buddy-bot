@@ -412,7 +412,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if !added_roles.empty?
       added_roles_text = added_roles.join ", "
       event.send_message "#{user.mention} your bias#{if added_roles.length > 1 then 'es' end} #{added_roles_text} #{if added_roles.length > 1 then 'have' else 'has' end} been added"
-      if added_ot6
+      if added_ot6 && added_roles.length > 1
         event.send_message "Do note that OT6 has been added as a primary and any further bias has been added as a secondary."
       end
     end
