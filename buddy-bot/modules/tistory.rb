@@ -1214,7 +1214,12 @@ module BuddyBot::Modules::Tistory
           return { "result" => "error", "request" => playlist_request }
         end
         playlist = M3u8::Playlist.read playlist_request.body
-        next_playlist_uri = twt_video_host + playlist.items.sort_by { |item| item.bandwidth }[-1].uri
+        next_playlist_uri = twt_video_host + playlist.items.sort_by do |item|
+          if !item.respond_to?(:bandwidth)
+            raise "Bandwidth not defined for playlist <#{video_uri}>"
+          end
+          item.bandwidth
+        end[-1].uri
         next_playlist_request = HTTParty.get(next_playlist_uri)
         if next_playlist_request.code != 200
           return { "result" => "error", "request" => next_playlist_request }
@@ -1330,7 +1335,13 @@ module BuddyBot::Modules::Tistory
       end || []
 
       tweet_urls.each do |tweet_url|
-        result = self.process_tweet(tweet_url, event)
+        begin
+          result = self.process_tweet(tweet_url, event)
+        rescue => e
+          self.log_warning ":warning: Tweet <#{tweet_url}> had an error:\n```\n#{e.inspect}\n```\n", event.bot
+          results << { "result" => "error" }
+          next
+        end
         if @@abort_twitter_queue_in_progress
           return
         end
