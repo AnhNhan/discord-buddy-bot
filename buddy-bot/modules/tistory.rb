@@ -1177,7 +1177,7 @@ module BuddyBot::Modules::Tistory
       end
 
       if video_type == "application/x-mpegURL"
-        poster_filename = File.basename(video_uri.sub("?tag=3", ""), ".m3u8") + ".jpg"
+        poster_filename = File.basename(video_uri.sub(/\?tag=\d+/i, ""), ".m3u8") + ".jpg"
       end
 
       # poster
@@ -1208,6 +1208,7 @@ module BuddyBot::Modules::Tistory
       # actual video
       if video_type == "application/x-mpegURL"
         filename = File.basename(video_uri.sub("?tag=3", ""), ".m3u8") + ".mp4"
+        subtitle_map = {}
         twt_video_host = "https://video.twimg.com"
         playlist_request = HTTParty.get(video_uri)
         if playlist_request.code != 200
@@ -1215,11 +1216,41 @@ module BuddyBot::Modules::Tistory
         end
         playlist = M3u8::Playlist.read playlist_request.body
         next_playlist_uri = twt_video_host + playlist.items.sort_by do |item|
-          if !item.respond_to?(:bandwidth)
+          if item.type == "SUBTITLES"
+            subtitle_map[item.language] = twt_video_host + item.uri
+            next
+          elsif !item.respond_to?(:bandwidth)
             raise "Bandwidth not defined for playlist <#{video_uri}>"
           end
           item.bandwidth
         end[-1].uri
+        subtitle_map.each do |lang, subtitle_uri|
+          subtitle_playlist_request = HTTParty.get(subtitle_uri)
+          if subtitle_playlist_request.code != 200
+            return { "result" => "error", "request" => subtitle_playlist_request }
+          end
+          subtitle_playlist = M3u8::Playlist.read subtitle_playlist_request.body
+          if subtitle_playlist.items.length > 1
+            self.log_warning ":warning: <#{url}> had multiple subtitle entries, please advise (<#{subtitle_uri}>)", event.bot
+            break
+          end
+          subtitle_file_uri = subtitle_playlist.items.first.uri
+          subtitle_file_request = HTTParty.get(subtitle_file_uri)
+          if subtitle_file_request.code != 200
+            return { "result" => "error", "request" => subtitle_file_request }
+          end
+          s3_path = s3_folder + File.basename(filename, ".*") + ".#{lang}" + File.extname(subtitle_file_uri)
+          Tempfile.create('tmpf') do |tempfile|
+            tempfile.write subtitle_file_request.body
+            file_size = tempfile.size
+            object = @@s3_bucket.object(s3_path)
+            result = object.upload_file(tempfile.path)
+            puts "Just uploaded #{s3_path} (#{(file_size.to_f / 2**20).round(2)}MB)"
+            if !result
+              raise 'Upload not successful!'
+            end
+          end
+        end
         next_playlist_request = HTTParty.get(next_playlist_uri)
         if next_playlist_request.code != 200
           return { "result" => "error", "request" => next_playlist_request }
