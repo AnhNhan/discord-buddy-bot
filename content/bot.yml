@@ -103,9 +103,12 @@ member_names:
   canada: canadabuddy
   canadabuddy: canadabuddy
   cabuddy: canadabuddy
-  buddytv: buddytv
-  tv: buddytv
-  rabbit: buddytv
+  buddytv: broadcast
+  tv: broadcast
+  rabbit: broadcast
+  broadcast: broadcast
+  brotkasten: broadcast
+  broadcasting: broadcast
   karaoke: karaoke
   noraebang: karaoke
   buddycraft: buddycraft
@@ -151,6 +154,21 @@ member_names:
   シンビ: sinb
   オムジ: umji
   ジーフレンド: buddy
+
+  # other fandoms
+  bts: bts
+  army: bts
+
+  leggo: leggo
+  exid: leggo
+  le: leggo
+  hani: leggo
+  junghwa: leggo
+  jeonghwa: leggo
+  solji: leggo
+  sojin: leggo
+  sojiniee: leggo
+  potato: leggo
 
 member_role_emoji_join:
   yerin:
@@ -520,14 +538,6 @@ members_of_other_groups:
     - "E! X! O!"
   iu:
     - "muh red shoes!"
-  le:
-    - "EXID"
-  hani:
-    - "EXID"
-  junghwa:
-    - "Did you mistake her for Jeonghwa?"
-  jeonghwa:
-    - "Did you mistake her for Junghwa"
   ailee:
     - "Ai Lee"
   hyosung:
