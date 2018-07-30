@@ -155,21 +155,6 @@ member_names:
   オムジ: umji
   ジーフレンド: buddy
 
-  # other fandoms
-  bts: bts
-  army: bts
-
-  leggo: leggo
-  exid: leggo
-  le: leggo
-  hani: leggo
-  junghwa: leggo
-  jeonghwa: leggo
-  solji: leggo
-  sojin: leggo
-  sojiniee: leggo
-  potato: leggo
-
 member_role_emoji_join:
   yerin:
     - 285243103877529610 # :yerin_chuu:
@@ -498,6 +483,7 @@ members_of_other_groups:
     - "She looks like Krystal..."
   sojin:
     - "uh.... I'm feeling old'"
+    - "Did you mistake her for Solji?"
   yura:
     - "Yura-chu!"
   minah:
@@ -703,6 +689,18 @@ members_of_other_groups:
     - "Did you mistake him for Byun Baekhyun?"
   daniel:
     - "Wanna GFriend?"
+  le:
+    - "EXID"
+  hani:
+    - "EXID"
+  junghwa:
+    - "Did you mistake her for Jeonghwa?"
+  jeonghwa:
+    - "Did you mistake her for Junghwa"
+  solji:
+    - "Did you mistake her for Sojin?"
+  potato:
+    - "EXID"
   gfriend:
     - "You are at the right place :D"
   defconn:
