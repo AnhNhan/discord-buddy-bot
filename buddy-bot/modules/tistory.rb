@@ -1216,7 +1216,7 @@ module BuddyBot::Modules::Tistory
         end
         playlist = M3u8::Playlist.read playlist_request.body
         next_playlist_uri = twt_video_host + playlist.items.sort_by do |item|
-          if item.type == "SUBTITLES"
+          if item.respond_to?(:type) && item.type == "SUBTITLES"
             subtitle_map[item.language] = twt_video_host + item.uri
             next
           elsif !item.respond_to?(:bandwidth)
