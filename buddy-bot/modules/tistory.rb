@@ -1003,7 +1003,7 @@ module BuddyBot::Modules::Tistory
 
     url = data
     if data =~ /^\d+$/
-      url = self.twitter_determine_full_url(data)
+      url = self.twitter_determine_full_url(data, event)
     end
     result = self.process_tweet(url, event)
     puts "#{result}"
@@ -1050,7 +1050,7 @@ module BuddyBot::Modules::Tistory
     end
   end
 
-  def self.twitter_determine_full_url(id)
+  def self.twitter_determine_full_url(id, event)
     url = "https://twitter.com/twitter/statuses/#{id}"
     result = HTTParty.head(url, follow_redirects: false)
     if result.code != 301
@@ -1223,7 +1223,7 @@ module BuddyBot::Modules::Tistory
             raise "Bandwidth not defined for playlist <#{video_uri}>"
           end
           item.bandwidth
-        end[-1].uri
+        end.compact[-1].uri
         subtitle_map.each do |lang, subtitle_uri|
           subtitle_playlist_request = HTTParty.get(subtitle_uri)
           if subtitle_playlist_request.code != 200
