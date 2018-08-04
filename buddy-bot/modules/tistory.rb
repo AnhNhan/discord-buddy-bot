@@ -1207,7 +1207,7 @@ module BuddyBot::Modules::Tistory
 
       # actual video
       if video_type == "application/x-mpegURL"
-        filename = File.basename(video_uri.sub("?tag=3", ""), ".m3u8") + ".mp4"
+        filename = File.basename(video_uri.sub(/\?tag=\d/, ""), ".m3u8") + ".mp4"
         subtitle_map = {}
         twt_video_host = "https://video.twimg.com"
         playlist_request = HTTParty.get(video_uri)
