@@ -361,6 +361,7 @@ module BuddyBot::Modules::BuddyFunctionality
         text = text.gsub /\b#{Regexp.quote(needle)}\b/i, replacement.downcase
       end
     end
+    return text
   end
 
   message(in: "whos-your-bias") do |event|
