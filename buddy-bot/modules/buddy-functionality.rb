@@ -355,6 +355,14 @@ module BuddyBot::Modules::BuddyFunctionality
     event.send_message "#{user.mention} My dice says **#{["Yerin", "Yuju", "SinB", "Umji", "Sowon", "Eunha"].sample}**!"
   end
 
+  def self.prepare_bias_replacement(text)
+    if @@bias_replacements.length
+      @@bias_replacements.each do |needle, replacement|
+        text = text.gsub /\b#{Regexp.quote(needle)}\b/i, replacement.downcase
+      end
+    end
+  end
+
   message(in: "whos-your-bias") do |event|
     next if @@is_crawler
     text = event.content
@@ -393,11 +401,7 @@ module BuddyBot::Modules::BuddyFunctionality
       text = text.gsub /\bot6\b/i, ""
     end
 
-    if @@bias_replacements.length
-      @@bias_replacements.each do |needle, replacement|
-        text = text.gsub /\b#{Regexp.quote(needle)}\b/i, replacement.downcase
-      end
-    end
+    text = self.prepare_bias_replacement(text)
 
     cb_member = lambda do |match, original|
       member_name = @@member_names[match]
@@ -447,6 +451,8 @@ module BuddyBot::Modules::BuddyFunctionality
       user = event.user.on event.server
       removed_roles = []
       added_roles = []
+
+      data = self.prepare_bias_replacement(data)
 
       if !(@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_role_names.include?(@@member_names[data])))
         event.send_message "#{user.mention} you didn't give me a possible primary bias"
@@ -517,6 +523,7 @@ module BuddyBot::Modules::BuddyFunctionality
       user = event.user.on event.server
       rejected_names = []
       removed_roles = []
+      data = self.prepare_bias_replacement(data)
       cb_member = lambda do |match, original|
         if match.eql? "buddy" # don't remove buddy role
           next
