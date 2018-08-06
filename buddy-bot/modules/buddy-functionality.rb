@@ -27,6 +27,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@new_member_roles = {}
 
+  @@bias_replacements = {}
+
   @@server_thresholds = {}
   @@server_threshold_remove_roles = {}
   @@server_threshold_ignore_channels = {}
@@ -65,6 +67,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@members_of_other_groups = member_config["members_of_other_groups"]
     @@ignored_roles = member_config["ignored_roles"]
     @@new_member_roles = member_config["new_member_roles"]
+    @@bias_replacements = member_config["bias_replacements"]
     @@server_thresholds = member_config["server_thresholds"]
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
     @@server_threshold_ignore_channels = member_config["server_threshold_ignore_channels"]
@@ -388,6 +391,12 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       # we only handle ot6 up here
       text = text.gsub /\bot6\b/i, ""
+    end
+
+    if @@bias_replacements.length
+      @@bias_replacements.each do |needle, replacement|
+        text = text.gsub /\b#{Regexp.quote(needle)}\b/i, replacement.downcase
+      end
     end
 
     cb_member = lambda do |match, original|
