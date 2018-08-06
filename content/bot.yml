@@ -354,12 +354,11 @@ yerin_pic_spam_channel: 468731351374364674
 trivia_config_reveal_after: 300 # 5 minutes
 
 bias_replacements:
-  "hong jin young": hongjinyoung
-  "hong jinyoung": hongjinyoung
-  "kang daniel": kangdaniel
-  "big bang": bigbang
-  "soj is streaming": sojisstreaming
-  "git gud": "gitgud"
+  hongjinyoung: "hong jin young"
+  kangdaniel: "kang daniel"
+  bigbang: "big bang"
+  sojisstreaming: "soj is streaming"
+  "gitgud": "git gud"
 
 members_of_other_groups:
   momo:

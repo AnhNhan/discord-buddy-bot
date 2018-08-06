@@ -204,7 +204,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.print_rejected_names(rejected_names, event)
     rejected_names_text = rejected_names.map do |name|
-      " - #{name.capitalize} (#{@@members_of_other_groups[name].sample})"
+      " - #{self.resolve_bias_replacement(name).capitalize} (#{@@members_of_other_groups[name].sample})"
     end.join "\n"
     event.send_message ":warning: #{BuddyBot.emoji(434376562142478367)} The following idol#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend. Officials have been alerted and now are on the search for you.\n#{rejected_names_text}"
   end
@@ -357,11 +357,15 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.prepare_bias_replacement(text)
     if @@bias_replacements.length
-      @@bias_replacements.each do |needle, replacement|
+      @@bias_replacements.each do |replacement, needle|
         text = text.gsub /\b#{Regexp.quote(needle)}\b/i, replacement.downcase
       end
     end
     return text
+  end
+
+  def self.resolve_bias_replacement(text)
+    @@bias_replacements[text] || text
   end
 
   message(in: "whos-your-bias") do |event|
@@ -412,7 +416,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       user.add_role roles
       roles.map do |role|
-        added_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
+        added_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
         self.log "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
       end
     end
@@ -535,7 +539,7 @@ module BuddyBot::Modules::BuddyFunctionality
         role.map do |role|
           next unless user.role?(role.id)
           user.remove_role role
-          removed_roles << "**#{role.name}**" + if !match.eql? member_name then " _(#{original})_" else "" end
+          removed_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
           self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
         end
       end
