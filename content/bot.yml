@@ -95,6 +95,7 @@ member_names:
   umjiyah: umji
   thumb: umji
   kimyewon: umji
+  umki: umji # ;_;
 
   manager: manager
 
@@ -113,6 +114,7 @@ member_names:
   noraebang: karaoke
   buddycraft: buddycraft
   minecraft: buddycraft
+  sojisstreaming: streaming
 
   # gfbuddies
   ot6: ot6
@@ -353,8 +355,11 @@ trivia_config_reveal_after: 300 # 5 minutes
 
 bias_replacements:
   "hong jin young": hongjinyoung
+  "hong jinyoung": hongjinyoung
   "kang daniel": kangdaniel
   "big bang": bigbang
+  "soj is streaming": sojisstreaming
+  "git gud": "gitgud"
 
 members_of_other_groups:
   momo:
@@ -675,6 +680,14 @@ members_of_other_groups:
     - "서울48"
   jurina:
     - "서울48"
+  juri:
+    - "서울48"
+  nako:
+    - "서울48"
+  miyu:
+    - "서울48"
+  gitgud:
+    - "git: gud is not a valid command"
   yg:
     - "Daddy!"
   dad:
