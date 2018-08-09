@@ -1015,7 +1015,7 @@ module BuddyBot::Modules::Tistory
       return
     end
 
-    event.send_message ":information_desk_person: Here is your link for `#{id}`! _Valid for one day_\n#{object.presigned_url(:get, :expires_in: 24 * 60 * 60)}"
+    event.send_message ":information_desk_person: Here is your link for `#{id}`! _Valid for one day_\n#{object.presigned_url(:get, expires_in: 24 * 60 * 60)}"
   end
 
   message(contains: /http:\/\/sendanywhe\.re\/\w+/) do |event|
