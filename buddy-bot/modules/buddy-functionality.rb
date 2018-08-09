@@ -218,20 +218,21 @@ module BuddyBot::Modules::BuddyFunctionality
         self.scan_trivia_lists()
       end
       # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
+
+      if event.bot.profile.id == 168796631137910784
+        @@scheduler.every '20m' do
+          yerinpics_root = BuddyBot.path("content/yerinpics/")
+          selected_file = `cd /; find #{yerinpics_root} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
+          selected_file = selected_file.sub /\n/, ""
+          self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{@@yerin_pic_spam_channel}>.", event.bot, Struct.new(:id).new(468731351374364672)
+          event.bot.send_file @@yerin_pic_spam_channel, File.open(selected_file, "r")
+        end
+      end
+
       @@initialized = true
     end
     BuddyBot.build_emoji_map(event.bot.servers)
     event.bot.game = @@motd.sample
-
-    if event.bot.profile.id == 168796631137910784
-      @@scheduler.every '20m' do
-        yerinpics_root = BuddyBot.path("content/yerinpics/")
-        selected_file = `cd /; find #{yerinpics_root} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
-        selected_file = selected_file.sub /\n/, ""
-        self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{@@yerin_pic_spam_channel}>.", event.bot, Struct.new(:id).new(468731351374364672)
-        event.bot.send_file @@yerin_pic_spam_channel, File.open(selected_file, "r")
-      end
-    end
 
     self.log "ready!", event.bot
   end
