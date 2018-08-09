@@ -171,7 +171,7 @@ module BuddyBot::Modules::Tistory
     count_replicated = 0
     count_404 = 0 # count of only 404
     count_first_404 = 0 # index of first 404 in 404 range, reset with every success
-    threshold_404 = 100
+    threshold_404 = 150 # yuna1004_ starts with 129...
     threshold_really_max = 100000
 
     range = 1..threshold_really_max
