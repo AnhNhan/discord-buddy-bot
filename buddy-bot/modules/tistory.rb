@@ -985,6 +985,39 @@ module BuddyBot::Modules::Tistory
     puts result
   end
 
+  message(start_with: /!sendanywhere-link\s/i) do |event|
+    next unless event.user.id == 139342974776639489
+    data = event.content.scan(/^!sendanywhere-link\s+([\w]+)\s*$/i)[0]
+    if !data
+      event.send_message ":warning: You need to specify a trivia list name..."
+      next
+    end
+
+    id = data[0]
+
+    if !@@sendanywhere_downloaded.include?(id)
+      event.send_message ":information_desk_person: Don't have that file yet, downloading now!"
+      result = self.replicate_sendanywhere_file(id, event)
+      puts result
+      if !result || result["result"] != "success"
+        self.log_warning ":warning: SendAnywhere `#{id}` could not be downloaded: `#{result.inspect}`", event.bot
+        event.send_message ":warning: Download error #{BuddyBot.emoji(434376562142478367)}"
+        return
+      end
+    end
+
+    object = @@s3_bucket.object(@@sendanywhere_downloaded[id])
+    if !object.exists?
+      self.log_warning ":warning: SendAnywhere `#{id}` was _supposedly_ downloaded but did not exist in S3!", event.bot
+      self.log_warning BuddyBot.emoji(434376562142478367), event.bot
+      event.send_message ":warning: SendAnywhere `#{id}` was _supposedly_ downloaded but did not exist in S3!"
+      event.send_message BuddyBot.emoji(434376562142478367)
+      return
+    end
+
+    event.send_message ":information_desk_person: Here is your link for `#{id}`! _Valid for one day_\n#{object.presigned_url(:get, :expires_in: 24 * 60 * 60)}"
+  end
+
   message(contains: /http:\/\/sendanywhe\.re\/\w+/) do |event|
     id = event.content.scan(/http:\/\/sendanywhe.re\/(\w+)\b/)[0][0]
     result = self.replicate_sendanywhere_file(id, event)
