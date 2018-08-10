@@ -1240,7 +1240,7 @@ module BuddyBot::Modules::Tistory
 
       # actual video
       if video_type == "application/x-mpegURL"
-        filename = File.basename(video_uri.sub(/\?tag=\d/, ""), ".m3u8") + ".mp4"
+        filename = File.basename(video_uri.sub(/\?tag=\d+/, ""), ".m3u8") + ".mp4"
         subtitle_map = {}
         twt_video_host = "https://video.twimg.com"
         playlist_request = HTTParty.get(video_uri)
@@ -1322,7 +1322,7 @@ module BuddyBot::Modules::Tistory
       else
         # straight mp4 (/ vmap)
 
-        s3_path = s3_folder + File.basename(video_uri)
+        s3_path = s3_folder + File.basename(video_uri.sub(/\?tag=\d+/i, ""))
         begin
           Tempfile.create('tmpf') do |tempfile|
             tempfile.write HTTParty.get(video_uri).body
