@@ -735,7 +735,7 @@ module BuddyBot::Modules::BuddyFunctionality
     self.only_mods(event.server, event.user) {
       event.bot.servers.each do |server_id, server|
         roles = server.roles.sort_by(&:position).map do |role|
-          "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end}`\n"
+          "`Role: #{role.position.to_s.rjust(2, "0")} - #{role.id} - #{role.name} - {#{role.colour.red}|#{role.colour.green}|#{role.colour.blue}} - #{if role.hoist then "hoist" else "dont-hoist" end} - #{if @@primary_ids[role.id] then "primary" else "secondary" end}`\n"
         end.join
         self.log "**#{server.name}**\n#{roles}\n", event.bot, event.server
       end
