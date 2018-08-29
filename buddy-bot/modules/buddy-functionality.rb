@@ -498,11 +498,10 @@ module BuddyBot::Modules::BuddyFunctionality
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
         self.log_roles "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot, event.server
-        user.remove_role current_primary_role, "on request, powered by BuddyBot™"
         sleep(2)
       end
 
-      user.add_role role, "on request, powered by BuddyBot™"
+      user.add_role role
       added_roles << "**#{role.name}**"
       self.log_roles "Added role '#{role.name}' to '#{event.user.name}'", event.bot, event.server
 
@@ -552,7 +551,7 @@ module BuddyBot::Modules::BuddyFunctionality
         role = role + (self.find_roles event.server, member_name, false)
         role.map do |role|
           next unless user.role?(role.id)
-          user.remove_role role, "on request, powered by BuddyBot™"
+          user.remove_role role
           removed_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
           self.log_roles "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
         end
@@ -601,7 +600,7 @@ module BuddyBot::Modules::BuddyFunctionality
       if not user.role? role
         next
       end
-      user.remove_role role, "on request, powered by BuddyBot™"
+      user.remove_role role
       removed_roles << "**#{role.name}**"
       self.log_roles "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
     end
