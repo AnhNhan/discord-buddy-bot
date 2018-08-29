@@ -506,10 +506,12 @@ module BuddyBot::Modules::BuddyFunctionality
         current_primary_roles.map do |current_primary_role|
           removed_roles << "**#{current_primary_role.name}**"
           user.remove_role current_primary_role
+          puts " - removed role '#{current_primary_role.name}'"
           self.log_roles "Removed role '#{current_primary_role.name}' from '#{user.name}'", event.bot, event.server
         end
 
         user.add_role role
+        puts "+  role '#{role.name}'"
         added_roles << "**#{role.name}**"
         self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
 
