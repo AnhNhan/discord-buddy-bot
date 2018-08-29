@@ -272,6 +272,11 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
+  member_leave do |event|
+    next if @@is_crawler
+    self.log ":information_desk_person: User just left '#{event.server.name}' - '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+  end
+
   # biasgame easter egg
   message(from: 283848369250500608, in: 318787939360571393, contains: /(GFriend \w+? vs|vs GFriend \w+?\b|Winner: GFriend \w+?!)/) do |event|
     data = event.content.scan(/GFriend (\w+)\b/)[0]
