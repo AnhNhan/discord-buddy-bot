@@ -36,6 +36,7 @@ module BuddyBot::Modules::BuddyFunctionality
   @@giveaway_channels = {}
   @@server_log_channels = {}
   @@server_moderator_roles = {}
+  @@log_role_events = false
 
   @@global_counted_messages = 0
   @@member_message_counts = {}
@@ -80,6 +81,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@trivia_config_reveal_after = member_config["trivia_config_reveal_after"]
     @@bot_owner_id = member_config["bot_owner_id"]
     @@server_log_channels = member_config["server_log_channels"]
+    @@log_role_events = member_config["log_role_events"]
     @@server_moderator_roles = member_config["server_moderator_roles"]
     @@yerin_pic_spam_channel = member_config["yerin_pic_spam_channel"]
 
@@ -134,6 +136,11 @@ module BuddyBot::Modules::BuddyFunctionality
         # do nothing
       end
     end
+  end
+
+  def self.log_roles(msg, bot, server = nil)
+    return if !@@log_role_events
+    self.log(msg, bot, server)
   end
 
   def self.find_emoji(input)
@@ -404,7 +411,7 @@ module BuddyBot::Modules::BuddyFunctionality
         event.send_message "You wanted OT6 but you already have a primary role. Please note that you have to explicitly specify `!primary OT6` to receive it as a primary."
       elsif !has_ot6_primary
         user.add_role ot6_role
-        self.log "Added role '#{ot6_role.name}' to '#{user.name}'", event.bot, event.server
+        self.log_roles "Added role '#{ot6_role.name}' to '#{user.name}'", event.bot, event.server
         added_roles << "**#{ot6_role.name}**"
         added_ot6 = true
       end
@@ -423,7 +430,7 @@ module BuddyBot::Modules::BuddyFunctionality
       user.add_role roles
       roles.map do |role|
         added_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
-        self.log "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
+        self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
       end
     end
     cb_other_member = lambda do |match, original|
@@ -474,7 +481,7 @@ module BuddyBot::Modules::BuddyFunctionality
       member_name = @@member_names[data]
       role = self.find_roles(event.server, member_name, true).first
       if !role
-        self.log "Primary role with name '#{member_name}' not found on server '#{event.server.name}'", event.bot, event.server
+        self.log "Primary role with name '#{member_name}' not found on server '#{event.server.name}', stale config?", event.bot, event.server
         next
       end
 
@@ -490,13 +497,14 @@ module BuddyBot::Modules::BuddyFunctionality
 
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
+        self.log_roles "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot, event.server
         self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot, event.server
         user.remove_role current_primary_role
       end
 
       user.add_role role
       added_roles << "**#{role.name}**"
-      self.log "Added role '#{role.name}' to '#{event.user.name}'", event.bot, event.server
+      self.log_roles "Added role '#{role.name}' to '#{event.user.name}'", event.bot, event.server
 
       if !removed_roles.empty?
         removed_roles_text = removed_roles.join ", "
@@ -546,12 +554,12 @@ module BuddyBot::Modules::BuddyFunctionality
           next unless user.role?(role.id)
           user.remove_role role
           removed_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
-          self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
+          self.log_roles "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
         end
       end
       cb_other_member = lambda do |match, original|
         rejected_names << match
-        self.log "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot, event.server
+        self.log_roles "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot, event.server
       end
       cb_special = lambda do |match, original, user_id|
         member = event.server.member(user_id)
@@ -577,7 +585,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if event.user.bot_account?
       next
     end
-    self.log "Remove-All attempt by '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
+    self.log_roles "Remove-All attempt by '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
     user = event.user.on event.server
     removed_roles = []
     main_roles = user.roles.find_all do |role|
@@ -595,7 +603,7 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       user.remove_role role
       removed_roles << "**#{role.name}**"
-      self.log "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
+      self.log_roles "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
     end
     if !removed_roles.empty?
       removed_roles_text = removed_roles.join ", "

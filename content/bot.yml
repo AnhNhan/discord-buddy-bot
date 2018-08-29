@@ -293,6 +293,8 @@ server_log_channels:
   12345678          : 455427647619465238 # tistory-log-warnings
   468731351374364672: 468818853783273512 # yerinpicspam
 
+log_role_events: false
+
 server_moderator_roles:
   166304074252288000:
     - 166349311871811585 # Bot Commander
