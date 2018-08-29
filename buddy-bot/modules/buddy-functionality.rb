@@ -498,8 +498,7 @@ module BuddyBot::Modules::BuddyFunctionality
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
         self.log_roles "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot, event.server
-        self.log "Removed role '#{current_primary_role.name}' from '#{event.user.name}'", event.bot, event.server
-        user.remove_role current_primary_role
+        sleep(2)
       end
 
       user.add_role role
