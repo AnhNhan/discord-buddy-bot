@@ -397,6 +397,7 @@ module BuddyBot::Modules::BuddyFunctionality
       next
     end
     @@mutex_roles.synchronize do
+      event.server.delete_member(event.user.id)
       user = event.user.on event.server
       added_roles = []
       rejected_names = []
@@ -472,6 +473,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if data
       data = data[0].downcase
       @@mutex_roles.synchronize do
+        event.server.delete_member(event.user.id)
         user = event.user.on event.server
         removed_roles = []
         added_roles = []
@@ -546,6 +548,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if data
       data = data[0]
       @@mutex_roles.synchronize do
+        event.server.delete_member(event.user.id)
         user = event.user.on event.server
         rejected_names = []
         removed_roles = []
@@ -595,6 +598,7 @@ module BuddyBot::Modules::BuddyFunctionality
     end
     self.log_roles "Remove-All attempt by '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
     @@mutex_roles.synchronize do
+      event.server.delete_member(event.user.id)
       user = event.user.on event.server
       removed_roles = []
       main_roles = user.roles.find_all do |role|
