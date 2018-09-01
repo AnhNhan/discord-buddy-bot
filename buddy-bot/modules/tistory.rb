@@ -218,6 +218,9 @@ module BuddyBot::Modules::Tistory
         # uh...
       elsif result == true
         count_first_404 = 0
+      elsif result == false
+        self.log_warning ":warning: Hard canceling `#{page_name}` due to big error!", event.bot
+        break
       end
     end
   end
@@ -227,7 +230,12 @@ module BuddyBot::Modules::Tistory
       return "abort"
     end
     time_start = Time.now
-    response = HTTParty.get(url)
+    begin
+      response = HTTParty.get(url)
+    rescue => e
+      puts e.inspect
+      return false
+    end
 
     if response.code != 200
       if verbose
