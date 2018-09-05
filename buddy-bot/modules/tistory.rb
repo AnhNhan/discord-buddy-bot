@@ -1116,7 +1116,15 @@ module BuddyBot::Modules::Tistory
     if twitter_host.nil? || twitter_host.empty?
       url = "https://twitter.com" + url
     end
-    page_contents = HTTParty.get(url)
+    page_contents = nil
+    begin
+      page_contents = HTTParty.get(url)
+    rescue => e
+      puts "Error fetching #{url}"
+      puts e.inspect
+      self.log_warning ":warning: Twitter error for <#{url}>: `#{e.inspect}`", event.bot
+      return { "result" => "error", "error" => e }
+    end
     if page_contents.code != 200
       # :sowonnotlikethis:
       return { "result": "error", "request" => page_contents }
