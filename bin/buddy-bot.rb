@@ -2,12 +2,6 @@
 $LOAD_PATH << (File.dirname(__FILE__) + "/../buddy-bot/")
 $LOAD_PATH << (File.dirname(__FILE__) + "/../buddybot-api/")
 
-begin
-  require 'rbnacl/libsodium'
-rescue LoadError
-  ::RBNACL_LIBSODIUM_GEM_LIB_PATH = File.dirname(__FILE__) + "/libsodium.dll"
-end
-
 require 'discordrb'
 require 'yaml'
 
@@ -60,10 +54,8 @@ end
 bot.include! BuddyBot::Modules::BuddyFunctionality
 
 if localconf["appid"] == 462291371408228352 || localconf["appid"] == 169371086067204096
-  require 'aws-sdk'
   BuddyBot::Modules::Tistory.set_s3_bucket_name(localconf['s3bucket'])
   bot.include! BuddyBot::Modules::Tistory
   BuddyBot::Modules::BuddyFunctionality.activate_crawler_mode()
 end
-
 bot.run
