@@ -22,6 +22,8 @@ require 'modules/buddy-functionality'
 module BuddyBot::Modules::Tistory
   extend Discordrb::EventContainer
 
+  @@is_testbot = false
+
   @@s3 = nil
   @@s3_bucket = nil
 
@@ -53,6 +55,11 @@ module BuddyBot::Modules::Tistory
 
     @@twitter_list = YAML.load_file(BuddyBot.path("content/pages-twitter.yml")) || []
     @@twitter_downloaded = YAML.load_file(BuddyBot.path("content/downloaded-twitter.yml")) || {}
+
+    bot_config = YAML.load_file(BuddyBot.path("content/bot.yml")) || {}
+    localconf = YAML::load(File.read(BuddyBot.localconf_filename))
+
+    @@is_testbot = localconf["appid"] == bot_config["bot_test_id"]
   end
 
   def self.log(message, bot)
