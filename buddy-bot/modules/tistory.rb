@@ -114,10 +114,10 @@ module BuddyBot::Modules::Tistory
 
     orig_input = url = data[0].downcase
 
-    if url !~ /https?:\/\/.*?\.tistory\.com(\/m)?\/\d+$/
-      event.send_message ":warning: URL is not a specific page, try e.g. <http://gfriendcom.tistory.com/163>"
-      next
-    end
+    # if url !~ /https?:\/\/.*?\.tistory\.com(\/m)?\/\d+$/
+    #   event.send_message ":warning: URL is not a specific page, try e.g. <http://gfriendcom.tistory.com/163>"
+    #   next
+    # end
 
     if url =~ /tistory\.com\/\d+$/
       parts = url.scan(/\/\/(.*?)\.tistory\.com\/(\d+)$/)[0]
