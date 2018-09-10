@@ -288,7 +288,7 @@ module BuddyBot::Modules::Tistory
         self.upload_tistory_image_file(url, page_name, page_number, page_title, event)
       rescue Exception => e
         self.log_warning ":warning: #{BuddyBot.emoji(434376562142478367)} Had a big error for `#{url}`, `#{page_name}`, `#{page_number}`, `#{page_title}`: `#{e}`\n```\n#{e.backtrace.join("\n")}\n```", event.bot
-        return { "result" => "error", "error" => e }
+        { "result" => "error", "error" => e }
       end
     end
     download_media_success = []
