@@ -633,17 +633,22 @@ module BuddyBot::Modules::Tistory
       xml_tracks = xml.css("track").sort_by { |k| k.at_css("title").content.to_i }
       begin
         Parallel.map(xml_tracks, in_processes: @@number_of_processes) do |track|
-          part_url = track.at_css("location").content
-          if part_url =~ /\/attachment\/http:\/\//
-            # sometimes we get urls like http://kkangjiilove.tistory.com/attachment/http://cfile8.uf.tistory.com/media/213F224E5415065A215AEA
-            part_url = part_url.scan(/\/attachment\/(http:\/\/.*)$/)[0][0]
+          begin
+            part_url = track.at_css("location").content
+            if part_url =~ /\/attachment\/http:\/\//
+              # sometimes we get urls like http://kkangjiilove.tistory.com/attachment/http://cfile8.uf.tistory.com/media/213F224E5415065A215AEA
+              part_url = part_url.scan(/\/attachment\/(http:\/\/.*)$/)[0][0]
+            end
+            part_download = HTTParty.get(part_url)
+            if part_download.code != 200
+              self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.inspect}\n```", event.bot
+              return { "result" => "error", "http" => part_download }
+            end
+            part_download
+          rescue => e
+            self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{e.inspect}\n```\n#{e.backtrace.inspect}\n```", event.bot
+            return { "result" => "error", "error" => e }
           end
-          part_download = HTTParty.get(part_url)
-          if part_download.code != 200
-            self.log_warning ":warning: Download error for `#{url} / #{part_url}`: #{part_download.code} - #{part_download.message}\n```\n#{part_download.inspect}\n```", event.bot
-            return { "result" => "error", "http" => part_download }
-          end
-          part_download
         end.each do |part_download|
           if temp_file.nil?
             params = CGI.parse(part_download.headers["content-disposition"])
