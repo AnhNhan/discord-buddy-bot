@@ -38,7 +38,7 @@ module BuddyBot::Modules::Tistory
 
   @@initialized = false
 
-  @@number_of_processes = 10
+  @@number_of_processes = 5
 
   @@abort_tistory_queue_in_progress = false
   @@abort_twitter_queue_in_progress = false
