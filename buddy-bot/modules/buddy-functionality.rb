@@ -31,6 +31,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@server_thresholds = {}
   @@server_threshold_remove_roles = {}
+  @@server_threshold_remove_ignore = []
   @@server_threshold_ignore_channels = {}
   @@server_bot_commands = {}
   @@giveaway_channels = {}
@@ -74,6 +75,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@bias_replacements = member_config["bias_replacements"]
     @@server_thresholds = member_config["server_thresholds"]
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
+    @@server_threshold_remove_ignore = member_config["server_threshold_remove_ignore"]
     @@server_threshold_ignore_channels = member_config["server_threshold_ignore_channels"]
     @@server_bot_commands = member_config["server_bot_commands"]
     @@giveaway_channels = member_config["giveaway_channels"]
@@ -309,6 +311,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if server.nil? || event.user.nil? || event.user.bot_account? || !@@server_threshold_remove_roles.include?(server.id) || !@@server_thresholds.include?(server.id)
       next
     end
+    next if @@server_threshold_remove_ignore.include? event.user.id
 
     if @@server_threshold_ignore_channels.include?(server.id) && @@server_threshold_ignore_channels[server.id].include?(event.channel.id)
       next

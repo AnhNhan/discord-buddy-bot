@@ -326,6 +326,10 @@ server_threshold_remove_roles:
   468731351374364672: # yerin pic spam
     - 468850607843835914 # New Guy
 
+server_threshold_remove_ignore:
+  - 133023324493185026 # chase / sixednine
+  - 244910116283875328 # blushie
+
 server_threshold_ignore_channels:
   166304074252288000: # gfcord
     - 166340324355080193 # whos-your-bias
