@@ -1422,7 +1422,7 @@ module BuddyBot::Modules::Tistory
       begin
         tweets = JSON.parse(tweets.body)
       rescue => e
-        self.log_warning ":warning: Tweet <#{tweet_url}> had an error parsing HTML:\n```\n#{e.inspect}\n```\n", event.bot
+        self.log_warning ":warning: Profile <#{author}> had an error parsing HTML, usually suspended:\n```\n#{e.inspect}\n```\n", event.bot
         next { "result": "error", "request" => tweets, "error" => e }
       end
       tweets_html = Nokogiri::HTML(tweets["items_html"])
