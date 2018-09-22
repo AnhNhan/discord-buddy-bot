@@ -1418,7 +1418,6 @@ module BuddyBot::Modules::Tistory
         # :sowonnotlikethis:
         next { "result": "error", "request" => tweets }
       end
-      tweets = nil
       begin
         tweets = JSON.parse(tweets.body)
       rescue => e
