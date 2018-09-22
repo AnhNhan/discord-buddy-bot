@@ -275,7 +275,9 @@ module BuddyBot::Modules::Tistory
       if media_info.length > 0
         event.send_message "Please note that #{media_info.length} media file(s) have been found, which are tricky to display here!"
       end
-      event.message.delete() unless event.channel.pm?
+      begin
+        event.message.delete() unless event.channel.pm?
+      end
     end
 
     self.log ":information_desk_person: Downloading #{urls_images.length} images and #{media_info.length} media from `#{page_title}` <#{orig_input}>", event.bot
