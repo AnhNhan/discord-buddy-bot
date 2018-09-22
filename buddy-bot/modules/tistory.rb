@@ -1416,9 +1416,15 @@ module BuddyBot::Modules::Tistory
       tweets = HTTParty.get("https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&count=200&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false")
       if tweets.code != 200
         # :sowonnotlikethis:
-        return { "result": "error", "request" => tweets }
+        next { "result": "error", "request" => tweets }
       end
-      tweets = JSON.parse(tweets.body)
+      tweets = nil
+      begin
+        tweets = JSON.parse(tweets.body)
+      rescue => e
+        self.log_warning ":warning: Tweet <#{tweet_url}> had an error parsing HTML:\n```\n#{e.inspect}\n```\n", event.bot
+        next { "result": "error", "request" => tweets, "error" => e }
+      end
       tweets_html = Nokogiri::HTML(tweets["items_html"])
       has_more_items = tweets["has_more_items"]
       earliest_tweet_id = tweets["min_position"]
