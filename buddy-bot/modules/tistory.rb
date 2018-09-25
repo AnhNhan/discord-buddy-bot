@@ -518,6 +518,12 @@ module BuddyBot::Modules::Tistory
     uri_nonexistent_players = [ # any player that we should ignore
       "http://cfile23.uf.tistory.com/media/230A50475842C1E20ED51F",
     ]
+    uri_weird_iframes = [
+      "/endGift.php?entryId=0&setNo=1940", # some gift button
+    ]
+    uri_weird_embeds = [
+      "http://kimmimi.net/plugin/CallBack_bootstrapperSrc?nil_profile=tistory&nil_type=copied_post",
+    ]
     doc.css('embed').each do |embed|
       uri = embed.attribute('src').to_s
       flashvars = (embed.attribute('flashvars') || "").to_s
@@ -538,6 +544,8 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "youtube", "uri" => uri }
       elsif uri.eql? uri_sowon_weird_flash_player
         media << { "type" => "sowon_weird_flash_player", "uri" => uri, "flashvars" => flashvars }
+      elsif uri_weird_embeds.include? uri
+        next # skip
       else
         media << { "type" => "unknown", "sub-type" => "embed", "uri" => uri, "flashvars" => flashvars }
       end
@@ -548,6 +556,8 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "youtube", "uri" => uri }
       elsif uri.include? uri_part_kakao_flashplayer
         media << { "type" => "kakao_player", "uri" => uri }
+      elsif uri_weird_iframes.include? uri
+        next # skip
       else
         media << { "type" => "unknown", "sub-type" => "iframe", "uri" => uri }
       end
