@@ -522,7 +522,6 @@ module BuddyBot::Modules::Tistory
       "/endGift.php?entryId=0&setNo=1940", # some gift button
     ]
     uri_weird_embeds = [
-      "http://kimmimi.net/plugin/CallBack_bootstrapperSrc?nil_profile=tistory&nil_type=copied_post",
     ]
     doc.css('embed').each do |embed|
       uri = embed.attribute('src').to_s
@@ -544,6 +543,7 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "youtube", "uri" => uri }
       elsif uri.eql? uri_sowon_weird_flash_player
         media << { "type" => "sowon_weird_flash_player", "uri" => uri, "flashvars" => flashvars }
+      elsif uri =~ /#{Regexp.quote("/plugin/CallBack_bootstrapperSrc?nil_profile=tistory&nil_type=copied_post")}$/
       elsif uri_weird_embeds.include? uri
         next # skip
       else
