@@ -156,11 +156,11 @@ module BuddyBot::Modules::Tistory
     @@abort_tistory_queue_in_progress = false
 
     self.log ":information_desk_person: Starting to process the page queue! :sujipraise:", event.bot
-    @@pages_special.each do |page_name|
-      self.process_pages(page_name, event) { |page_name, page_number| "http://#{page_name}/m/#{page_number}" }
-    end
-    @@pages.each do |page_name|
+    @@pages.shuffle.each do |page_name|
       self.process_pages(page_name, event) { |page_name, page_number| "http://#{page_name}.tistory.com/m/#{page_number}" }
+    end
+    @@pages_special.shuffle.each do |page_name|
+      self.process_pages(page_name, event) { |page_name, page_number| "http://#{page_name}/m/#{page_number}" }
     end
 
     if @@abort_tistory_queue_in_progress
@@ -1106,7 +1106,7 @@ module BuddyBot::Modules::Tistory
   message(content: "!twitter-queue-run") do |event|
     next if event.user.bot_account?
     @@abort_twitter_queue_in_progress = false
-    @@twitter_list.each do |author|
+    @@twitter_list.shuffle.each do |author|
       self.process_twitter_profile(author, event)
     end
     if @@abort_twitter_queue_in_progress
