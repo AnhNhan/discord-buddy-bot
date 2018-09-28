@@ -479,7 +479,7 @@ module BuddyBot::Modules::Tistory
       end
       uri = uri.to_s
       if uri !~ /^http:\/\/cfile\d+\.uf\.tistory\.com\/(original|image)\/\w+/i
-        if uri !~ /(\/contents\/emoticon\/|abs\.twimg\.com\/emoji\/)/ # ignore error on emoticons
+        if uri !~ /(\/contents\/emoticon\/|\/tistory_admin\/|abs\.twimg\.com\/emoji\/)/ # ignore error on emoticons
           self.log_warning ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
         end
         next
