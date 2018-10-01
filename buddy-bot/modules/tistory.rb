@@ -479,7 +479,7 @@ module BuddyBot::Modules::Tistory
       end
       uri = uri.to_s
       if uri !~ /^http:\/\/cfile\d+\.uf\.tistory\.com\/(original|image)\/\w+/i
-        if uri !~ /(\/contents\/emoticon\/|abs\.twimg\.com\/emoji\/)/ # ignore error on emoticons
+        if uri !~ /(\/contents\/emoticon\/|\/tistory_admin\/|abs\.twimg\.com\/emoji\/)/ # ignore error on emoticons
           self.log_warning ":warning: Url '<#{input_url}>' had an invalid image: `#{img.attribute('src')}`", event.bot
         end
         next
@@ -522,7 +522,6 @@ module BuddyBot::Modules::Tistory
       "/endGift.php?entryId=0&setNo=1940", # some gift button
     ]
     uri_weird_embeds = [
-      "http://kimmimi.net/plugin/CallBack_bootstrapperSrc?nil_profile=tistory&nil_type=copied_post",
     ]
     doc.css('embed').each do |embed|
       uri = embed.attribute('src').to_s
@@ -544,6 +543,7 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "youtube", "uri" => uri }
       elsif uri.eql? uri_sowon_weird_flash_player
         media << { "type" => "sowon_weird_flash_player", "uri" => uri, "flashvars" => flashvars }
+      elsif uri =~ /#{Regexp.quote("/plugin/CallBack_bootstrapperSrc?nil_profile=tistory&nil_type=copied_post")}$/
       elsif uri_weird_embeds.include? uri
         next # skip
       else
