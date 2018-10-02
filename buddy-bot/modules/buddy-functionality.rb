@@ -267,9 +267,9 @@ module BuddyBot::Modules::BuddyFunctionality
       end
       member = event.user.on(server)
       member.roles = roles
-      self.log ":information_desk_person: Added roles '#{roles.map(&:name).join(', ')}' to '#{event.user.username} - #{event.user.mention}'", event.bot, server
+      self.log "<:yerinpeekwave:442204826269515776> User joined: '#{event.user.username} - #{event.user.mention}'; adding roles '#{roles.map(&:name).join(', ')}'", event.bot, server
       if @@member_message_counts.include?(event.user.id)
-        self.log ":warning: User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, server
+        self.log "<:eunhashock:434376562142478367> User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, server
         @@member_message_counts.delete(event.user.id)
       end
       if server.id == 468731351374364672 # yerin pic spam
@@ -286,7 +286,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   member_leave do |event|
     next if @@is_crawler
-    self.log ":information_desk_person: User just left '#{event.server.name}' - '#{event.user.username} - \##{event.user.mention}'", event.bot, event.server
+    self.log "<:yerinzzz:471761896115011585> User left: '#{event.server.name}' - '#{event.user.username} - \##{event.user.mention}'", event.bot, event.server
   end
 
   # biasgame easter egg
