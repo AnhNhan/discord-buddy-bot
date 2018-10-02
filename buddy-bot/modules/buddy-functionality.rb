@@ -286,7 +286,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   member_leave do |event|
     next if @@is_crawler
-    self.log "<:yerinzzz:471761896115011585> User left: '#{event.server.name}' - '#{event.user.username} - \##{event.user.mention}'", event.bot, event.server
+    self.log "<:yerinzzz:471761896115011585> User left: '#{event.server.name}' - '#{event.user.username} - #{event.user.mention}'", event.bot, event.server
   end
 
   # biasgame easter egg
