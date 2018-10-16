@@ -117,6 +117,10 @@ member_names:
   buddycraft: buddycraft
   minecraft: buddycraft
   sojisstreaming: streaming
+  vlive: vlive
+  vliev: vlive
+  picping: picping
+  newsletter: picping
 
   # gfbuddies
   ot6: ot6
@@ -368,6 +372,9 @@ bias_replacements:
   bigbang: "big bang"
   sojisstreaming: "soj is streaming"
   "gitgud": "git gud"
+  picping: "pic ping"
+  newsletter: "news letter"
+  vlive: "v live"
 
 members_of_other_groups:
   momo:
