@@ -305,7 +305,7 @@ module BuddyBot::Modules::BuddyFunctionality
     next if @@is_crawler
     begin
       if @@server_invite_bot_reject_active
-        if member.username =~ /discord\.gg[\/\\]\S+/i
+        if event.user.username =~ /discord\.gg[\/\\]\S+/i
           self.log "<:eunhashock:434376562142478367> User got rejected: '#{event.server.name}' - '`#{event.user.username}` - #{event.user.mention}'", event.bot, event.server
           next
         end
