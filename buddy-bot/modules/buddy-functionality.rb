@@ -266,8 +266,7 @@ module BuddyBot::Modules::BuddyFunctionality
           member.pm "Hello, welcome to the GFriend Discord server!\n" +
                         "I'm afraid that your username resembles a Discord invite link,\n" +
                         "which the mod team regards to be spam.\n" +
-                        "If you are indeed a human troll, you are free to join\n" +
-                        "using any other username and change it back later.\n\n"
+                        "If you are indeed a human, you are free to join with a different username.\n\n"
           member.pm BuddyBot.emoji(472108548810342410)
           member.pm "- BuddyBot"
           server.kick member
