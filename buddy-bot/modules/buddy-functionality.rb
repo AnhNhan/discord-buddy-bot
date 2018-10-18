@@ -284,9 +284,9 @@ module BuddyBot::Modules::BuddyFunctionality
         server.role role_id
       end
       member.roles = roles
-      self.log "<:yerinpeekwave:442204826269515776> User joined: '#{event.user.username} - #{event.user.mention}'; adding roles '#{roles.map(&:name).join(', ')}'", event.bot, server
+      self.log "<:yerinpeekwave:442204826269515776> User joined: '`#{event.user.username}` - #{event.user.mention}'; adding roles '#{roles.map(&:name).join(', ')}'", event.bot, server
       if @@member_message_counts.include?(event.user.id)
-        self.log "<:eunhashock:434376562142478367> User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, server
+        self.log "<:eunhashock:434376562142478367> User had previous record in new member counting, deleting: '`#{event.user.username}` - \##{event.user.id}'", event.bot, server
         @@member_message_counts.delete(event.user.id)
       end
       if server.id == 468731351374364672 # yerin pic spam
@@ -303,7 +303,15 @@ module BuddyBot::Modules::BuddyFunctionality
 
   member_leave do |event|
     next if @@is_crawler
-    self.log "<:yerinzzz:471761896115011585> User left: '#{event.server.name}' - '#{event.user.username} - #{event.user.mention}'", event.bot, event.server
+    begin
+      if @@server_invite_bot_reject_active
+        if member.username =~ /discord\.gg[\/\\]\S+/i
+          self.log "<:eunhashock:434376562142478367> User got rejected: '#{event.server.name}' - '`#{event.user.username}` - #{event.user.mention}'", event.bot, event.server
+          next
+        end
+      end
+    end
+    self.log "<:yerinzzz:471761896115011585> User left: '#{event.server.name}' - '`#{event.user.username}` - #{event.user.mention}'", event.bot, event.server
   end
 
   # biasgame easter egg
