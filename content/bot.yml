@@ -291,6 +291,8 @@ bot_owner_id: 139342974776639489
 bot_crawler_id: 462291371408228352
 bot_test_id: 169371086067204096
 
+server_invite_bot_reject_active: true
+
 server_log_channels:
   166304074252288000: 496778998555344897 # gfcord, on gfriend cord
   165551300375871488: 449780784119676940 # anh-test
