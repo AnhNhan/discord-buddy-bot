@@ -41,6 +41,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@global_counted_messages = 0
   @@member_message_counts = {}
+  @@join_counter = {}
 
   @@member_role_emoji_join = {}
   @@member_role_emoji_leave = {}
@@ -97,10 +98,12 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.scan_member_message_counts()
     @@member_message_counts = YAML.load_file(BuddyBot.path("content/member_message_counts.yml"))
+    @@join_counter = YAML.load_file(BuddyBot.path("content/data-join-counter.yml"))
   end
 
   def self.persist_member_message_counts()
     File.open(BuddyBot.path("content/member_message_counts.yml"), "w") { |file| file.write(YAML.dump(@@member_message_counts)) }
+    File.open(BuddyBot.path("content/data-join-counter.yml"), "w") { |file| file.write(YAML.dump(@@join_counter)) }
   end
 
   def self.scan_giveaway_joins()
