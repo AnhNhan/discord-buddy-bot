@@ -785,7 +785,7 @@ module BuddyBot::Modules::BuddyFunctionality
       event.bot.servers.each do |server_id, server|
         self.log "**#{server.name}**\n", event.bot, event.server
         roles = server.emoji.map do |emoji_id, emoji|
-          "`<:#{emoji.name}:#{emoji.id}>` <:#{emoji.name}:#{emoji.id}>\n"
+          "`< :#{emoji.name}: - #{emoji.id} >` <:#{emoji.name}:#{emoji.id}>\n"
         end.each_slice(25)
         roles.each do |chunk|
           self.log chunk.join, event.bot, event.server
