@@ -317,7 +317,8 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   # biasgame easter egg
-  message(from: 283848369250500608, in: 318787939360571393, contains: /(GFriend \w+? vs|vs GFriend \w+?\b|Winner: GFriend \w+?!)/) do |event|
+  message(from: 283848369250500608, contains: /(GFriend \w+? vs|vs GFriend \w+?\b|Winner: GFriend \w+?!)/) do |event|
+    next unless [ 318787939360571393, 492785764493557764 ].include? event.channel.id
     data = event.content.scan(/GFriend (\w+)\b/)[0]
     if !data
       next
