@@ -30,10 +30,10 @@ Aws.config.update({
   region: localconf['s3region'],
 })
 
-if localconf['cleverbot_access'] && localconf['cleverbot_secret']
-  require 'cleverbot'
-  BuddyBot::Modules::BuddyFunctionality.set_cleverbot(Cleverbot.new(localconf['cleverbot_access'], localconf['cleverbot_secret']))
-end
+# if localconf['cleverbot_access'] && localconf['cleverbot_secret']
+#   require 'cleverbot'
+#   BuddyBot::Modules::BuddyFunctionality.set_cleverbot(Cleverbot.new(localconf['cleverbot_access'], localconf['cleverbot_secret']))
+# end
 
 if localconf['twt_consumer_key'] && localconf['twt_consumer_secret']
   BuddyBot::Modules::Tistory.set_twitter_credentials(localconf['twt_consumer_key'], localconf['twt_consumer_secret'])

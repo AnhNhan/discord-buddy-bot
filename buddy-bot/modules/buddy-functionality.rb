@@ -29,6 +29,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@bias_replacements = {}
 
+  @@server_invite_bot_reject_active = false
+
   @@server_thresholds = {}
   @@server_threshold_remove_roles = {}
   @@server_threshold_remove_ignore = []
@@ -74,6 +76,7 @@ module BuddyBot::Modules::BuddyFunctionality
     @@ignored_roles = member_config["ignored_roles"]
     @@new_member_roles = member_config["new_member_roles"]
     @@bias_replacements = member_config["bias_replacements"]
+    @@server_invite_bot_reject_active = member_config["server_invite_bot_reject_active"]
     @@server_thresholds = member_config["server_thresholds"]
     @@server_threshold_remove_roles = member_config["server_threshold_remove_roles"]
     @@server_threshold_remove_ignore = member_config["server_threshold_remove_ignore"]
@@ -258,8 +261,22 @@ module BuddyBot::Modules::BuddyFunctionality
 
   member_join do |event|
     next if @@is_crawler
+    server = event.server
+    member = event.user.on(server)
     begin
-      server = event.server
+      if @@server_invite_bot_reject_active
+        if member.username =~ /discord\.gg[\/\\]\S+/i
+          member.pm "Hello, welcome to the GFriend Discord server!\n" +
+                        "I'm afraid that your username resembles a Discord invite link,\n" +
+                        "which the mod team regards to be spam.\n" +
+                        "If you are indeed a human, you are free to join with a different username.\n\n"
+          member.pm BuddyBot.emoji(472108548810342410)
+          member.pm "- BuddyBot"
+          server.kick member
+        end
+      end
+    end
+    begin
       if !@@new_member_roles.include? server.id
         self.log "A user joined #{server.name} \##{server.id} but the bot does not have a config for the server.", event.bot, server
         next
@@ -268,11 +285,10 @@ module BuddyBot::Modules::BuddyFunctionality
       roles = role_ids.map do |role_id|
         server.role role_id
       end
-      member = event.user.on(server)
       member.roles = roles
-      self.log "<:yerinpeekwave:442204826269515776> User joined: '#{event.user.username} - #{event.user.mention}'; adding roles '#{roles.map(&:name).join(', ')}'", event.bot, server
+      self.log "<:yerinpeekwave:442204826269515776> User joined: '`#{event.user.username}` - #{event.user.mention}'; adding roles '#{roles.map(&:name).join(', ')}'", event.bot, server
       if @@member_message_counts.include?(event.user.id)
-        self.log "<:eunhashock:434376562142478367> User had previous record in new member counting, deleting: '#{event.user.username} - \##{event.user.id}'", event.bot, server
+        self.log "<:eunhashock:434376562142478367> User had previous record in new member counting, deleting: '`#{event.user.username}` - \##{event.user.id}'", event.bot, server
         @@member_message_counts.delete(event.user.id)
       end
       if server.id == 468731351374364672 # yerin pic spam
@@ -289,7 +305,15 @@ module BuddyBot::Modules::BuddyFunctionality
 
   member_leave do |event|
     next if @@is_crawler
-    self.log "<:yerinzzz:471761896115011585> User left: '#{event.server.name}' - '#{event.user.username} - #{event.user.mention}'", event.bot, event.server
+    begin
+      if @@server_invite_bot_reject_active
+        if event.user.username =~ /discord\.gg[\/\\]\S+/i
+          self.log "<:eunhashock:434376562142478367> User got rejected: '#{event.server.name}' - '`#{event.user.username}` - #{event.user.mention}'", event.bot, event.server
+          next
+        end
+      end
+    end
+    self.log "<:yerinzzz:471761896115011585> User left: '#{event.server.name}' - '`#{event.user.username}` - #{event.user.mention}'", event.bot, event.server
   end
 
   # biasgame easter egg
