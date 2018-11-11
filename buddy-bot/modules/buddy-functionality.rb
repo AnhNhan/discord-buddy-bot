@@ -317,7 +317,8 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   # biasgame easter egg
-  message(from: 283848369250500608, in: 318787939360571393, contains: /(GFriend \w+? vs|vs GFriend \w+?\b|Winner: GFriend \w+?!)/) do |event|
+  message(from: 283848369250500608, contains: /(GFriend \w+? vs|vs GFriend \w+?\b|Winner: GFriend \w+?!)/) do |event|
+    next unless [ 318787939360571393, 492785764493557764 ].include? event.channel.id
     data = event.content.scan(/GFriend (\w+)\b/)[0]
     if !data
       next
@@ -784,11 +785,7 @@ module BuddyBot::Modules::BuddyFunctionality
       event.bot.servers.each do |server_id, server|
         self.log "**#{server.name}**\n", event.bot, event.server
         roles = server.emoji.map do |emoji_id, emoji|
-          prefix = ""
-          # if emoji.animated
-          #   prefix = "a"
-          # end
-          "\\<#{prefix}:#{emoji.name}:#{emoji.id}> <#{prefix}:#{emoji.name}:#{emoji.id}>\n"
+          "`< :#{emoji.name}: - #{emoji.id} >` <:#{emoji.name}:#{emoji.id}>\n"
         end.each_slice(25)
         roles.each do |chunk|
           self.log chunk.join, event.bot, event.server
