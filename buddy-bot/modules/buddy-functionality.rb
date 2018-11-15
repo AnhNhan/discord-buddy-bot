@@ -866,31 +866,12 @@ module BuddyBot::Modules::BuddyFunctionality
   # Giveaway stuff
 
   def self.format_giveaway(giveaway_list_name, server)
-    "Giveaway #**#{giveaway_list_name}** - use `!giveaway join #{giveaway_list_name}` in #{@@server_bot_commands[server.id].map{|channel_id| '<#' + channel_id.to_s + '>' }.join(' or ')} to join the draw!\n" +
+    "Giveaway #**#{giveaway_list_name}** - use the #{BuddyBot.emoji(472108548810342410)} reaction to join the draw!\n" +
       "Subject: **#{@@giveaways[giveaway_list_name]['subject']}**\n" +
       "Restrictions: #{@@giveaways[giveaway_list_name]['restrictions']}\n" +
       "Responsible: **<#{@@giveaways[giveaway_list_name]['responsible_name']}>**\n" +
       "Giveaway end: #{@@giveaways[giveaway_list_name]['join_end'].utc}\n" +
       "**Disclaimer: It is not subject to legal recourse. We are some random dudes on the internet and can't be held liable. Please don't trust us about anything**"
-  end
-
-  def self.gdpr_disclaimer()
-    "As per EU regulation 2016/679 aka the General Data Protection Regulation (GDPR), only the bare minimum amount of information is going to be recorded. When you join a giveaway solely your Discord ID will be recorded.\n" +
-    "Should you be drawn as the winner your Discord ID will be shared with the mod team and the responsible person.\n" +
-    "DO NOT SHARE YOUR PERSONAL INFORMATION with anyone other than the responsible person of the giveaway.\n" +
-    "Neither the bot, its owner nor anyone of the mod team will require your personal information like your address.\nWe merely handle the recording of participation and the drawing process."
-  end
-
-  message(content: "!gdpr-giveaway") do |event|
-    next if @@is_crawler
-    next unless !event.user.bot_account?
-    next unless event.server
-    self.only_mods(event.server, event.user) {
-      BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
-        event.send_message self.gdpr_disclaimer()
-        event.message.delete()
-      }
-    }
   end
 
   message(content: "!giveaway list") do |event|
@@ -899,8 +880,7 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if @@giveaways.length
-        @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name, event.server) }.each { |giveaway| event.user.pm(giveaway) }
-        event.user.pm(self.gdpr_disclaimer())
+        @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name, event.server) }.reject{ |giveaway| giveaway['join_end'].utc < Time.now.utc }.each { |giveaway| event.user.pm(giveaway) }
         event.send_message "#{event.user.mention} please check your DMs!"
       else
         event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
@@ -942,53 +922,12 @@ module BuddyBot::Modules::BuddyFunctionality
             next
           end
 
-          event.send_message self.format_giveaway(giveaway_list_name, event.server)
+          msg = event.send_message self.format_giveaway(giveaway_list_name, event.server)
+          msg.create_reaction BuddyBot.emoji(472108548810342410)
           if @@giveaways.values.reject{ |giveaway| giveaway['join_end'].utc < Time.now.utc }.length > 1
             event.send_message "Hold up, there's more than one giveaway going on 👀. Use `!giveaway list` in #{@@server_bot_commands[event.server.id].map{|channel_id| '<#' + channel_id.to_s + '>' }.join(' or ')} to know more about them!"
           end
           event.message.delete()
-        else
-          event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
-        end
-      }
-    }
-  end
-
-  message(start_with: "!giveaway fix ") do |event|
-    next if @@is_crawler
-    next unless !event.user.bot_account?
-    next unless event.server
-    self.only_mods(event.server, event.user) {
-      BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-        if @@giveaways.length
-          data = event.content.scan(/^!giveaway fix\s+(.*?)\s+(\d+)\s*$/i)[0]
-          if !data
-            event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
-            next
-          end
-
-          giveaway_list_name = data[0].downcase
-          user_id = data[1].to_i
-          if !@@giveaways.include? giveaway_list_name
-            event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
-            next
-          end
-
-          if !@@giveaway_joins.include? giveaway_list_name
-            @@giveaway_joins[giveaway_list_name] = {
-              "joined" => []
-            }
-          end
-
-          if @@giveaway_joins[giveaway_list_name]["joined"].include? user_id
-            event.send_message "#{event.user.mention} '#{user_id}' already joined the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'... <:eunhathink:350850054900416512>"
-            next
-          end
-          @@giveaway_joins[giveaway_list_name]["joined"] << user_id
-          event.send_message "Ka-ching! #{event.user.mention} '#{user_id}' joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
-          event.message.delete()
-
-          self.log "Re-added member joined giveaway '#{giveaway_list_name}' - by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} -- '#{user_id}'", event.bot, event.server
         else
           event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
         end
@@ -1003,13 +942,14 @@ module BuddyBot::Modules::BuddyFunctionality
     self.only_mods(event.server, event.user) {
       BuddyBot.only_channels(event.channel, @@giveaway_channels[event.server.id]) {
         if @@giveaways.length
-          data = event.content.scan(/^!giveaway draw\s+(.*?)\s*$/i)[0]
+          data = event.content.scan(/^!giveaway draw\s+(.*?)\s+(\d{18})\s*$/i)[0]
           if !data
             event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
             next
           end
 
           giveaway_list_name = data[0].downcase
+          announce_message_id = data[1].to_i
           if !@@giveaways.include? giveaway_list_name
             event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
             next
@@ -1019,6 +959,11 @@ module BuddyBot::Modules::BuddyFunctionality
             event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' did not end yet #{self.random_derp_emoji()}"
             next
           end
+
+          announce_message_object = Message.new(JSON.parse(Discordrb::API::Channel.message(event.bot.token, event.channel.id, announce_message_id)), event.bot)
+          event.respond announce_message_object.inspect
+          event.respond announce_message_object.reactions.inspect
+          break
 
           if !@@giveaway_joins[giveaway_list_name] || !@@giveaway_joins[giveaway_list_name]["joined"] || @@giveaway_joins[giveaway_list_name]["joined"].length == 0
             event.send_message "No members entered the giveaway #{self.random_derp_emoji()}"
@@ -1050,140 +995,6 @@ module BuddyBot::Modules::BuddyFunctionality
           event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
         end
       }
-    }
-  end
-
-  message(start_with: "!giveaway join ") do |event|
-    next if @@is_crawler
-    next unless !event.user.bot_account?
-    next unless event.server
-    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      if @@giveaways.length
-        data = event.content.scan(/^!giveaway join\s+(.*?)\s*$/i)[0]
-        if !data
-          event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
-          event.message.delete()
-          next
-        end
-
-        giveaway_list_name = data[0].downcase
-        if !@@giveaways.include? giveaway_list_name
-          event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
-          event.message.delete()
-          next
-        end
-
-        if @@giveaways[giveaway_list_name]['join_end'].utc < Time.now.utc
-          event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
-          event.message.delete()
-          next
-        end
-        if @@giveaways[giveaway_list_name]['join_start'].utc > Time.now.utc
-          event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' hasn't even started yet #{self.random_derp_emoji()}"
-          event.message.delete()
-          next
-        end
-
-        # block new people from joining
-        if @@server_threshold_remove_roles[event.server.id]
-          if @@server_threshold_remove_roles[event.server.id].find{ |role_id| event.user.role?(role_id) }
-            event.message.delete() # blackhole
-            next
-          end
-        end
-
-        if !@@giveaway_joins.include? giveaway_list_name
-          @@giveaway_joins[giveaway_list_name] = {
-            "joined" => []
-          }
-        end
-
-        if @@giveaway_joins[giveaway_list_name]["joined"].include? event.user.id
-          event.send_message "#{event.user.mention} you already joined the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'... <:eunhathink:350850054900416512>"
-          event.message.delete()
-          next
-        end
-        @@giveaway_joins[giveaway_list_name]["joined"] << event.user.id
-        event.send_message "Ka-ching! #{event.user.mention} you joined the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
-        # event.message.create_reaction(BuddyBot.emoji(342101928903442432))
-        event.message.delete()
-
-        self.log "New member joined giveaway '#{giveaway_list_name}' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot, event.server
-
-        @@global_counted_giveaway_joins = @@global_counted_giveaway_joins + 1
-
-        # save every three messages
-        if @@global_counted_giveaway_joins % 3 == 0
-          self.persist_giveaway_joins()
-        end
-      else
-        event.send_message "No ongoing giveaways... #{self.random_derp_emoji()}"
-      end
-    }
-  end
-
-  message(start_with: "!giveaway leave ") do |event|
-    next if @@is_crawler
-    next unless !event.user.bot_account?
-    next unless event.server
-    BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
-      if @@giveaways.length
-        data = event.content.scan(/^!giveaway leave\s+(.*?)\s*$/i)[0]
-        if !data
-          event.send_message "You need to specify a giveaway list name... #{self.random_derp_emoji()}"
-          event.message.delete()
-          next
-        end
-
-        giveaway_list_name = data[0].downcase
-        if !@@giveaways.include? giveaway_list_name
-          event.send_message "A list with the name #{giveaway_list_name} does not exist... #{self.random_derp_emoji()}"
-          event.message.delete()
-          next
-        end
-
-        if @@giveaways[giveaway_list_name]['join_end'].utc < Time.now.utc
-          event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' already ended #{self.random_derp_emoji()}"
-          event.message.delete()
-          next
-        end
-
-        if @@giveaways[giveaway_list_name]['join_start'].utc > Time.now.utc
-          event.send_message "Giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}' hasn't even started yet #{self.random_derp_emoji()}"
-          event.message.delete()
-          next
-        end
-
-        # block new people from joining
-        if @@server_threshold_remove_roles[event.server.id]
-          if @@server_threshold_remove_roles[event.server.id].find{ |role_id| event.user.role?(role_id) }
-            event.message.delete() # blackhole
-            next
-          end
-        end
-
-        if !@@giveaway_joins.include?(giveaway_list_name) || !@@giveaway_joins[giveaway_list_name]["joined"].include?(event.user.id)
-          event.send_message "#{event.user.mention} you did not join the giveaway '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'... <:eunhathink:350850054900416512>"
-          event.message.delete()
-          next
-        end
-
-        @@giveaway_joins[giveaway_list_name]["joined"] = @@giveaway_joins[giveaway_list_name]["joined"].reject{ |id| id == event.user.id }
-        event.send_message "Ka-ching! #{event.user.mention} you **left** the '**#{giveaway_list_name}** - #{@@giveaways[giveaway_list_name]['subject']}'! <:yerinthumbsup:342101928903442432> Good luck competing with #{@@giveaway_joins[giveaway_list_name]["joined"].length - 1} people..."
-        # event.message.create_reaction(BuddyBot.emoji(342101928903442432))
-        event.message.delete()
-
-        self.log "Old member left giveaway '#{giveaway_list_name}' - '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id}", event.bot, event.server
-
-        @@global_counted_giveaway_joins = @@global_counted_giveaway_joins + 1
-
-        # save every three messages
-        if @@global_counted_giveaway_joins % 3 == 0
-          self.persist_giveaway_joins()
-        end
-      else
-        event.send_message "No ongoing giveaways... #{self.random_derp_emoji()}"
-      end
     }
   end
 
