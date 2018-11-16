@@ -1064,7 +1064,7 @@ module BuddyBot::Modules::Tistory
       next
     end
 
-    url = data
+    url = data[0]
     if data =~ /^\d+$/
       url = self.twitter_determine_full_url(data, event)
     end
