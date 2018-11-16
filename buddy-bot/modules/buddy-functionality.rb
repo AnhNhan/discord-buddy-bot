@@ -962,7 +962,7 @@ module BuddyBot::Modules::BuddyFunctionality
           end
 
           announce_message_object = Discordrb::Message.new(JSON.parse(Discordrb::API::Channel.message(event.bot.token, event.channel.id, announce_message_id)), event.bot)
-          reactions_list = announce_message_object.reacted_with(@@giveaway_emote_id).reject(&:bot_account)
+          reactions_list = announce_message_object.reacted_with(BuddyBot.emoji(@@giveaway_emote_id)).reject(&:bot_account)
           event.respond reactions_list.inspect
           event.respond reactions_list.map(&:username)
           break
