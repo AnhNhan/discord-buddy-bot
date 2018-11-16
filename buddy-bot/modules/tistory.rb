@@ -1056,10 +1056,55 @@ module BuddyBot::Modules::Tistory
     puts result
   end
 
+  message(start_with: /!twitter-link\s/i) do |event|
+    next unless event.user.id == 139342974776639489
+    data = event.content.scan(/^!twitter-link\s+(\S+)(\?s=\d+)?\s*$/i)[0]
+    if !data
+      event.send_message ":warning: You need to specify a trivia list name..."
+      next
+    end
+
+    url = data
+    if data =~ /^\d+$/
+      url = self.twitter_determine_full_url(data, event)
+    end
+
+    twitter_host, author, id = url.scan(/^(https:\/\/twitter.com)?\/(\w+)\/status\/(\d+)$/)[0]
+    if !(@@twitter_downloaded.include?(author) &&
+      @@twitter_downloaded[author].include?(id))
+      event.send_message ":information_desk_person: Don't have that tweet yet, downloading now!"
+      result = self.process_tweet(url, event)
+      puts result
+      if !result || result["result"] != "success"
+        self.log_warning ":warning: Tweet `#{id}` could not be downloaded: `#{result.inspect}`", event.bot
+        event.send_message ":warning: Download error #{BuddyBot.emoji(434376562142478367)}"
+        return
+      end
+      if result["result"] == "success"
+        self.twitter_record_successful_result(result["author"], result["id"], result)
+        File.open(BuddyBot.path("content/downloaded-twitter.yml"), "w") { |file| file.write(YAML.dump(@@twitter_downloaded)) }
+      end
+    end
+
+    entry = @@twitter_downloaded[author][id]
+    [ "files_images", "files_videos", "files_links" ].each do |key|
+      entry[key].values.each do |path|
+        object = @@s3_bucket.object(path)
+        if !object.exists?
+          self.log_warning ":warning: Tweet `#{id}` was _supposedly_ downloaded but did not exist in S3 as `#{path}`! BuddyBot.emoji(434376562142478367)", event.bot
+          event.send_message ":warning: Tweet `#{id}` was _supposedly_ downloaded but did not exist in S3 as `#{path}`! BuddyBot.emoji(434376562142478367)"
+          return
+        end
+
+        event.send_message ":information_desk_person: Here is your link for `#{id} / #{path}`! _Valid for one day._\n#{object.presigned_url(:get, expires_in: 24 * 60 * 60)}"
+      end
+    end
+  end
+
   message(start_with: "!twitter ") do |event|
     next if event.user.bot_account?
     @@abort_twitter_queue_in_progress = false
-    data = event.content.scan(/^!twitter\s+(\S+)\s*$/i)[0]
+    data = event.content.scan(/^!twitter\s+(\S+)(\?s=\d+)?\s*$/i)[0]
     if !data
       event.send_message ":warning: You need to specify a trivia list name..."
       next
@@ -1082,7 +1127,9 @@ module BuddyBot::Modules::Tistory
       self.log ":information_desk_person: Aborted Twitter!", event.bot
       next
     end
-    self.log ":information_desk_person: Finished going through <#{url}>: \n```\n#{result}\n```", event.bot
+    msg = ":information_desk_person: Finished going through <#{url}>: \n```\n#{result}\n```"
+    self.log msg, event.bot
+    event.respond msg
   end
 
   message(start_with: "!twitter-page ") do |event|
