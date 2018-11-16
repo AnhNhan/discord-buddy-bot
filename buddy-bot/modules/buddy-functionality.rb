@@ -864,9 +864,10 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   # Giveaway stuff
+  @@giveaway_emote_id = 472108548810342410
 
   def self.format_giveaway(giveaway_list_name, server)
-    "Giveaway #**#{giveaway_list_name}** - use the #{BuddyBot.emoji(472108548810342410)} reaction to join the draw!\n" +
+    "Giveaway #**#{giveaway_list_name}** - use the #{BuddyBot.emoji(@@giveaway_emote_id)} reaction to join the draw!\n" +
       "Subject: **#{@@giveaways[giveaway_list_name]['subject']}**\n" +
       "Restrictions: #{@@giveaways[giveaway_list_name]['restrictions']}\n" +
       "Responsible: **<#{@@giveaways[giveaway_list_name]['responsible_name']}>**\n" +
@@ -923,7 +924,7 @@ module BuddyBot::Modules::BuddyFunctionality
           end
 
           msg = event.send_message self.format_giveaway(giveaway_list_name, event.server)
-          msg.create_reaction BuddyBot.emoji(472108548810342410)
+          msg.create_reaction BuddyBot.emoji(@@giveaway_emote_id)
           if @@giveaways.values.reject{ |giveaway| giveaway['join_end'].utc < Time.now.utc }.length > 1
             event.send_message "Hold up, there's more than one giveaway going on 👀. Use `!giveaway list` in #{@@server_bot_commands[event.server.id].map{|channel_id| '<#' + channel_id.to_s + '>' }.join(' or ')} to know more about them!"
           end
@@ -961,8 +962,9 @@ module BuddyBot::Modules::BuddyFunctionality
           end
 
           announce_message_object = Discordrb::Message.new(JSON.parse(Discordrb::API::Channel.message(event.bot.token, event.channel.id, announce_message_id)), event.bot)
-          event.respond announce_message_object.inspect
-          event.respond announce_message_object.reactions.inspect
+          reactions_list = announce_message_object.reacted_with(@@giveaway_emote_id).reject(&:bot_account)
+          event.respond reactions_list.inspect
+          event.respond reactions_list.map(&:username)
           break
 
           if !@@giveaway_joins[giveaway_list_name] || !@@giveaway_joins[giveaway_list_name]["joined"] || @@giveaway_joins[giveaway_list_name]["joined"].length == 0
