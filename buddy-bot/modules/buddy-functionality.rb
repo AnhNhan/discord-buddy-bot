@@ -960,7 +960,7 @@ module BuddyBot::Modules::BuddyFunctionality
             next
           end
 
-          announce_message_object = discord::Data::Message.new(JSON.parse(Discordrb::API::Channel.message(event.bot.token, event.channel.id, announce_message_id)), event.bot)
+          announce_message_object = Discordrb::Data::Message.new(JSON.parse(Discordrb::API::Channel.message(event.bot.token, event.channel.id, announce_message_id)), event.bot)
           event.respond announce_message_object.inspect
           event.respond announce_message_object.reactions.inspect
           break
