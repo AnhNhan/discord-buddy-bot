@@ -963,24 +963,21 @@ module BuddyBot::Modules::BuddyFunctionality
 
           announce_message_object = Discordrb::Message.new(JSON.parse(Discordrb::API::Channel.message(event.bot.token, event.channel.id, announce_message_id)), event.bot)
           reactions_list = announce_message_object.reacted_with(BuddyBot.emoji(@@giveaway_emote_id)).reject(&:bot_account)
-          event.respond reactions_list.inspect
-          event.respond reactions_list.map(&:username)
-          break
 
-          if !@@giveaway_joins[giveaway_list_name] || !@@giveaway_joins[giveaway_list_name]["joined"] || @@giveaway_joins[giveaway_list_name]["joined"].length == 0
+          if !reactions_list || reactions_list.length == 0
             event.send_message "No members entered the giveaway #{self.random_derp_emoji()}"
             next
           end
 
-          winner = @@giveaway_joins[giveaway_list_name]["joined"].sample
-          self.log "Winner decided for giveaway '#{giveaway_list_name}' by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} ----- it's '#{winner}'", event.bot, event.server
+          winner = reactions_list.sample
+          self.log "Winner decided for giveaway '#{giveaway_list_name}' by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} ----- it's '`#{winner.username}##{winner.discriminator}` - #{winner.mention}'", event.bot, event.server
 
           event.message.delete()
 
           event.send_message "_\*drum roll\*_"
           event.channel.start_typing
           sleep(2)
-          event.send_message "_staring at #{@@giveaway_joins[giveaway_list_name]["joined"].length} people..._"
+          event.send_message "_staring at #{reactions_list.length} people..._"
           sleep(2)
           event.send_message "_and only one can win..._"
           event.channel.start_typing
@@ -990,7 +987,7 @@ module BuddyBot::Modules::BuddyFunctionality
           event.send_message "is ..."
           event.channel.start_typing
           sleep(6)
-          event.send_message ":tada: :confetti_ball: <@#{winner}> :confetti_ball: :tada:"
+          event.send_message ":tada: :confetti_ball: #{winner.mention} :confetti_ball: :tada:"
           sleep(2)
           event.send_message "<@#{@@giveaways[giveaway_list_name]['responsible_id']}> fyi"
         else
