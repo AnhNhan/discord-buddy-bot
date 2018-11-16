@@ -880,7 +880,7 @@ module BuddyBot::Modules::BuddyFunctionality
     next unless event.server
     BuddyBot.only_channels(event.channel, @@server_bot_commands[event.server.id]) {
       if @@giveaways.length
-        @@giveaways.keys.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name, event.server) }.reject{ |giveaway| giveaway['join_end'].utc < Time.now.utc }.each { |giveaway| event.user.pm(giveaway) }
+        @@giveaways.keys.reject{ |giveaway_list_name| @@giveaways[giveaway_list_name]['join_end'].utc < Time.now.utc }.map{ |giveaway_list_name| self.format_giveaway(giveaway_list_name, event.server) }.each { |giveaway| event.user.pm(giveaway) }
         event.send_message "#{event.user.mention} please check your DMs!"
       else
         event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
