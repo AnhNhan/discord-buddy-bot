@@ -970,7 +970,7 @@ module BuddyBot::Modules::BuddyFunctionality
           end
 
           winner = reactions_list.sample
-          self.log "Winner decided for giveaway '#{giveaway_list_name}' by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} ----- it's '`#{winner.username}##{winner.discriminator}` - #{winner.mention}'", event.bot, event.server
+          self.log ":tada: Winner decided for giveaway '#{giveaway_list_name}' by '#{event.user.username}' / '#{event.user.nick}' / #{event.user.id} ----- it's '`#{winner.username}##{winner.discriminator}` - #{winner.mention}'", event.bot, event.server
 
           event.message.delete()
 
@@ -990,6 +990,8 @@ module BuddyBot::Modules::BuddyFunctionality
           event.send_message ":tada: :confetti_ball: #{winner.mention} :confetti_ball: :tada:"
           sleep(2)
           event.send_message "<@#{@@giveaways[giveaway_list_name]['responsible_id']}> fyi"
+          self.log ":eunhapeek: Deleted announcement message for giveaway `#{giveaway_list_name}`"
+          announce_message_object.delete()
         else
           event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
         end
