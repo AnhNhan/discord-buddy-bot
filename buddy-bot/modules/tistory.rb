@@ -1065,9 +1065,9 @@ module BuddyBot::Modules::Tistory
       next
     end
 
-    url = data
-    if data =~ /^\d+$/
-      url = self.twitter_determine_full_url(data, event)
+    url = data[0]
+    if url =~ /^\d+$/
+      url = self.twitter_determine_full_url(url, event)
     end
 
     twitter_host, author, id = url.scan(/^(https:\/\/twitter.com)?\/(\w+)\/status\/(\d+)$/)[0]
