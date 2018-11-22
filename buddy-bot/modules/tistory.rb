@@ -1198,6 +1198,7 @@ module BuddyBot::Modules::Tistory
           msg = ":information_desk_person: Twitter account `#{author}` is suspended, skipping"
           self.log_warning msg, event.bot
           self.log msg, event.bot
+          return
         end
       rescue => e
         # TODO: debug
@@ -1490,6 +1491,7 @@ module BuddyBot::Modules::Tistory
         msg = ":information_desk_person: Twitter account `#{author}` is suspended, skipping"
         self.log_warning msg, event.bot
         self.log msg, event.bot
+        return
       end
     rescue => e
       # TODO: debug
