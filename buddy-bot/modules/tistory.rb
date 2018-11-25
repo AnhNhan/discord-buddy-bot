@@ -1173,7 +1173,7 @@ module BuddyBot::Modules::Tistory
     tweet_url = result.headers["location"]
   end
 
-  def self.process_tweet(url, event)
+  def self.process_tweet(url, event, options = {})
     if @@abort_twitter_queue_in_progress
       return
     end
@@ -1189,6 +1189,24 @@ module BuddyBot::Modules::Tistory
     if twitter_host.nil? || twitter_host.empty?
       url = "https://twitter.com" + url
     end
+
+    # check if account had been suspended
+    if !options[:did_suspended_check]
+      begin
+        request = HTTParty.head(url, follow_redirects: false)
+        if request.code == 302 && request.headers["location"] == "https://twitter.com/account/suspended"
+          msg = ":information_desk_person: Twitter account `#{author}` is suspended, skipping"
+          self.log_warning msg, event.bot
+          self.log msg, event.bot
+          return
+        end
+      rescue => e
+        # TODO: debug
+        self.log_warning "self.process_tweet: Hard error while checking suspended account for `#{url}`: `#{e.inspect}`", event.bot
+        return
+      end
+    end
+
     page_contents = nil
     begin
       page_contents = HTTParty.get(url)
@@ -1466,6 +1484,21 @@ module BuddyBot::Modules::Tistory
       return
     end
     self.log ":information_desk_person: Going through @#{author}'s Twitter page", event.bot
+
+    begin
+      request = HTTParty.head("https://twitter.com/#{author}", follow_redirects: false)
+      if request.code == 302 && request.headers["location"] == "https://twitter.com/account/suspended"
+        msg = ":information_desk_person: Twitter account `#{author}` is suspended, skipping"
+        self.log_warning msg, event.bot
+        self.log msg, event.bot
+        return
+      end
+    rescue => e
+      # TODO: debug
+      self.log_warning "self.process_twitter_profile: Hard error while checking suspended account for `#{author}`: `#{e.inspect}`", event.bot
+      return
+    end
+
     time_start = Time.now
     earliest_tweet_id = false
     results = []
@@ -1494,7 +1527,7 @@ module BuddyBot::Modules::Tistory
 
       tweet_urls.each do |tweet_url|
         begin
-          result = self.process_tweet(tweet_url, event)
+          result = self.process_tweet(tweet_url, event, did_suspended_check: true)
         rescue => e
           self.log_warning ":warning: Tweet <#{tweet_url}> had an error:\n```\n#{e.inspect}\n```\n", event.bot
           results << { "result" => "error" }
