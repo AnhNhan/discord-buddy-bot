@@ -990,7 +990,7 @@ module BuddyBot::Modules::BuddyFunctionality
           event.send_message ":tada: :confetti_ball: #{winner.mention} :confetti_ball: :tada:"
           sleep(2)
           event.send_message "<@#{@@giveaways[giveaway_list_name]['responsible_id']}> fyi"
-          self.log ":eunhapeek: Deleted announcement message for giveaway `#{giveaway_list_name}`"
+          self.log ":eunhapeek: Deleted announcement message for giveaway `#{giveaway_list_name}`", event.bot, event.server
           announce_message_object.delete()
         else
           event.send_message "No ongoing giveaways...  #{self.random_derp_emoji()}"
