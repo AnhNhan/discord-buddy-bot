@@ -1503,9 +1503,16 @@ module BuddyBot::Modules::Tistory
     earliest_tweet_id = false
     results = []
     has_more_items = true
+    page_count = 0
 
     while has_more_items && !earliest_tweet_id.nil? do
-      tweets = HTTParty.get("https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&count=200&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false")
+      page_count = page_count + 1
+      begin
+        tweets = HTTParty.get("https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&count=200&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false")
+      rescue => e
+        self.log_warning "self.process_twitter_profile: Hard error while checking suspended account for `#{author}`, page #{page_count}, tweet id `#{earliest_tweet_id}`: `#{e.inspect}`", event.bot
+        next
+      end
       if tweets.code != 200
         # :sowonnotlikethis:
         next { "result": "error", "request" => tweets }
