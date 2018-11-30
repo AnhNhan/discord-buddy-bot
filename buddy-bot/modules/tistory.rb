@@ -535,6 +535,7 @@ module BuddyBot::Modules::Tistory
     ]
     uri_weird_iframes = [
       "/endGift.php?entryId=0&setNo=1940", # some gift button
+      "https://t1.daumcdn.net/tistory_admin/static/plugin/endGift.html?entryId=0&setNo=1940",
     ]
     uri_weird_embeds = [
     ]
