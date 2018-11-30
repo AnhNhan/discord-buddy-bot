@@ -404,7 +404,7 @@ module BuddyBot::Modules::Tistory
     File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
 
     if orig_expected != 0 && orig_expected != @@pages_downloaded[page_name][page_number]["files"].keys.length
-      self.log_warning ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :frame_photo: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
+      self.log_warning ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :frame_photo: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_image_results.keys.length}** from just now", event.bot
     end
     if orig_expected_media != 0 && orig_expected_media != @@pages_downloaded[page_name][page_number]["media_files"].keys.length
       self.log_warning ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :movie_camera: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected_media"]}** but only **#{@@pages_downloaded[page_name][page_number]["media_files"].keys.length}** exist, **#{download_media_success.length}** from just now", event.bot
