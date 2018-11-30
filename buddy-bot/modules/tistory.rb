@@ -169,6 +169,21 @@ module BuddyBot::Modules::Tistory
     end
   end
 
+  message(start_with: /!tistory-special-queue-run/i) do |event|
+    next unless event.user.id == 139342974776639489
+    @@abort_tistory_queue_in_progress = false
+
+    self.log ":information_desk_person: Starting to process the special page queue! :sujipraise:", event.bot
+    @@pages_special.shuffle.each do |page_name|
+      self.process_pages(page_name, event) { |page_name, page_number| "http://#{page_name}/m/#{page_number}" }
+    end
+
+    if @@abort_tistory_queue_in_progress
+      @@abort_tistory_queue_in_progress = false
+      self.log ":information_desk_person: Aborted Tistory!", event.bot
+    end
+  end
+
   def self.process_pages(page_name, event, &build_url)
     if @@abort_tistory_queue_in_progress
       return
