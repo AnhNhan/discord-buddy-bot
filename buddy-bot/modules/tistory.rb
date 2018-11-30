@@ -882,7 +882,7 @@ module BuddyBot::Modules::Tistory
     retry_count = 0
 
     begin
-      Tempfile.create('tmpf') do |tempfile|
+      Tempfile.create('tmpf', '/home/anhnhan/tmp-web-crawler/') do |tempfile|
         tempfile.write response.body
         tempfile.seek(0)
         time_split = Time.now # .to_f
@@ -1276,7 +1276,7 @@ module BuddyBot::Modules::Tistory
       s3_path = s3_folder + image_filename
       retry_count = 0
       begin
-        Tempfile.create('tmpf') do |tempfile|
+        Tempfile.create('tmpf', '/home/anhnhan/tmp-web-crawler/') do |tempfile|
           tempfile.write HTTParty.get(image_url).body
           tempfile.seek(0)
           file_size = tempfile.size
@@ -1342,7 +1342,7 @@ module BuddyBot::Modules::Tistory
       end
       s3_path = s3_folder + poster_filename
       begin
-        Tempfile.create('tmpf') do |tempfile|
+        Tempfile.create('tmpf', '/home/anhnhan/tmp-web-crawler/') do |tempfile|
           tempfile.write HTTParty.get(poster_uri).body
           tempfile.seek(0)
           file_size = tempfile.size
@@ -1395,7 +1395,7 @@ module BuddyBot::Modules::Tistory
             return { "result" => "error", "request" => subtitle_file_request }
           end
           s3_path = s3_folder + File.basename(filename, ".*") + ".#{lang}" + File.extname(subtitle_file_uri)
-          Tempfile.create('tmpf') do |tempfile|
+          Tempfile.create('tmpf', '/home/anhnhan/tmp-web-crawler/') do |tempfile|
             tempfile.write subtitle_file_request.body
             file_size = tempfile.size
             object = @@s3_bucket.object(s3_path)
@@ -1412,7 +1412,7 @@ module BuddyBot::Modules::Tistory
         end
         next_playlist = M3u8::Playlist.read next_playlist_request.body
         begin
-          Tempfile.create('tmpf') do |tempfile|
+          Tempfile.create('tmpf', '/home/anhnhan/tmp-web-crawler/') do |tempfile|
             next_playlist.items.map { |segment| twt_video_host + segment.segment }.each do |segment_uri|
               segment_request = HTTParty.get(segment_uri)
               if segment_request.code != 200
@@ -1446,7 +1446,7 @@ module BuddyBot::Modules::Tistory
 
         s3_path = s3_folder + File.basename(video_uri.sub(/\?tag=\d+/i, ""))
         begin
-          Tempfile.create('tmpf') do |tempfile|
+          Tempfile.create('tmpf', '/home/anhnhan/tmp-web-crawler/') do |tempfile|
             tempfile.write HTTParty.get(video_uri).body
             tempfile.flush
             tempfile.seek(0)
