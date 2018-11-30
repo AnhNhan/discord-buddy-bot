@@ -256,6 +256,7 @@ module BuddyBot::Modules::Tistory
       response = HTTParty.get(url)
     rescue => e
       puts e.inspect
+      event.send_message ":warning: Encountered an error while loading the page `#{url}`! `#{e.inspect}`\n```\n#{e.inspect}\n```"
       return false
     end
 
