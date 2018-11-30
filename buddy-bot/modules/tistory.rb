@@ -101,7 +101,7 @@ module BuddyBot::Modules::Tistory
   # invoke this command if you want to e.g. add new audio clips or memes, but don't want to restart the bot. for now, you also have to invoke e.g. #audio-load manually afterwards.
   message(content: "!crawler-git-sync") do |event|
     next unless event.user.id == 139342974776639489
-    event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull && git add content/tistory-list.yml content/tistory-pages-downloaded.yml content/pages-twitter.yml content/downloaded-twitter.yml content/downloaded-sendanywhere.yml && git commit -m "tistory: update pages" && git push`}"
+    event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull && git add content/tistory-list.yml content/tistory-pages-downloaded.yml content/pages-twitter.yml content/downloaded-twitter.yml content/downloaded-sendanywhere.yml && git commit -m "crawler: update pages" && git push`}"
   end
 
   message(start_with: /^!tistory\s/i) do |event|
