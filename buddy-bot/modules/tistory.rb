@@ -252,11 +252,16 @@ module BuddyBot::Modules::Tistory
       return "abort"
     end
     time_start = Time.now
+    retry_counter = 0
+    retry_counter_max = 5
+
     begin
       response = HTTParty.get(url)
     rescue => e
       puts e.inspect
-      event.send_message ":warning: Encountered an error while loading the page `#{url}`! `#{e.inspect}`\n```\n#{e.inspect}\n```"
+      self.log_warning ":warning: Encountered an error while loading the page `#{url}`! `#{e.inspect}`\n```\n#{e.inspect}\n```", event.bot
+      retry_counter = retry_counter + 1
+      retry if retry_counter < retry_counter_max
       return false
     end
 
