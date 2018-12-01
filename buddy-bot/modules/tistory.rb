@@ -252,11 +252,16 @@ module BuddyBot::Modules::Tistory
       return "abort"
     end
     time_start = Time.now
+    retry_counter = 0
+    retry_counter_max = 5
+
     begin
       response = HTTParty.get(url)
     rescue => e
+      retry_counter = retry_counter + 1
+      retry if retry_counter < retry_counter_max
       puts e.inspect
-      event.send_message ":warning: Encountered an error while loading the page `#{url}`! `#{e.inspect}`\n```\n#{e.inspect}\n```"
+      self.log_warning ":warning: Encountered an error while loading the page `#{url}`! `#{e.inspect}`\n```\n#{e.inspect}\n```", event.bot
       return false
     end
 
@@ -404,7 +409,7 @@ module BuddyBot::Modules::Tistory
     File.open(BuddyBot.path("content/tistory-pages-downloaded.yml"), "w") { |file| file.write(YAML.dump(@@pages_downloaded)) }
 
     if orig_expected != 0 && orig_expected != @@pages_downloaded[page_name][page_number]["files"].keys.length
-      self.log_warning ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :frame_photo: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_results.keys.length}** from just now", event.bot
+      self.log_warning ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :frame_photo: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected"]}** but only **#{@@pages_downloaded[page_name][page_number]["files"].keys.length}** exist, **#{download_image_results.keys.length}** from just now", event.bot
     end
     if orig_expected_media != 0 && orig_expected_media != @@pages_downloaded[page_name][page_number]["media_files"].keys.length
       self.log_warning ":warning: Page `#{page_title}` <#{orig_input}>: Downloaded :movie_camera: count discrepancy, expected **#{@@pages_downloaded[page_name][page_number]["expected_media"]}** but only **#{@@pages_downloaded[page_name][page_number]["media_files"].keys.length}** exist, **#{download_media_success.length}** from just now", event.bot
