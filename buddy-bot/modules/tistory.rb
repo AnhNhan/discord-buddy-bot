@@ -962,7 +962,9 @@ module BuddyBot::Modules::Tistory
     # keyinfo = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=keyinfo")
 
     # file names and list
-    filelist = HTTParty.get("#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=list&start_pos=0&end_pos=30")
+    filelist_uri = "#{server_uri}webfile/#{id}?device_key=#{device_key}&mode=list&start_pos=0&end_pos=30"
+    puts "filelist_uri: #{filelist_uri}"
+    filelist = HTTParty.get(filelist_uri)
     filelist = JSON.parse(filelist.body)
 
     if filelist["file"].length > 1
