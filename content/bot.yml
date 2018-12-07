@@ -347,7 +347,7 @@ new_member_roles:
     - 468850607843835914 # New Guy
 
 server_thresholds:
-  166304074252288000: 100 # gfcord
+  166304074252288000: 50 # gfcord
   165551300375871488: 5   # anh-test
   468731351374364672: 2   # yerin pic spam
 
