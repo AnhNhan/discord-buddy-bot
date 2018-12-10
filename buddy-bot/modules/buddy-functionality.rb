@@ -62,9 +62,6 @@ module BuddyBot::Modules::BuddyFunctionality
   @@scheduler = Rufus::Scheduler.new
   @@yerin_pic_spam_channel = 0
 
-  @@mutex_roles = Mutex.new
-  @@mutex_trivia = Mutex.new
-
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
 
@@ -427,68 +424,66 @@ module BuddyBot::Modules::BuddyFunctionality
     if event.user.bot_account?
       next
     end
-    @@mutex_roles.synchronize do
-      event.server.delete_member(event.user.id)
-      user = event.user.on event.server
-      added_roles = []
-      rejected_names = []
-      added_ot6 = false
-      current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
-      ot6_role = self.find_roles(event.server, 'ot6', true).first
-      has_ot6_primary = current_primary_roles.find{ |current_role| current_role.id == ot6_role.id }
-      has_non_ot6_primary = current_primary_roles.find{ |current_role| current_role.id != ot6_role.id }
+    event.server.delete_member(event.user.id)
+    user = event.user.on event.server
+    added_roles = []
+    rejected_names = []
+    added_ot6 = false
+    current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
+    ot6_role = self.find_roles(event.server, 'ot6', true).first
+    has_ot6_primary = current_primary_roles.find{ |current_role| current_role.id == ot6_role.id }
+    has_non_ot6_primary = current_primary_roles.find{ |current_role| current_role.id != ot6_role.id }
 
-      if text =~ /^!(secondary|bias|add) /i
-        event.send_message "#{user.mention} you do not need to provide the `!secondary` / `!bias` command."
-      end
+    if text =~ /^!(secondary|bias|add) /i
+      event.send_message "#{user.mention} you do not need to provide the `!secondary` / `!bias` command."
+    end
 
-      if text =~ /\bot6\b/i
-        if current_primary_roles.length > 0 && !has_ot6_primary && has_non_ot6_primary
-          event.send_message "You wanted OT6 but you already have a primary role. Please note that you have to explicitly specify `!primary OT6` to receive it as a primary."
-        elsif !has_ot6_primary
-          user.add_role ot6_role
-          self.log_roles "Added role '#{ot6_role.name}' to '#{user.name}'", event.bot, event.server
-          added_roles << "**#{ot6_role.name}**"
-          added_ot6 = true
-        end
-        # we only handle ot6 up here
-        text = text.gsub /\bot6\b/i, ""
+    if text =~ /\bot6\b/i
+      if current_primary_roles.length > 0 && !has_ot6_primary && has_non_ot6_primary
+        event.send_message "You wanted OT6 but you already have a primary role. Please note that you have to explicitly specify `!primary OT6` to receive it as a primary."
+      elsif !has_ot6_primary
+        user.add_role ot6_role
+        self.log_roles "Added role '#{ot6_role.name}' to '#{user.name}'", event.bot, event.server
+        added_roles << "**#{ot6_role.name}**"
+        added_ot6 = true
       end
+      # we only handle ot6 up here
+      text = text.gsub /\bot6\b/i, ""
+    end
 
-      text = self.prepare_bias_replacement(text)
+    text = self.prepare_bias_replacement(text)
 
-      cb_member = lambda do |match, original|
-        member_name = @@member_names[match]
-        roles = self.find_roles event.server, member_name, self.determine_requesting_primary(user, member_name)
-        if roles.find{ |role| user.role? role }
-          next
-        end
-        user.add_role roles
-        roles.map do |role|
-          added_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
-          self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
-        end
+    cb_member = lambda do |match, original|
+      member_name = @@member_names[match]
+      roles = self.find_roles event.server, member_name, self.determine_requesting_primary(user, member_name)
+      if roles.find{ |role| user.role? role }
+        next
       end
-      cb_other_member = lambda do |match, original|
-        rejected_names << match
+      user.add_role roles
+      roles.map do |role|
+        added_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
+        self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
       end
-      cb_special = lambda do |match, original, user_id|
-        # for now disabled
-        # member = event.server.member(user_id)
-        # event.send_message "Hey **@#{member.nick || member.username}**, lookie lookie super lookie! You have an admirer!"
-      end
-      self.members_map(text, cb_member, cb_other_member, cb_special)
+    end
+    cb_other_member = lambda do |match, original|
+      rejected_names << match
+    end
+    cb_special = lambda do |match, original, user_id|
+      # for now disabled
+      # member = event.server.member(user_id)
+      # event.send_message "Hey **@#{member.nick || member.username}**, lookie lookie super lookie! You have an admirer!"
+    end
+    self.members_map(text, cb_member, cb_other_member, cb_special)
 
-      if !added_roles.empty?
-        added_roles_text = added_roles.join ", "
-        event.send_message "#{user.mention} your bias#{if added_roles.length > 1 then 'es' end} #{added_roles_text} #{if added_roles.length > 1 then 'have' else 'has' end} been added"
-        if added_ot6 && added_roles.length > 1
-          event.send_message "Do note that OT6 has been added as a primary and any further bias has been added as a secondary."
-        end
+    if !added_roles.empty?
+      added_roles_text = added_roles.join ", "
+      event.send_message "#{user.mention} your bias#{if added_roles.length > 1 then 'es' end} #{added_roles_text} #{if added_roles.length > 1 then 'have' else 'has' end} been added"
+      if added_ot6 && added_roles.length > 1
+        event.send_message "Do note that OT6 has been added as a primary and any further bias has been added as a secondary."
       end
-      if !rejected_names.empty?
-        self.print_rejected_names rejected_names, event
-      end
+    end
+    if !rejected_names.empty?
+      self.print_rejected_names rejected_names, event
     end
   end
 
@@ -503,68 +498,66 @@ module BuddyBot::Modules::BuddyFunctionality
     data = event.content.scan(/^!primary\s+(.*?)\s*$/i)[0]
     if data
       data = data[0].downcase
-      @@mutex_roles.synchronize do
-        event.server.delete_member(event.user.id)
-        user = event.user.on event.server
-        removed_roles = []
-        added_roles = []
+      event.server.delete_member(event.user.id)
+      user = event.user.on event.server
+      removed_roles = []
+      added_roles = []
 
-        data = self.prepare_bias_replacement(data)
+      data = self.prepare_bias_replacement(data)
 
-        if !(@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_role_names.include?(@@member_names[data])))
-          event.send_message "#{user.mention} you didn't give me a possible primary bias"
-          next
+      if !(@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_role_names.include?(@@member_names[data])))
+        event.send_message "#{user.mention} you didn't give me a possible primary bias"
+        next
+      end
+
+      current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
+      member_name = @@member_names[data]
+      role = self.find_roles(event.server, member_name, true).first
+      if !role
+        self.log "Primary role with name '#{member_name}' not found on server '#{event.server.name}', stale config?", event.bot, event.server
+        next
+      end
+
+      if current_primary_roles.find{ |current_role| current_role.id == role.id }
+        event.send_message "You can't hop to your current primary bias #{self.random_derp_emoji()}"
+        if current_primary_roles.length > 1
+          event.send_message "Do note that you have _multiple_ primary biases. If you are not satisfied with your current color you might consider to `!remove #{current_primary_roles.find_all{ |current_role| current_role.id != role.id }.map(&:name).join(" ")}` #{BuddyBot.emoji(342101928903442432)}"
         end
+        next
+      end
 
-        current_primary_roles = user.roles.find_all{ |role| self.role_is_primary(role) }
-        member_name = @@member_names[data]
-        role = self.find_roles(event.server, member_name, true).first
-        if !role
-          self.log "Primary role with name '#{member_name}' not found on server '#{event.server.name}', stale config?", event.bot, event.server
-          next
-        end
+      event.channel.start_typing
 
-        if current_primary_roles.find{ |current_role| current_role.id == role.id }
-          event.send_message "You can't hop to your current primary bias #{self.random_derp_emoji()}"
-          if current_primary_roles.length > 1
-            event.send_message "Do note that you have _multiple_ primary biases. If you are not satisfied with your current color you might consider to `!remove #{current_primary_roles.find_all{ |current_role| current_role.id != role.id }.map(&:name).join(" ")}` #{BuddyBot.emoji(342101928903442432)}"
-          end
-          next
-        end
+      current_primary_roles.map do |current_primary_role|
+        removed_roles << "**#{current_primary_role.name}**"
+        user.remove_role current_primary_role
+        puts " - removed role '#{current_primary_role.name}'"
+        self.log_roles "Removed role '#{current_primary_role.name}' from '#{user.name}'", event.bot, event.server
+      end
 
-        event.channel.start_typing
+      user.add_role role
+      puts "+  role '#{role.name}'"
+      added_roles << "**#{role.name}**"
+      self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
 
-        current_primary_roles.map do |current_primary_role|
-          removed_roles << "**#{current_primary_role.name}**"
-          user.remove_role current_primary_role
-          puts " - removed role '#{current_primary_role.name}'"
-          self.log_roles "Removed role '#{current_primary_role.name}' from '#{user.name}'", event.bot, event.server
-        end
-
-        user.add_role role
-        puts "+  role '#{role.name}'"
-        added_roles << "**#{role.name}**"
-        self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
-
-        if !removed_roles.empty?
-          removed_roles_text = removed_roles.join ", "
-          self.find_emoji(removed_roles_text)
-            .map{ |name| @@member_role_emoji_leave[name] }
-            .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
-            .reject()
-            .each{ |emoji| event.message.create_reaction(emoji) }
-        end
-        if !added_roles.empty?
-          added_roles_text = added_roles.join ", "
-          event.send_message self.find_emoji(added_roles_text)
-            .map{ |name| @@member_role_emoji_join[name] }
-            .map(&:sample)
-            .map{ |raw| BuddyBot.emoji(raw) }
-            .reject()
-            .map(&:mention)
-            .to_a
-            .join
-        end
+      if !removed_roles.empty?
+        removed_roles_text = removed_roles.join ", "
+        self.find_emoji(removed_roles_text)
+          .map{ |name| @@member_role_emoji_leave[name] }
+          .map(&:sample).map{ |raw| BuddyBot.emoji(raw) }
+          .reject()
+          .each{ |emoji| event.message.create_reaction(emoji) }
+      end
+      if !added_roles.empty?
+        added_roles_text = added_roles.join ", "
+        event.send_message self.find_emoji(added_roles_text)
+          .map{ |name| @@member_role_emoji_join[name] }
+          .map(&:sample)
+          .map{ |raw| BuddyBot.emoji(raw) }
+          .reject()
+          .map(&:mention)
+          .to_a
+          .join
       end
     end
   end
@@ -580,43 +573,41 @@ module BuddyBot::Modules::BuddyFunctionality
     data = event.content.scan(/^!remove\s+(.*?)\s*$/i)[0]
     if data
       data = data[0]
-      @@mutex_roles.synchronize do
-        event.server.delete_member(event.user.id)
-        user = event.user.on event.server
-        rejected_names = []
-        removed_roles = []
-        data = self.prepare_bias_replacement(data)
-        cb_member = lambda do |match, original|
-          if match.eql? "buddy" # don't remove buddy role
-            next
-          end
-          member_name = @@member_names[match]
-          role = self.find_roles event.server, member_name, true
-          role = role + (self.find_roles event.server, member_name, false)
-          role.map do |role|
-            next unless user.role?(role.id)
-            user.remove_role role
-            removed_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
-            self.log_roles "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
-          end
+      event.server.delete_member(event.user.id)
+      user = event.user.on event.server
+      rejected_names = []
+      removed_roles = []
+      data = self.prepare_bias_replacement(data)
+      cb_member = lambda do |match, original|
+        if match.eql? "buddy" # don't remove buddy role
+          next
         end
-        cb_other_member = lambda do |match, original|
-          rejected_names << match
-          self.log_roles "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot, event.server
+        member_name = @@member_names[match]
+        role = self.find_roles event.server, member_name, true
+        role = role + (self.find_roles event.server, member_name, false)
+        role.map do |role|
+          next unless user.role?(role.id)
+          user.remove_role role
+          removed_roles << "**#{role.name}**" + if !self.resolve_bias_replacement(match).eql? member_name then " _(#{original})_" else "" end
+          self.log_roles "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
         end
-        cb_special = lambda do |match, original, user_id|
-          member = event.server.member(user_id)
-          event.send_message "Do you really think bias hopping away from **@#{member.nick || member.username}** is any fun!?"
-        end
-        self.members_map data, cb_member, cb_other_member, cb_special
+      end
+      cb_other_member = lambda do |match, original|
+        rejected_names << match
+        self.log_roles "Warning, '#{event.user.name}' requested to remove '#{match}'.", event.bot, event.server
+      end
+      cb_special = lambda do |match, original, user_id|
+        member = event.server.member(user_id)
+        event.send_message "Do you really think bias hopping away from **@#{member.nick || member.username}** is any fun!?"
+      end
+      self.members_map data, cb_member, cb_other_member, cb_special
 
-        if !removed_roles.empty?
-          removed_roles_text = removed_roles.join ", "
-          event.send_message "#{user.mention} removed bias#{if removed_roles.length > 1 then 'es' end} #{removed_roles_text}"
-        end
-        if !rejected_names.empty?
-          self.print_rejected_names rejected_names, event
-        end
+      if !removed_roles.empty?
+        removed_roles_text = removed_roles.join ", "
+        event.send_message "#{user.mention} removed bias#{if removed_roles.length > 1 then 'es' end} #{removed_roles_text}"
+      end
+      if !rejected_names.empty?
+        self.print_rejected_names rejected_names, event
       end
     end
   end
@@ -630,31 +621,29 @@ module BuddyBot::Modules::BuddyFunctionality
       next
     end
     self.log_roles "Remove-All attempt by '#{event.user.username} - \##{event.user.id}'", event.bot, event.server
-    @@mutex_roles.synchronize do
-      event.server.delete_member(event.user.id)
-      user = event.user.on event.server
-      removed_roles = []
-      main_roles = user.roles.find_all do |role|
-        if @@ignored_roles.include? role.name
-          next
-        end
-        role.name.downcase.scan(/([A-z0-6]+)/).find do |matches|
-          @@primary_role_names.include? matches.first
-        end
+    event.server.delete_member(event.user.id)
+    user = event.user.on event.server
+    removed_roles = []
+    main_roles = user.roles.find_all do |role|
+      if @@ignored_roles.include? role.name
+        next
       end
+      role.name.downcase.scan(/([A-z0-6]+)/).find do |matches|
+        @@primary_role_names.include? matches.first
+      end
+    end
 
-      main_roles.map do |role|
-        if not user.role? role
-          next
-        end
-        user.remove_role role
-        removed_roles << "**#{role.name}**"
-        self.log_roles "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
+    main_roles.map do |role|
+      if not user.role? role
+        next
       end
-      if !removed_roles.empty?
-        removed_roles_text = removed_roles.join ", "
-        event.send_message "#{user.mention} removed bias#{if removed_roles.length > 1 then 'es' end} #{removed_roles_text}"
-      end
+      user.remove_role role
+      removed_roles << "**#{role.name}**"
+      self.log_roles "Removed role '#{role.name}' from '#{event.user.name}'", event.bot, event.server
+    end
+    if !removed_roles.empty?
+      removed_roles_text = removed_roles.join ", "
+      event.send_message "#{user.mention} removed bias#{if removed_roles.length > 1 then 'es' end} #{removed_roles_text}"
     end
   end
 
