@@ -362,6 +362,7 @@ server_threshold_remove_roles:
 server_threshold_remove_ignore:
   - 133023324493185026 # chase / sixednine
   - 244910116283875328 # blushie
+  - 231376216500731905 # Piku
 
 server_threshold_ignore_channels:
   166304074252288000: # gfcord
