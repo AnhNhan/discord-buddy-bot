@@ -117,8 +117,9 @@ member_names:
   buddycraft: buddycraft
   minecraft: buddycraft
   sojisstreaming: streaming
-  vlive: vlive
-  vliev: vlive
+  vlive: buddyping
+  vliev: buddyping
+  buddyping: buddyping
   picping: picping
   newsletter: picping
   giveaways: giveaways
@@ -405,6 +406,7 @@ bias_replacements:
   picping: "pic ping"
   newsletter: "news letter"
   vlive: "v live"
+  buddyping: "buddy ping"
 
 members_of_other_groups:
   momo:
