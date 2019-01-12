@@ -2,6 +2,7 @@
 require 'discordrb'
 require 'yaml'
 require 'rufus-scheduler'
+require 'shellwords'
 
 module BuddyBot::Modules::BuddyFunctionality
   extend Discordrb::EventContainer
@@ -61,6 +62,7 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@scheduler = Rufus::Scheduler.new
   @@yerin_pic_spam_channel = 0
+  @@pic_spam_image_hash_history = {}
 
   def self.scan_bot_files()
     member_config = YAML.load_file(BuddyBot.path("content/bot.yml"))
@@ -224,6 +226,29 @@ module BuddyBot::Modules::BuddyFunctionality
     event.send_message ":warning: #{BuddyBot.emoji(434376562142478367)} The following idol#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend. Officials have been alerted and now are on the search for you.\n#{rejected_names_text}"
   end
 
+  def self.pic_spam_post_pic(channel_id, event)
+    yerinpics_root = BuddyBot.path("content/yerinpics/")
+    selected_file = self.pic_spam_pick_non_recent_file(yerinpics_root, event)
+    self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{channel_id}>.", event.bot, Struct.new(:id).new(468731351374364672)
+    event.bot.send_file channel_id, File.open(selected_file, "r")
+  end
+
+  def self.pic_spam_pick_non_recent_file(root, event)
+    selected_file = `cd /; find #{Shellwords.escape(root)} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
+    selected_file = selected_file.sub /\n/, ""
+    selected_file_hash = self.calc_dhash_file(selected_file)
+    if !@@pic_spam_image_hash_history.has selected_file_hash
+      @@pic_spam_image_hash_history[selected_file_hash] = selected_file
+      return selected_file
+    end
+    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig", event.bot, Struct.new(:id).new(468731351374364672)
+    return self.pic_spam_pick_non_recent_file(root, event)
+  end
+
+  def self.calc_dhash_file(path)
+    `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)} integer`.sub /\n/, ""
+  end
+
   ready do |event|
     if not @@initialized
       self.scan_bot_files()
@@ -236,11 +261,9 @@ module BuddyBot::Modules::BuddyFunctionality
 
       if event.bot.profile.id == 168796631137910784
         @@scheduler.every '20m' do
-          yerinpics_root = BuddyBot.path("content/yerinpics/")
-          selected_file = `cd /; find #{yerinpics_root} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
-          selected_file = selected_file.sub /\n/, ""
-          self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{@@yerin_pic_spam_channel}>.", event.bot, Struct.new(:id).new(468731351374364672)
-          event.bot.send_file @@yerin_pic_spam_channel, File.open(selected_file, "r")
+          self.pic_spam_post_pic(@@yerin_pic_spam_channel, event)
+          if @@pic_spam_image_hash_history.size > 2100
+          end
         end
       end
 
@@ -254,6 +277,17 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(start_with: /^!motd/) do |event|
     event.bot.game = @@motd.sample
+  end
+
+  message(start_with: /^!pic-spam\s+\d+/) do |event|
+    next if @@is_crawler
+    self.only_mods(event.server, event.user) {
+      data = event.content.scan(/^!pic-spam\s+(\d+)/i)[0]
+      if data
+        data = data[0].downcase
+        self.pic_spam_post_pic(data, event)
+      end
+    }
   end
 
   member_join do |event|
