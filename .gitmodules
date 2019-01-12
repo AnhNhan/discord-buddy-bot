@@ -1,0 +1,3 @@
+[submodule "php-image-dedup"]
+	path = php-image-dedup
+	url = https://github.com/AnhNhan/php-image-dedup.git
