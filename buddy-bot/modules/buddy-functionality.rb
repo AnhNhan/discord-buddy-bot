@@ -10,6 +10,8 @@ module BuddyBot::Modules::BuddyFunctionality
   @@initialized = false
   @@is_crawler = false
 
+  @@bot = nil
+
   @@bot_owner_id = 0
 
   @@cleverbot = nil
@@ -256,17 +258,15 @@ module BuddyBot::Modules::BuddyFunctionality
     `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)}`.sub /\n/, ""
   end
 
-  def self.reported_actually_yerin(event)
+  reaction_add do |event|
+    # reported_actually_yerin
     return unless event.channel.id == @@yerin_pic_spam_channel
     return unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
-    event.bot.send_message @@yerin_pic_spam_reportedly_yerin, event.message.attachments.first.url
-  end
-
-  reaction_add do |event|
-    self.reported_actually_yerin(event)
+    @@bot.send_message @@yerin_pic_spam_reportedly_yerin, event.message.attachments.first.url
   end
 
   ready do |event|
+    @@bot = event.bot
     BuddyBot.build_emoji_map(event.bot.servers) # required for
     if not @@initialized
       self.scan_bot_files()
