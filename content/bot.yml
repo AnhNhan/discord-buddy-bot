@@ -394,6 +394,8 @@ giveaway_channels:
     - 446755943384875008 # giveaways
 
 yerin_pic_spam_channel: 468731351374364674
+yerin_pic_spam_yerin_emoji: 534067702185328643
+yerin_pic_spam_reportedly_yerin: 534075130956218389
 
 trivia_config_reveal_after: 300 # 5 minutes
 

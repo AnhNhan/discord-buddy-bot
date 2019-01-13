@@ -62,6 +62,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   @@scheduler = Rufus::Scheduler.new
   @@yerin_pic_spam_channel = 0
+  @@yerin_pic_spam_yerin_emoji = 0
+  @@yerin_pic_spam_reportedly_yerin = 0
   @@pic_spam_image_hash_history = {}
 
   def self.scan_bot_files()
@@ -92,6 +94,8 @@ module BuddyBot::Modules::BuddyFunctionality
     @@log_role_events = member_config["log_role_events"]
     @@server_moderator_roles = member_config["server_moderator_roles"]
     @@yerin_pic_spam_channel = member_config["yerin_pic_spam_channel"]
+    @@yerin_pic_spam_yerin_emoji = member_config["yerin_pic_spam_yerin_emoji"]
+    @@yerin_pic_spam_reportedly_yerin = member_config["yerin_pic_spam_reportedly_yerin"]
 
     @@motd = File.readlines(BuddyBot.path("content/motds.txt")).map(&:strip)
 
@@ -252,7 +256,14 @@ module BuddyBot::Modules::BuddyFunctionality
     `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)}`.sub /\n/, ""
   end
 
+  def self.reported_actually_yerin(event)
+    next unless event.channel.id == @@yerin_pic_spam_channel
+    next unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
+    event.bot.send_message @@yerin_pic_spam_reportedly_yerin, event.message.attachments.first.url
+  end
+
   ready do |event|
+    BuddyBot.build_emoji_map(event.bot.servers) # required for
     if not @@initialized
       self.scan_bot_files()
       if !@@is_crawler
@@ -268,9 +279,12 @@ module BuddyBot::Modules::BuddyFunctionality
         end
       end
 
+      reaction_add(emoji: @@yerin_pic_spam_yerin_emoji) do |event|
+        self.reported_actually_yerin(event)
+      end
+
       @@initialized = true
     end
-    BuddyBot.build_emoji_map(event.bot.servers)
     event.bot.game = @@motd.sample
 
     self.log "ready!", event.bot
