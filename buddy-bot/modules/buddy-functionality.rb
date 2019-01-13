@@ -294,6 +294,7 @@ module BuddyBot::Modules::BuddyFunctionality
   message(start_with: /^!pic-spam-hash-dump/) do |event|
     next if @@is_crawler
     self.only_mods(event.server, event.user) {
+      event.send_message @@pic_spam_image_hash_history.size
       event.send_message "```\n" + @@pic_spam_image_hash_history.inspect + "\n```"
     }
   end
