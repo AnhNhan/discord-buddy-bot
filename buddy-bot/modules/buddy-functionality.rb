@@ -257,8 +257,8 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   def self.reported_actually_yerin(event)
-    next unless event.channel.id == @@yerin_pic_spam_channel
-    next unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
+    return unless event.channel.id == @@yerin_pic_spam_channel
+    return unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
     event.bot.send_message @@yerin_pic_spam_reportedly_yerin, event.message.attachments.first.url
   end
 
