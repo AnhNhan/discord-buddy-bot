@@ -246,7 +246,7 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   def self.calc_dhash_file(path)
-    `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)} integer`.to_i
+    `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)}`.sub /\n/, ""
   end
 
   ready do |event|
