@@ -262,7 +262,8 @@ module BuddyBot::Modules::BuddyFunctionality
     # reported_actually_yerin
     return unless event.channel.id == @@yerin_pic_spam_channel
     return unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
-    @@bot.send_message @@yerin_pic_spam_reportedly_yerin, event.message.attachments.first.url
+    attachment = event.message.attachments.first
+    @@bot.send_message @@yerin_pic_spam_reportedly_yerin, attachment.filename + " - " + attachment.url
   end
 
   ready do |event|
