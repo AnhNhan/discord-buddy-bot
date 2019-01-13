@@ -248,7 +248,7 @@ module BuddyBot::Modules::BuddyFunctionality
   def self.pic_spam_pick_non_recent_file(root, event)
     selected_file = `cd /; find #{Shellwords.escape(root)} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
     selected_file = selected_file.sub /\n/, ""
-    if not [ "jpg", "jpeg", "bmp", "png" ].include? File.extname("selected_file").downcase
+    if not [ "jpg", "jpeg", "bmp", "png" ].include? File.extname(selected_file).downcase
       return selected_file
     end
     selected_file_hash = self.calc_dhash_file(selected_file)
