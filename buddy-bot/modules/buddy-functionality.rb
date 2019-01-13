@@ -290,6 +290,13 @@ module BuddyBot::Modules::BuddyFunctionality
     }
   end
 
+  message(start_with: /^!pic-spam-hash-dump/) do |event|
+    next if @@is_crawler
+    self.only_mods(event.server, event.user) {
+      event.send_message "```\n" + @@pic_spam_image_hash_history.inspect + "\n```"
+    }
+  end
+
   member_join do |event|
     next if @@is_crawler
     server = event.server
