@@ -262,6 +262,10 @@ module BuddyBot::Modules::BuddyFunctionality
     event.bot.send_message @@yerin_pic_spam_reportedly_yerin, event.message.attachments.first.url
   end
 
+  reaction_add do |event|
+    self.reported_actually_yerin(event)
+  end
+
   ready do |event|
     BuddyBot.build_emoji_map(event.bot.servers) # required for
     if not @@initialized
@@ -277,10 +281,6 @@ module BuddyBot::Modules::BuddyFunctionality
         @@scheduler.every '20m' do
           self.pic_spam_post_pic(@@yerin_pic_spam_channel, event)
         end
-      end
-
-      reaction_add(emoji: @@yerin_pic_spam_yerin_emoji) do |event|
-        self.reported_actually_yerin(event)
       end
 
       @@initialized = true
