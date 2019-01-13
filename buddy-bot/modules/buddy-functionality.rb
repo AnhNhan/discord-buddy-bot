@@ -420,16 +420,6 @@ module BuddyBot::Modules::BuddyFunctionality
     end
   end
 
-  # talk with BuddyBot
-  mention() do |event|
-    next if @@is_crawler
-    next if event.user.bot_account?
-    next if @@cleverbot.nil?
-    next if event.content.nil? || event.content.empty?
-    event.channel.start_typing
-    event.send_message @@cleverbot.say(event.content)
-  end
-
   message(start_with: /^!suggest-bias\s*/i, in: "whos-your-bias") do |event|
     next if @@is_crawler
     if event.user.nil?
