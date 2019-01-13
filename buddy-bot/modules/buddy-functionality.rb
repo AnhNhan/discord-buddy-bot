@@ -260,8 +260,8 @@ module BuddyBot::Modules::BuddyFunctionality
 
   reaction_add do |event|
     # reported_actually_yerin
-    return unless event.channel.id == @@yerin_pic_spam_channel
-    return unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
+    next unless event.channel.id == @@yerin_pic_spam_channel
+    next unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
     attachment = event.message.attachments.first
     @@bot.send_message @@yerin_pic_spam_reportedly_yerin, BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji).to_s + " " + attachment.filename + " - " + attachment.url
   end
