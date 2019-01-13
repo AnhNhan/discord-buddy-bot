@@ -3,6 +3,7 @@ require 'discordrb'
 require 'yaml'
 require 'rufus-scheduler'
 require 'shellwords'
+require 'rest-client'
 
 module BuddyBot::Modules::BuddyFunctionality
   extend Discordrb::EventContainer
@@ -234,9 +235,14 @@ module BuddyBot::Modules::BuddyFunctionality
 
   def self.pic_spam_post_pic(channel_id, event)
     yerinpics_root = BuddyBot.path("content/yerinpics/")
-    selected_file = self.pic_spam_pick_non_recent_file(yerinpics_root, event)
-    self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{channel_id}>.", event.bot, Struct.new(:id).new(468731351374364672)
-    event.bot.send_file channel_id, File.open(selected_file, "r")
+    begin
+      selected_file = self.pic_spam_pick_non_recent_file(yerinpics_root, event)
+      self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{channel_id}>.", event.bot, Struct.new(:id).new(468731351374364672)
+      event.bot.send_file channel_id, File.open(selected_file, "r")
+    rescue RestClient::PayloadTooLarge
+      self.log ":warning: `#{Time.now}` File `#{selected_file}` was too large.", event.bot, Struct.new(:id).new(468731351374364672)
+      retry
+    end
   end
 
   def self.pic_spam_pick_non_recent_file(root, event)
