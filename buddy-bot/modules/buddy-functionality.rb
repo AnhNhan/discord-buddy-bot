@@ -237,16 +237,16 @@ module BuddyBot::Modules::BuddyFunctionality
     selected_file = `cd /; find #{Shellwords.escape(root)} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
     selected_file = selected_file.sub /\n/, ""
     selected_file_hash = self.calc_dhash_file(selected_file)
-    if !@@pic_spam_image_hash_history.has selected_file_hash
+    if !@@pic_spam_image_hash_history.include? selected_file_hash
       @@pic_spam_image_hash_history[selected_file_hash] = selected_file
       return selected_file
     end
-    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig", event.bot, Struct.new(:id).new(468731351374364672)
+    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig\nhash: #{selected_file_hash}", event.bot, Struct.new(:id).new(468731351374364672)
     return self.pic_spam_pick_non_recent_file(root, event)
   end
 
   def self.calc_dhash_file(path)
-    `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)} integer`.sub /\n/, ""
+    `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)} integer`.to_i
   end
 
   ready do |event|
