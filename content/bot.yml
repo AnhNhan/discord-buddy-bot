@@ -123,6 +123,7 @@ member_names:
   picping: picping
   newsletter: picping
   giveaways: giveaways
+  giveaway: giveaways
 
   # gfbuddies
   ot6: ot6
@@ -409,6 +410,7 @@ bias_replacements:
   newsletter: "news letter"
   vlive: "v live"
   buddyping: "buddy ping"
+  giveaway: "give away"
 
 members_of_other_groups:
   momo:
