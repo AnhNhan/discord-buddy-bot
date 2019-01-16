@@ -5,6 +5,7 @@ require 'digest/md5'
 require 'stringio'
 require 'enumerator'
 require 'base64'
+require 'shellwords'
 
 require 'aws-sdk'
 require 'nokogiri'
@@ -101,7 +102,24 @@ module BuddyBot::Modules::Tistory
   # invoke this command if you want to e.g. add new audio clips or memes, but don't want to restart the bot. for now, you also have to invoke e.g. #audio-load manually afterwards.
   message(content: "!crawler-git-sync") do |event|
     next unless event.user.id == 139342974776639489
-    event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull && git add content/tistory-list.yml content/tistory-pages-downloaded.yml content/pages-twitter.yml content/downloaded-twitter.yml content/downloaded-sendanywhere.yml && git commit -m "crawler: update pages" && git push`.gsub(/Git LFS: .*?\n/m, "")}"
+    self.crawler_git_sync(event)
+  end
+
+  def self.crawler_git_sync(event)
+    files = [
+      "content/tistory-list.yml",
+      "content/tistory-pages-downloaded.yml",
+      "content/pages-twitter.yml",
+      "content/downloaded-twitter.yml",
+      "content/downloaded-sendanywhere.yml",
+    ]
+    for file in files
+      if File.size(BuddyBot.path(file)) == 0
+        event.send_message ":warning: File `#{file}` was empty, probably still open in an application \*cough\*."
+        return
+      end
+    end
+    event.channel.split_send "Done.\n#{`cd #{BuddyBot.path} && git pull && git add #{files.join(" ")} && git commit -m "crawler: update pages" && git push`.gsub(/Git LFS: .*?\n/m, "")}"
   end
 
   message(start_with: /^!tistory\s/i) do |event|
