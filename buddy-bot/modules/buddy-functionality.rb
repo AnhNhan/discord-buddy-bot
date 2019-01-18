@@ -233,48 +233,6 @@ module BuddyBot::Modules::BuddyFunctionality
     event.send_message ":warning: #{BuddyBot.emoji(434376562142478367)} The following idol#{if rejected_names.length > 1 then 's do' else ' does' end} not belong to \#Godfriend. Officials have been alerted and now are on the search for you.\n#{rejected_names_text}"
   end
 
-  def self.pic_spam_post_pic(channel_id, event)
-    yerinpics_root = BuddyBot.path("content/yerinpics/")
-    begin
-      selected_file = self.pic_spam_pick_non_recent_file(yerinpics_root, event)
-      self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{channel_id}>.", event.bot, Struct.new(:id).new(468731351374364672)
-      event.bot.send_file channel_id, File.open(selected_file, "r")
-    rescue RestClient::PayloadTooLarge
-      self.log ":warning: `#{Time.now}` File `#{selected_file}` was too large.", event.bot, Struct.new(:id).new(468731351374364672)
-      retry
-    end
-  end
-
-  def self.pic_spam_pick_non_recent_file(root, event)
-    selected_file = `cd /; find #{Shellwords.escape(root)} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
-    selected_file = selected_file.sub /\n/, ""
-    if not [ ".jpg", ".jpeg", ".bmp", ".png" ].include? File.extname(selected_file).downcase
-      return selected_file
-    end
-    selected_file_hash = self.calc_dhash_file(selected_file)
-    if !@@pic_spam_image_hash_history.include? selected_file_hash
-      @@pic_spam_image_hash_history[selected_file_hash] = selected_file
-      if @@pic_spam_image_hash_history.size > 2100
-        @@pic_spam_image_hash_history.delete selected_file_hash
-      end
-      return selected_file
-    end
-    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig\nhash: #{selected_file_hash}", event.bot, Struct.new(:id).new(468731351374364672)
-    return self.pic_spam_pick_non_recent_file(root, event)
-  end
-
-  def self.calc_dhash_file(path)
-    `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)}`.sub /\n/, ""
-  end
-
-  reaction_add do |event|
-    # reported_actually_yerin
-    next unless event.channel.id == @@yerin_pic_spam_channel
-    next unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
-    attachment = event.message.attachments.first
-    @@bot.send_message @@yerin_pic_spam_reportedly_yerin, BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji).to_s + " " + attachment.filename + " - " + attachment.url
-  end
-
   ready do |event|
     @@bot = event.bot
     BuddyBot.build_emoji_map(event.bot.servers) # required for
@@ -302,25 +260,6 @@ module BuddyBot::Modules::BuddyFunctionality
 
   message(start_with: /^!motd/) do |event|
     event.bot.game = @@motd.sample
-  end
-
-  message(start_with: /^!pic-spam\s+\d+/) do |event|
-    next if @@is_crawler
-    self.only_mods(event.server, event.user) {
-      data = event.content.scan(/^!pic-spam\s+(\d+)/i)[0]
-      if data
-        data = data[0].downcase
-        self.pic_spam_post_pic(data, event)
-      end
-    }
-  end
-
-  message(start_with: /^!pic-spam-hash-dump/) do |event|
-    next if @@is_crawler
-    self.only_mods(event.server, event.user) {
-      event.send_message @@pic_spam_image_hash_history.size
-      event.send_message "```\n" + @@pic_spam_image_hash_history.inspect + "\n```"
-    }
   end
 
   member_join do |event|
@@ -1402,5 +1341,68 @@ module BuddyBot::Modules::BuddyFunctionality
       matching_parts = trivia_normalize_light(input.downcase).split.select{ |part| terms.include? part }.uniq
       matching_parts.length >= count
     end
+  end
+
+  # YERIN PIC SPAM
+
+  def self.pic_spam_post_pic(channel_id, event)
+    yerinpics_root = BuddyBot.path("content/yerinpics/")
+    begin
+      selected_file = self.pic_spam_pick_non_recent_file(yerinpics_root, event)
+      self.log ":information_desk_person: `#{Time.now}` Sending `#{selected_file}` to <##{channel_id}>.", event.bot, Struct.new(:id).new(468731351374364672)
+      event.bot.send_file channel_id, File.open(selected_file, "r")
+    rescue RestClient::PayloadTooLarge
+      self.log ":warning: `#{Time.now}` File `#{selected_file}` was too large.", event.bot, Struct.new(:id).new(468731351374364672)
+      retry
+    end
+  end
+
+  def self.pic_spam_pick_non_recent_file(root, event)
+    selected_file = `cd /; find #{Shellwords.escape(root)} ~/gdrive/GFriend/Yerin/ -type f | grep -v .gitkeep | shuf -n1`
+    selected_file = selected_file.sub /\n/, ""
+    if not [ ".jpg", ".jpeg", ".bmp", ".png" ].include? File.extname(selected_file).downcase
+      return selected_file
+    end
+    selected_file_hash = self.calc_dhash_file(selected_file)
+    if !@@pic_spam_image_hash_history.include? selected_file_hash
+      @@pic_spam_image_hash_history[selected_file_hash] = selected_file
+      if @@pic_spam_image_hash_history.size > 2100
+        @@pic_spam_image_hash_history.delete selected_file_hash
+      end
+      return selected_file
+    end
+    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig\nhash: #{selected_file_hash}", event.bot, Struct.new(:id).new(468731351374364672)
+    return self.pic_spam_pick_non_recent_file(root, event)
+  end
+
+  def self.calc_dhash_file(path)
+    `cd #{BuddyBot.path("php-image-dedup/")}; php scripts/dhash_display.php #{Shellwords.escape(path)}`.sub /\n/, ""
+  end
+
+  reaction_add do |event|
+    # reported_actually_yerin
+    next unless event.channel.id == @@yerin_pic_spam_channel
+    next unless event.message.reacted_with(BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji)).size == 1
+    attachment = event.message.attachments.first
+    @@bot.send_message @@yerin_pic_spam_reportedly_yerin, BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji).to_s + " " + attachment.filename + " - " + attachment.url
+  end
+
+  message(start_with: /^!pic-spam\s+\d+/) do |event|
+    next if @@is_crawler
+    self.only_mods(event.server, event.user) {
+      data = event.content.scan(/^!pic-spam\s+(\d+)/i)[0]
+      if data
+        data = data[0].downcase
+        self.pic_spam_post_pic(data, event)
+      end
+    }
+  end
+
+  message(start_with: /^!pic-spam-hash-dump/) do |event|
+    next if @@is_crawler
+    self.only_mods(event.server, event.user) {
+      event.send_message @@pic_spam_image_hash_history.size
+      event.send_message "```\n" + @@pic_spam_image_hash_history.inspect + "\n```"
+    }
   end
 end
