@@ -242,12 +242,14 @@ module BuddyBot::Modules::BuddyFunctionality
         self.scan_member_message_counts()
         self.scan_giveaway_joins()
         self.scan_trivia_lists()
+        self.scan_pic_spam_hash_dumps()
       end
       # event.bot.profile.avatar = open("GFRIEND-NAVILLERA-Lyrics.jpg")
 
       if event.bot.profile.id == 168796631137910784
         @@scheduler.every '20m' do
           self.pic_spam_post_pic(@@yerin_pic_spam_channel, event)
+          self.persist_pic_spam_hash_dumps()
         end
       end
 
@@ -732,6 +734,7 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log "'#{event.user.name}' just requested a dynamic data persist!", event.bot, event.server
       self.persist_member_message_counts()
       self.persist_giveaway_joins
+      self.persist_pic_spam_hash_dumps()
       event.respond "Done! Hopefully..."
     }
   end
@@ -1344,6 +1347,13 @@ module BuddyBot::Modules::BuddyFunctionality
   end
 
   # YERIN PIC SPAM
+  def self.scan_pic_spam_hash_dumps()
+    @@pic_spam_image_hash_history = YAML.load_file(BuddyBot.path("content/data-pic-spam-hashes.yml"))
+  end
+
+  def self.persist_pic_spam_hash_dumps()
+    File.open(BuddyBot.path("content/data-pic-spam-hashes.yml"), "w") { |file| file.write(YAML.dump(@@pic_spam_image_hash_history)) }
+  end
 
   def self.pic_spam_post_pic(channel_id, event)
     yerinpics_root = BuddyBot.path("content/yerinpics/")
@@ -1387,6 +1397,14 @@ module BuddyBot::Modules::BuddyFunctionality
     @@bot.send_message @@yerin_pic_spam_reportedly_yerin, BuddyBot.emoji(@@yerin_pic_spam_yerin_emoji).to_s + " " + attachment.filename + " - " + attachment.url
   end
 
+  message(content: "!reload-pic-spam-hashes") do |event|
+    self.only_mods(event.server, event.user) {
+      self.log "'#{event.user.name}' just requested a pic spam hashes reload!", event.bot, event.server
+      self.scan_pic_spam_hash_dumps()
+      event.respond "Done! Hopefully..."
+    }
+  end
+
   message(start_with: /^!pic-spam\s+\d+/) do |event|
     next if @@is_crawler
     self.only_mods(event.server, event.user) {
@@ -1403,6 +1421,18 @@ module BuddyBot::Modules::BuddyFunctionality
     self.only_mods(event.server, event.user) {
       event.send_message @@pic_spam_image_hash_history.size
       event.send_message "```\n" + @@pic_spam_image_hash_history.inspect + "\n```"
+    }
+  end
+
+  message(start_with: /^!pic-spam-test\s+\S/i) do |event|
+    next if @@is_crawler
+    self.only_mods(event.server, event.user) {
+      data = event.content.scan(/^!pic-spam-test\s+(.*?)\s*$/i)[0]
+      if !data
+        break
+      end
+      file = data[0].downcase
+      event.send_message self.calc_dhash_file(file)
     }
   end
 end
