@@ -1445,10 +1445,13 @@ module BuddyBot::Modules::Tistory
               if segment_request.code != 200
                 return { "result" => "error", "request" => segment_request }
               end
+              # literally just write the next part at the end
+              # ts is a file format you can just concat
               tempfile.write segment_request.body
             end
             path = tempfile.path
             tempfile.flush
+            # transmux to mp4, ts makes me feel old
             `ffmpeg -i #{path} -c:v copy -c:a copy -bsf:a aac_adtstoasc #{path}2.mp4`
 
             s3_path = s3_folder + filename
