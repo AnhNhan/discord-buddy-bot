@@ -622,7 +622,12 @@ module BuddyBot::Modules::Tistory
       return { "result" => "error", "request" => player_page }
     end
 
-    file_id = player_page.body.scan(/ENV\.clipLinkId = '(\d+)';/)[0][0]
+    _file_id = player_page.body.scan(/ENV\.clipLinkId = '(\d+)';/)[0]
+    if !_file_id
+      self.log_warning ":warning: Kakao Video did not have a clip ID - `#{url}` - from Tistory `#{page_name}/#{page_number} - #{page_title}`", event.bot
+      return { "result" => "error" }
+    end
+    file_id = _file_id[0]
     selected_profile = player_page.body.scan(/ENV.profile = '(\w+)';/)[0][0]
     # impress data contains general video data, and most importantly, provides us with uuid and tid values
     impress = HTTParty.get("http://tv.kakao.com/api/v2/ft/cliplinks/#{file_id}/impress?player=monet_html5&referer=&service=daum_tistory&section=daum_tistory&withConad=true&dteType=PC&fields=clipLink,clip,channel,hasPlusFriend,user,userSkinData,-service,-tagList")
