@@ -553,6 +553,7 @@ module BuddyBot::Modules::Tistory
     ]
     uri_part_kakao_flashplayer = "tv.kakao.com/embed/player/cliplink"
     uri_weird_gdrive_flash_player = "https://www.googledrive.com/host/0B-9MTMyoDRgrWTc4bFN6NVNxQmc"
+    uri_another_weird_gdrive_flash_player = "https://www.googledrive.com/host/0B-9MTMyoDRgrXy03Q1NvWE1VNlk"
     uri_sowon_weird_flash_player = "http://951207.com/plugin/CallBack_bootstrapperSrc?nil_profile=tistory&nil_type=copied_post"
     uri_nonexistent_players = [ # any player that we should ignore
       "http://cfile23.uf.tistory.com/media/230A50475842C1E20ED51F",
@@ -575,7 +576,7 @@ module BuddyBot::Modules::Tistory
         media << { "type" => "nonexistent", "uri" => uri }
       elsif uri.include? uri_part_kakao_flashplayer
         media << { "type" => "kakao_player", "uri" => uri }
-      elsif uri.eql? uri_weird_gdrive_flash_player
+      elsif uri.eql?(uri_weird_gdrive_flash_player) || uri.eql?(uri_another_weird_gdrive_flash_player)
         parsed_vars = CGI.parse(flashvars)
         gdrive_file_id = parsed_vars["file"][0].scan(/host\/(.*?)(&|$)/)[0][0]
         media << { "type" => "weird-gdrive-file", "id" => gdrive_file_id }
@@ -1245,12 +1246,13 @@ module BuddyBot::Modules::Tistory
           msg = ":information_desk_person: Twitter account `#{author}` is suspended, skipping"
           self.log_warning msg, event.bot
           self.log msg, event.bot
-          return
+          return { "result" => "error", "reason" => "suspended" }
         end
       rescue => e
         # TODO: debug
         self.log_warning "self.process_tweet: Hard error while checking suspended account for `#{url}`: `#{e.inspect}`", event.bot
-        return
+        puts e.inspect
+        return { "result" => "error", "reason" => "suspended-error" }
       end
     end
 
@@ -1536,9 +1538,22 @@ module BuddyBot::Modules::Tistory
     self.log ":information_desk_person: Going through @#{author}'s Twitter page", event.bot
 
     begin
-      request = HTTParty.head("https://twitter.com/#{author}", follow_redirects: false)
+      request = HTTParty.get("https://twitter.com/#{author}", follow_redirects: false)
       if request.code == 302 && request.headers["location"] == "https://twitter.com/account/suspended"
         msg = ":information_desk_person: Twitter account `#{author}` is suspended, skipping"
+        self.log_warning msg, event.bot
+        self.log msg, event.bot
+        return
+      end
+      if request.code != 200
+        msg = ":information_desk_person: Twitter account `#{author}` hard error, HTTP #{request.code}, skipping"
+        self.log_warning msg, event.bot
+        self.log msg, event.bot
+        return
+      end
+      page = Nokogiri::HTML(request.body)
+      if page.css(".ProtectedTimeline-heading").size > 0
+        msg = ":information_desk_person: Twitter account `#{author}` has *protected timeline*, skipping"
         self.log_warning msg, event.bot
         self.log msg, event.bot
         return
@@ -1546,6 +1561,7 @@ module BuddyBot::Modules::Tistory
     rescue => e
       # TODO: debug
       self.log_warning "self.process_twitter_profile: Hard error while checking suspended account for `#{author}`: `#{e.inspect}`", event.bot
+      puts e.inspect
       return
     end
 
@@ -1560,7 +1576,7 @@ module BuddyBot::Modules::Tistory
       begin
         tweets = HTTParty.get("https://twitter.com/i/profiles/show/#{author}/timeline/tweets?include_available_features=1&count=200&include_entities=1#{if earliest_tweet_id then "&max_position=" + earliest_tweet_id end}&reset_error_state=false")
       rescue => e
-        self.log_warning "self.process_twitter_profile: Hard error while checking suspended account for `#{author}`, page #{page_count}, tweet id `#{earliest_tweet_id}`: `#{e.inspect}`", event.bot
+        self.log_warning "self.process_twitter_profile: Hard error while fetching tweets for `#{author}`, page #{page_count}, earliest tweet id `#{earliest_tweet_id}`: `#{e.inspect}`", event.bot
         next
       end
       if tweets.code != 200
