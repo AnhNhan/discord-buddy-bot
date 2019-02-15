@@ -547,7 +547,7 @@ module BuddyBot::Modules::BuddyFunctionality
       self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
 
       if meme_shadow_from_yerin && meme_shadow_to_yuju && meme_shadow_is_shadow
-        event.bot.send_file event.channel.id, File.open(BuddyBot.path("content/memes/DzMStvmVAAA8ybw.mp4", "r")
+        event.bot.send_file event.channel.id, File.open(BuddyBot.path("content/memes/DzMStvmVAAA8ybw.mp4", "r"))
         next
       end
 
