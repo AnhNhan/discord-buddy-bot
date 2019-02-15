@@ -501,6 +501,12 @@ module BuddyBot::Modules::BuddyFunctionality
       removed_roles = []
       added_roles = []
 
+      meme_shadow_is_shadow = user.id == 208094574416101378
+      meme_shadow_from_yerin = false
+      meme_shadow_to_yuju = false
+      meme_id_yerin = 166306254048854017
+      meme_id_yuju  = 166306276148510720
+
       data = self.prepare_bias_replacement(data)
 
       if !(@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_role_names.include?(@@member_names[data])))
@@ -529,14 +535,21 @@ module BuddyBot::Modules::BuddyFunctionality
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
         user.remove_role current_primary_role
+        meme_shadow_from_yerin = true if current_primary_role.id == meme_id_yerin
         puts " - removed role '#{current_primary_role.name}'"
         self.log_roles "Removed role '#{current_primary_role.name}' from '#{user.name}'", event.bot, event.server
       end
 
       user.add_role role
+      meme_shadow_to_yuju = true if role.id == meme_id_yuju
       puts "+  role '#{role.name}'"
       added_roles << "**#{role.name}**"
       self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
+
+      if meme_shadow_from_yerin && meme_shadow_to_yuju && meme_shadow_is_shadow
+        event.bot.send_file event.channel.id, File.open(BuddyBot.path("content/memes/DzMStvmVAAA8ybw.mp4", "r")
+        next
+      end
 
       if !removed_roles.empty?
         removed_roles_text = removed_roles.join ", "
