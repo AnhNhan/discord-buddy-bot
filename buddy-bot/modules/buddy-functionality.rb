@@ -1390,7 +1390,7 @@ module BuddyBot::Modules::BuddyFunctionality
     if !@@pic_spam_image_hash_history.include? selected_file_hash
       @@pic_spam_image_hash_history[selected_file_hash] = selected_file
       if @@pic_spam_image_hash_history.size > 2100
-        @@pic_spam_image_hash_history.delete selected_file_hash
+        @@pic_spam_image_hash_history.delete @@pic_spam_image_hash_history.keys.first
       end
       return selected_file
     end
