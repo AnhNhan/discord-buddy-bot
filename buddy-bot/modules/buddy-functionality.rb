@@ -1389,12 +1389,12 @@ module BuddyBot::Modules::BuddyFunctionality
     selected_file_hash = self.calc_dhash_file(selected_file)
     if !@@pic_spam_image_hash_history.include? selected_file_hash
       @@pic_spam_image_hash_history[selected_file_hash] = selected_file
-      if @@pic_spam_image_hash_history.size > 2100
+      if @@pic_spam_image_hash_history.size > 2100 # should suffice for about a month?
         @@pic_spam_image_hash_history.delete @@pic_spam_image_hash_history.keys.first
       end
       return selected_file
     end
-    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig\nhash: #{selected_file_hash}", event.bot, Struct.new(:id).new(468731351374364672)
+    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig\nhash: #{selected_file_hash}", event.bot, Struct.new(:id).new(468731351374364672) unless selected_file == @@pic_spam_image_hash_history[selected_file_hash]
     return self.pic_spam_pick_non_recent_file(root, event)
   end
 
