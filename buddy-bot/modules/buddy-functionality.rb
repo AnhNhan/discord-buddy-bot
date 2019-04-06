@@ -501,6 +501,12 @@ module BuddyBot::Modules::BuddyFunctionality
       removed_roles = []
       added_roles = []
 
+      meme_shadow_is_shadow = user.id == 208094574416101378
+      meme_shadow_from_yerin = false
+      meme_shadow_to_yuju = false
+      meme_id_yerin = 166306254048854017
+      meme_id_yuju  = 166306276148510720
+
       data = self.prepare_bias_replacement(data)
 
       if !(@@primary_role_names.include?(data) || (@@member_names.include?(data) && @@primary_role_names.include?(@@member_names[data])))
@@ -529,14 +535,21 @@ module BuddyBot::Modules::BuddyFunctionality
       current_primary_roles.map do |current_primary_role|
         removed_roles << "**#{current_primary_role.name}**"
         user.remove_role current_primary_role
+        meme_shadow_from_yerin = true if current_primary_role.id == meme_id_yerin
         puts " - removed role '#{current_primary_role.name}'"
         self.log_roles "Removed role '#{current_primary_role.name}' from '#{user.name}'", event.bot, event.server
       end
 
       user.add_role role
+      meme_shadow_to_yuju = true if role.id == meme_id_yuju
       puts "+  role '#{role.name}'"
       added_roles << "**#{role.name}**"
       self.log_roles "Added role '#{role.name}' to '#{user.name}'", event.bot, event.server
+
+      if meme_shadow_from_yerin && meme_shadow_to_yuju && meme_shadow_is_shadow
+        event.bot.send_file event.channel.id, File.open(BuddyBot.path("content/memes/DzMStvmVAAA8ybw.mp4", "r"))
+        next
+      end
 
       if !removed_roles.empty?
         removed_roles_text = removed_roles.join ", "
@@ -1376,12 +1389,12 @@ module BuddyBot::Modules::BuddyFunctionality
     selected_file_hash = self.calc_dhash_file(selected_file)
     if !@@pic_spam_image_hash_history.include? selected_file_hash
       @@pic_spam_image_hash_history[selected_file_hash] = selected_file
-      if @@pic_spam_image_hash_history.size > 2100
-        @@pic_spam_image_hash_history.delete selected_file_hash
+      if @@pic_spam_image_hash_history.size > 2100 # should suffice for about a month?
+        @@pic_spam_image_hash_history.delete @@pic_spam_image_hash_history.keys.first
       end
       return selected_file
     end
-    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig\nhash: #{selected_file_hash}", event.bot, Struct.new(:id).new(468731351374364672)
+    self.log ":warning: Duplicate image\n`#{selected_file}` duplicate\n`#{@@pic_spam_image_hash_history[selected_file_hash]}` orig\nhash: #{selected_file_hash}", event.bot, Struct.new(:id).new(468731351374364672) unless selected_file == @@pic_spam_image_hash_history[selected_file_hash]
     return self.pic_spam_pick_non_recent_file(root, event)
   end
 
