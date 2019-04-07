@@ -563,6 +563,7 @@ module BuddyBot::Modules::Tistory
       "https://t1.daumcdn.net/tistory_admin/static/plugin/endGift.html?entryId=0&setNo=1940",
     ]
     uri_weird_embeds = [
+      "http://player.youku.com/player.php/sid/XNjE5MTgxOTQw/v.swf",
     ]
     doc.css('embed').each do |embed|
       uri = embed.attribute('src').to_s
