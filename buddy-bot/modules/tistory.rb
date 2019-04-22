@@ -1106,9 +1106,9 @@ module BuddyBot::Modules::Tistory
     puts result
   end
 
-  message(start_with: /!twitter-link\s/i) do |event|
+  message(start_with: /!tl\s/i) do |event|
     next unless event.user.id == 139342974776639489
-    data = event.content.scan(/^!twitter-link\s+(\S+)(\?s=\d+)?\s*$/i)[0]
+    data = event.content.scan(/^!tl\s+(\S+)(\?s=\d+)?\s*$/i)[0]
     if !data
       event.send_message ":warning: You need to specify a trivia list name..."
       next
@@ -1152,10 +1152,11 @@ module BuddyBot::Modules::Tistory
     end
   end
 
-  message(start_with: "!twitter ") do |event|
+  message(start_with: "!t ") do |event|
     next if event.user.bot_account?
     @@abort_twitter_queue_in_progress = false
-    data = event.content.scan(/^!twitter\s+(\S+)(\?s=\d+)?\s*$/i)[0]
+    input = event.content.strip.replace /(\?s=\d+|\s+)+$/, ""
+    data = input.scan(/^!t\s+(\S+)$/i)[0]
     if !data
       event.send_message ":warning: You need to specify a trivia list name..."
       next
