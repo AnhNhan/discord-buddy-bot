@@ -672,7 +672,7 @@ GEM
       ffi
     parallel (1.12.1)
     raabro (1.1.6)
-    rack (2.0.5)
+    rack (2.2.2)
     rack-test (1.0.0)
       rack (>= 1.0, < 3)
     rails-dom-testing (2.0.3)
