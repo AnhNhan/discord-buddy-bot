@@ -620,7 +620,7 @@ GEM
       httpclient (~> 2.8)
       oj (~> 2.15)
     concurrent-ruby (1.0.5)
-    crass (1.0.4)
+    crass (1.0.6)
     discordrb (3.2.1)
       discordrb-webhooks (~> 3.2.0.1)
       opus-ruby
@@ -649,7 +649,7 @@ GEM
       concurrent-ruby (~> 1.0)
     image_size (2.0.0)
     jmespath (1.4.0)
-    loofah (2.2.2)
+    loofah (2.5.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     m3u8 (0.8.1)
