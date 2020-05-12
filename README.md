@@ -1,13 +1,7 @@
 # Deployment
 
 1. Install Ruby >= 2.2.0
-2. Install gems (I have no idea how to use bundler/gemspec/whatever)
-  - discordrb (make sure it's version > 2.0)
-  - rbnacl-libsodium (if your `rbnacl` somehow doesn't want to recognize the `libsodium` on your system)
-  - aws-sdk
-  - image_size
-  - nokogiri
-  - httparty
+2. Install gems via bundler
 3. Install other dependencies
   - libopus / `opus.dll`
   - ffmpeg available on `PATH`
